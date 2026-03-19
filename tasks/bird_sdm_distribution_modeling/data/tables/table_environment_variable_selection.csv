@@ -1,9 +1,11 @@
 variable,keep,rationale
-bio_1,TRUE,Retained after correlation screening
 bio_12,TRUE,Retained after correlation screening
 bio_15,TRUE,Retained after correlation screening
 bio_3,TRUE,Retained after correlation screening
 bio_4,TRUE,Retained after correlation screening
+bio_9,TRUE,Retained after correlation screening
+elev,TRUE,Retained after correlation screening
+bio_1,FALSE,Dropped because |r| >= 0.7 with a higher-priority variable
 bio_10,FALSE,Dropped because |r| >= 0.7 with a higher-priority variable
 bio_11,FALSE,Dropped because |r| >= 0.7 with a higher-priority variable
 bio_13,FALSE,Dropped because |r| >= 0.7 with a higher-priority variable
@@ -17,4 +19,3 @@ bio_5,FALSE,Dropped because |r| >= 0.7 with a higher-priority variable
 bio_6,FALSE,Dropped because |r| >= 0.7 with a higher-priority variable
 bio_7,FALSE,Dropped because |r| >= 0.7 with a higher-priority variable
 bio_8,FALSE,Dropped because |r| >= 0.7 with a higher-priority variable
-bio_9,FALSE,Dropped because |r| >= 0.7 with a higher-priority variable

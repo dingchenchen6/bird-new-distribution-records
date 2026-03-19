@@ -98,8 +98,10 @@ prepare_only <- any(args == "--prepare-only")
 force_download <- any(args == "--force-download")
 selected_species_arg <- args[grepl("^--species=", args)]
 species_limit_arg <- args[grepl("^--species-limit=", args)]
+worker_arg <- args[grepl("^--workers=", args)]
 selected_species <- if (length(selected_species_arg)) sub("^--species=", "", selected_species_arg[[1]]) else NA_character_
 species_limit <- if (length(species_limit_arg)) as.integer(sub("^--species-limit=", "", species_limit_arg[[1]])) else NA_integer_
+workers <- if (length(worker_arg)) as.integer(sub("^--workers=", "", worker_arg[[1]])) else 1L
 current_only <- any(args == "--current-only")
 
 SCRIPT_FILE <- script_path()
@@ -133,6 +135,7 @@ SPECIES_STATUS_PATH <- file.path(TABLE_DIR, "table_species_status_summary.csv")
 QA_LOG_PATH <- file.path(TABLE_DIR, "table_qa_log.csv")
 UNMATCHED_PATH <- file.path(TABLE_DIR, "table_unmatched_species_list.csv")
 PROVINCE_SUMMARY_PATH <- file.path(TABLE_DIR, "table_province_prediction_summary.csv")
+PROVINCE_POTENTIAL_LIST_PATH <- file.path(TABLE_DIR, "table_potential_province_listing_all_species.csv")
 AREA_CHANGE_PATH <- file.path(TABLE_DIR, "table_scenario_area_change_summary.csv")
 METRIC_SUMMARY_PATH <- file.path(TABLE_DIR, "table_model_metrics_summary.csv")
 TASK_SUMMARY_PATH <- file.path(RESULT_DIR, "task_summary.md")
@@ -196,10 +199,12 @@ create_default_model_config <- function(path) {
         "tss_selection_threshold",
         "province_threshold_a",
         "province_threshold_b",
+        "province_threshold_c",
+        "province_threshold_d",
         "buffer_km",
         "correlation_cutoff"
       ),
-      value = c("10", "3", "1000", "5", "20", "0.6", "3", "10", "500", "0.7")
+      value = c("10", "3", "1000", "5", "20", "0.6", "3", "10", "20", "50", "500", "0.7")
     )
     readr::write_csv(cfg, path)
   }
@@ -483,7 +488,7 @@ choose_environment_variables <- function(current_stack, cutoff = 0.7) {
   sample_df <- sample_df[, colnames(sample_df) %in% names(current_stack), drop = FALSE]
   cor_mat <- stats::cor(sample_df, use = "pairwise.complete.obs")
   priority <- intersect(c(
-    "bio_1", "bio_4", "bio_12", "bio_15", "bio_5", "bio_6", "bio_13", "bio_14",
+    "elev", "bio_1", "bio_4", "bio_12", "bio_15", "bio_5", "bio_6", "bio_13", "bio_14",
     "bio_2", "bio_3", "bio_7", "bio_8", "bio_9", "bio_10", "bio_11", "bio_16", "bio_17", "bio_18", "bio_19"
   ), colnames(sample_df))
 
@@ -517,6 +522,35 @@ repair_worldclim_bioclim_files <- function(res_value, climate_root) {
     try(utils::unzip(zip_path, exdir = out_dir), silent = TRUE)
   }
   tif_paths[file.exists(tif_paths)]
+}
+
+
+repair_worldclim_elevation_file <- function(res_value, climate_root) {
+  fres <- ifelse(res_value == "0.5", "30s", paste0(res_value, "m"))
+  out_dir <- file.path(climate_root, "climate", paste0("wc2.1_", fres))
+  tif_path <- file.path(out_dir, paste0("wc2.1_", fres, "_elev.tif"))
+  if (file.exists(tif_path)) tif_path else character(0)
+}
+
+load_worldclim_elevation <- function(res_value, climate_root, china_boundary) {
+  elev <- tryCatch(
+    geodata::worldclim_global(var = "elev", res = res_value, path = climate_root),
+    error = function(e) NULL
+  )
+  if (is.null(elev)) {
+    elev_path <- repair_worldclim_elevation_file(res_value = res_value, climate_root = climate_root)
+    if (length(elev_path) == 1) {
+      elev <- tryCatch(terra::rast(elev_path), error = function(e) NULL)
+    }
+  }
+  if (is.null(elev)) {
+    return(NULL)
+  }
+  names(elev) <- "elev"
+  china_vect <- terra::vect(china_boundary)
+  elev <- terra::crop(elev, china_vect)
+  elev <- terra::mask(elev, china_vect)
+  elev
 }
 
 load_environment_stack <- function(row, china_boundary, force_download = FALSE) {
@@ -559,6 +593,10 @@ load_environment_stack <- function(row, china_boundary, force_download = FALSE) 
   china_vect <- terra::vect(china_boundary)
   stack <- terra::crop(stack, china_vect)
   stack <- terra::mask(stack, china_vect)
+  elev <- load_worldclim_elevation(res_value = res_value, climate_root = climate_root, china_boundary = china_boundary)
+  if (!is.null(elev)) {
+    stack <- c(stack, elev)
+  }
   stack
 }
 
@@ -904,7 +942,143 @@ save_raster_if_present <- function(r, path) {
   }
 }
 
-province_sensitivity_summary <- function(binary_raster, provinces, species, scenario, gcm, thresholds = c(3, 10)) {
+normalize_worker_count <- function(workers, n_tasks) {
+  detected <- suppressWarnings(parallel::detectCores(logical = FALSE))
+  if (is.na(detected) || detected < 1) detected <- 1L
+  max_workers <- max(1L, min(as.integer(detected), as.integer(n_tasks)))
+  requested <- suppressWarnings(as.integer(workers))
+  if (is.na(requested) || requested < 1) requested <- 1L
+  min(requested, max_workers)
+}
+
+get_province_thresholds <- function(model_cfg) {
+  threshold_keys <- c("province_threshold_a", "province_threshold_b", "province_threshold_c", "province_threshold_d")
+  thresholds <- model_cfg %>%
+    filter(.data$key %in% threshold_keys) %>%
+    mutate(order_id = match(.data$key, threshold_keys)) %>%
+    arrange(.data$order_id) %>%
+    pull(.data$value) %>%
+    as.integer()
+  thresholds <- thresholds[!is.na(thresholds) & thresholds > 0]
+  unique(thresholds)
+}
+
+run_species_task <- function(species_name, species_points, current_stack = NULL, model_config, algo_tbl, provinces, future_stacks = NULL, province_thresholds, current_config = NULL, china_boundary = NULL, selected_predictors = NULL, future_configs = NULL, force_download = FALSE) {
+  safe_message("Modeling species: ", species_name)
+  qa_rows <- list()
+  if (is.null(current_stack)) {
+    current_stack <- load_environment_stack(current_config, china_boundary, force_download = force_download)
+    if (is.null(current_stack)) {
+      qa_rows[[length(qa_rows) + 1]] <- log_qa("climate", species_name, "missing", "Current climate raster unavailable inside worker")
+      return(list(
+        status = tibble(
+          species = species_name,
+          match_status = "matched",
+          n_raw = nrow(species_points),
+          n_clean = nrow(species_points),
+          n_cell_unique = nrow(species_points),
+          model_status = "failed",
+          skip_reason = "missing_current_climate",
+          cv_strategy = NA_character_,
+          maxent_engine = algo_tbl %>% filter(.data$algorithm == "MaxEnt") %>% pull(engine) %>% .[[1]]
+        ),
+        metrics = tibble(),
+        province = tibble(),
+        area_change = tibble(),
+        figure_paths = character(0),
+        qa_log = bind_rows(qa_rows)
+      ))
+    }
+    if (!is.null(selected_predictors) && length(selected_predictors) > 0) {
+      current_stack <- current_stack[[selected_predictors]]
+    }
+  }
+  if (is.null(future_stacks)) {
+    future_stacks <- list()
+    if (!is.null(future_configs) && nrow(future_configs) > 0) {
+      for (row_i in seq_len(nrow(future_configs))) {
+        row <- future_configs[row_i, , drop = FALSE]
+        future_stack <- load_environment_stack(row, china_boundary, force_download = force_download)
+        if (is.null(future_stack)) {
+          qa_rows[[length(qa_rows) + 1]] <- log_qa("climate", row$scenario[[1]], "missing", paste0("Future climate raster unavailable for ", species_name))
+          next
+        }
+        if (!is.null(selected_predictors) && length(selected_predictors) > 0) {
+          future_stack <- future_stack[[selected_predictors]]
+        }
+        future_stacks[[row$scenario[[1]]]] <- list(config = row, stack = future_stack)
+      }
+    }
+  }
+  sp_points <- species_points %>% distinct(.data$species, .data$longitude, .data$latitude, .keep_all = TRUE)
+  model_fit <- fit_species_models(species_name, sp_points, current_stack, model_config, algo_tbl)
+
+  result <- list(
+    status = model_fit$status,
+    metrics = model_fit$metrics,
+    province = tibble(),
+    area_change = tibble(),
+    figure_paths = character(0),
+    qa_log = bind_rows(qa_rows)
+  )
+
+  if (!identical(model_fit$status$model_status[[1]], "modeled")) {
+    return(result)
+  }
+
+  species_slug <- str_replace_all(tolower(species_name), "[^a-z0-9]+", "_")
+  species_dir <- ensure_dir(file.path(RASTER_DIR, species_slug))
+  save_raster_if_present(model_fit$probability_current, file.path(species_dir, paste0(species_slug, "_current_probability.tif")))
+  save_raster_if_present(model_fit$binary_current, file.path(species_dir, paste0(species_slug, "_current_binary.tif")))
+
+  province_rows <- list()
+  area_change_rows <- list()
+
+  current_province <- province_sensitivity_summary(model_fit$binary_current, provinces, species_name, "current", "ensemble_mean", thresholds = province_thresholds)
+  province_rows[["current"]] <- current_province
+
+  current_area <- current_province %>%
+    filter(.data$cell_threshold == 3) %>%
+    summarise(total_area_km2 = sum(.data$suitable_area_km2, na.rm = TRUE)) %>%
+    pull(total_area_km2)
+  area_change_rows[["current"]] <- tibble(species = species_name, scenario = "current", gcm = "ensemble_mean", total_area_km2 = current_area, delta_area_km2 = 0)
+
+  current_map <- plot_probability_map(model_fit$probability_current, provinces, paste0(species_name, " - current suitability"))
+  current_png <- file.path(FIGURE_MAP_DIR, paste0(species_slug, "_current_probability.png"))
+  current_pdf <- file.path(FIGURE_MAP_DIR, paste0(species_slug, "_current_probability.pdf"))
+  ggsave(current_png, current_map, width = 8.5, height = 6.0, dpi = 320, bg = "white")
+  ggsave(current_pdf, current_map, width = 8.5, height = 6.0, device = cairo_pdf, bg = "white")
+  result$figure_paths <- c(result$figure_paths, current_png)
+
+  if (length(future_stacks) > 0) {
+    for (stack_item in future_stacks) {
+      row <- stack_item$config
+      future_stack <- stack_item$stack[[model_fit$predictors]]
+      probability_layers <- lapply(model_fit$selected_algorithms, function(algorithm) {
+        predict_raster_values(model_fit$fitted_models[[algorithm]], algorithm, future_stack, model_fit$predictors)
+      })
+      probability_layers <- probability_layers[!vapply(probability_layers, is.null, logical(1))]
+      if (length(probability_layers) == 0) next
+      future_probability <- Reduce(`+`, probability_layers) / length(probability_layers)
+      future_binary <- future_probability >= model_fit$threshold
+      save_raster_if_present(future_probability, file.path(species_dir, paste0(species_slug, "_", row$scenario[[1]], "_probability.tif")))
+      save_raster_if_present(future_binary, file.path(species_dir, paste0(species_slug, "_", row$scenario[[1]], "_binary.tif")))
+      province_tbl <- province_sensitivity_summary(future_binary, provinces, species_name, row$ensemble_group[[1]], row$gcm[[1]], thresholds = province_thresholds)
+      province_rows[[row$scenario[[1]]]] <- province_tbl
+      future_area <- province_tbl %>%
+        filter(.data$cell_threshold == 3) %>%
+        summarise(total_area_km2 = sum(.data$suitable_area_km2, na.rm = TRUE)) %>%
+        pull(total_area_km2)
+      area_change_rows[[row$scenario[[1]]]] <- tibble(species = species_name, scenario = row$ensemble_group[[1]], gcm = row$gcm[[1]], total_area_km2 = future_area, delta_area_km2 = future_area - current_area)
+    }
+  }
+
+  result$province <- bind_rows(province_rows)
+  result$area_change <- bind_rows(area_change_rows)
+  result
+}
+
+province_sensitivity_summary <- function(binary_raster, provinces, species, scenario, gcm, thresholds = c(3, 10, 20, 50)) {
   if (is.null(binary_raster)) return(tibble())
   binary01 <- terra::ifel(binary_raster, 1, 0)
   cell_area <- terra::cellSize(binary01, unit = "km")
@@ -954,7 +1128,7 @@ plot_threshold_sensitivity <- function(province_tbl) {
     summarise(n_provinces = n(), suitable_area_km2 = sum(.data$suitable_area_km2), .groups = "drop") %>%
     ggplot(aes(x = factor(.data$cell_threshold), y = .data$n_provinces, fill = factor(.data$cell_threshold))) +
     geom_boxplot(width = 0.55, alpha = 0.8) +
-    scale_fill_manual(values = c("3" = "#4C956C", "10" = "#D68C45"), name = "Threshold") +
+    scale_fill_manual(values = c("3" = "#4C956C", "10" = "#D68C45", "20" = "#457B9D", "50" = "#7A4EAB"), name = "Threshold") +
     labs(title = "Province sensitivity analysis", x = "Suitable-cell threshold", y = "No. potential provinces") +
     theme_minimal(base_family = "Arial") +
     theme(plot.title = element_text(face = "bold"))
@@ -1005,7 +1179,7 @@ write_task_summary <- function(summary_stats, algo_tbl, note_lines = character(0
     paste0("- Exact/manual/auto matched species ready for modeling: ", summary_stats$matched_ready),
     paste0("- Successfully modeled species: ", summary_stats$modeled_species),
     paste0("- Unmatched species requiring Avibase/IOC + BirdLife review: ", summary_stats$unmatched_species),
-    paste0("- Province sensitivity thresholds: 3 cells and 10 cells"),
+    paste0("- Province sensitivity thresholds: ", paste(get_province_thresholds(create_default_model_config(MODEL_CONFIG_PATH)), collapse = ", "), " cells"),
     "",
     "## Algorithm availability",
     ""
@@ -1019,7 +1193,7 @@ write_task_summary <- function(summary_stats, algo_tbl, note_lines = character(0
   writeLines(lines, TASK_SUMMARY_PATH)
 }
 
-run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_, species_limit = NA_integer_, force_download = FALSE, current_only = FALSE) {
+run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_, species_limit = NA_integer_, force_download = FALSE, current_only = FALSE, workers = 1L) {
   qa_log <- list()
   qa_log[[length(qa_log) + 1]] <- log_qa("setup", "task_root", "ok", TASK_ROOT)
 
@@ -1072,16 +1246,19 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
   }
 
   env_selection <- choose_environment_variables(current_stack, cutoff = as.numeric(get_config_value(model_config, "correlation_cutoff", "0.7")))
+  province_thresholds <- get_province_thresholds(model_config)
   readr::write_csv(env_selection, ENV_SELECTION_PATH)
   selected_predictors <- env_selection %>% filter(.data$keep) %>% pull(.data$variable)
   current_stack <- current_stack[[selected_predictors]]
 
   modelable_species <- match_tbl %>% filter(.data$model_ready)
   if (!is.na(selected_species) && nzchar(selected_species)) {
-    modelable_species <- modelable_species %>% filter(.data$new_record_species == normalize_species_name(selected_species))
-  }
-  if (!is.na(species_limit)) {
-    modelable_species <- modelable_species %>% slice_head(n = species_limit)
+    selected_species_values <- selected_species %>%
+      str_split(",") %>%
+      .[[1]] %>%
+      normalize_species_name() %>%
+      unique()
+    modelable_species <- modelable_species %>% filter(.data$new_record_species %in% selected_species_values)
   }
 
   occurrence_ready <- occurrence_birds %>%
@@ -1092,50 +1269,12 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
     st_as_sf() %>%
     st_filter(st_as_sf(china_boundary), .predicate = st_intersects)
 
-  species_status_rows <- list()
-  metric_rows <- list()
-  province_rows <- list()
-  area_change_rows <- list()
-  figure_paths <- character(0)
-
-  for (species_name in unique(occurrence_ready$species)) {
-    safe_message("Modeling species: ", species_name)
-    sp_points <- occurrence_ready %>% filter(.data$species == !!species_name) %>% distinct(.data$species, .data$longitude, .data$latitude, .keep_all = TRUE)
-    model_fit <- fit_species_models(species_name, sp_points, current_stack, model_config, algo_tbl)
-    species_status_rows[[species_name]] <- model_fit$status
-    metric_rows[[species_name]] <- model_fit$metrics
-
-    if (!identical(model_fit$status$model_status[[1]], "modeled")) {
-      next
-    }
-
-    summary_stats$modeled_species <- summary_stats$modeled_species + 1L
-    species_slug <- str_replace_all(tolower(species_name), "[^a-z0-9]+", "_")
-    species_dir <- ensure_dir(file.path(RASTER_DIR, species_slug))
-    save_raster_if_present(model_fit$probability_current, file.path(species_dir, paste0(species_slug, "_current_probability.tif")))
-    save_raster_if_present(model_fit$binary_current, file.path(species_dir, paste0(species_slug, "_current_binary.tif")))
-
-    current_province <- province_sensitivity_summary(model_fit$binary_current, provinces, species_name, "current", "ensemble_mean", thresholds = c(3, 10))
-    province_rows[[paste0(species_name, "_current")]] <- current_province
-
-    current_area <- current_province %>%
-      filter(.data$cell_threshold == 3) %>%
-      summarise(total_area_km2 = sum(.data$suitable_area_km2, na.rm = TRUE)) %>%
-      pull(total_area_km2)
-    area_change_rows[[paste0(species_name, "_current")]] <- tibble(species = species_name, scenario = "current", gcm = "ensemble_mean", total_area_km2 = current_area, delta_area_km2 = 0)
-
-    current_map <- plot_probability_map(model_fit$probability_current, provinces, paste0(species_name, " - current suitability"))
-    current_png <- file.path(FIGURE_MAP_DIR, paste0(species_slug, "_current_probability.png"))
-    current_pdf <- file.path(FIGURE_MAP_DIR, paste0(species_slug, "_current_probability.pdf"))
-    ggsave(current_png, current_map, width = 8.5, height = 6.0, dpi = 320, bg = "white")
-    ggsave(current_pdf, current_map, width = 8.5, height = 6.0, device = cairo_pdf, bg = "white")
-    figure_paths <- c(figure_paths, current_png)
-
-    future_configs <- scenario_config %>% filter(.data$scenario != "current", .data$enabled)
-    if (current_only) {
-      future_configs <- future_configs[0, , drop = FALSE]
-    }
-    scenario_probability <- list(current = model_fit$probability_current)
+  future_configs <- scenario_config %>% filter(.data$scenario != "current", .data$enabled)
+  if (current_only) {
+    future_configs <- future_configs[0, , drop = FALSE]
+  }
+  future_stacks <- list()
+  if (nrow(future_configs) > 0) {
     for (row_i in seq_len(nrow(future_configs))) {
       row <- future_configs[row_i, , drop = FALSE]
       future_stack <- load_environment_stack(row, china_boundary, force_download = force_download)
@@ -1143,25 +1282,66 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
         qa_log[[length(qa_log) + 1]] <- log_qa("climate", row$scenario[[1]], "missing", "Future climate raster unavailable")
         next
       }
-      future_stack <- future_stack[[model_fit$predictors]]
-      probability_layers <- lapply(model_fit$selected_algorithms, function(algorithm) {
-        predict_raster_values(model_fit$fitted_models[[algorithm]], algorithm, future_stack, model_fit$predictors)
-      })
-      probability_layers <- probability_layers[!vapply(probability_layers, is.null, logical(1))]
-      if (length(probability_layers) == 0) next
-      future_probability <- Reduce(`+`, probability_layers) / length(probability_layers)
-      future_binary <- future_probability >= model_fit$threshold
-      scenario_probability[[row$scenario[[1]]]] <- future_probability
-      save_raster_if_present(future_probability, file.path(species_dir, paste0(species_slug, "_", row$scenario[[1]], "_probability.tif")))
-      save_raster_if_present(future_binary, file.path(species_dir, paste0(species_slug, "_", row$scenario[[1]], "_binary.tif")))
-      province_tbl <- province_sensitivity_summary(future_binary, provinces, species_name, row$ensemble_group[[1]], row$gcm[[1]], thresholds = c(3, 10))
-      province_rows[[paste0(species_name, "_", row$scenario[[1]])]] <- province_tbl
-      future_area <- province_tbl %>% filter(.data$cell_threshold == 3) %>% summarise(total_area_km2 = sum(.data$suitable_area_km2, na.rm = TRUE)) %>% pull(total_area_km2)
-      area_change_rows[[paste0(species_name, "_", row$scenario[[1]])]] <- tibble(species = species_name, scenario = row$ensemble_group[[1]], gcm = row$gcm[[1]], total_area_km2 = future_area, delta_area_km2 = future_area - current_area)
+      future_stacks[[row$scenario[[1]]]] <- list(config = row, stack = future_stack[[selected_predictors]])
     }
   }
 
-  species_status_tbl <- bind_rows(species_status_rows)
+  species_names <- occurrence_ready %>%
+    st_drop_geometry() %>%
+    count(.data$species, sort = TRUE, name = "n_points") %>%
+    { if (!is.na(species_limit)) slice_head(., n = species_limit) else . } %>%
+    pull(.data$species)
+  occurrence_ready <- occurrence_ready %>% filter(.data$species %in% species_names)
+  worker_count <- normalize_worker_count(workers, length(species_names))
+  safe_message("Running ", length(species_names), " species with workers=", worker_count)
+  species_points_list <- split(occurrence_ready, occurrence_ready$species)
+  species_runner <- function(species_name) {
+    run_species_task(
+      species_name = species_name,
+      species_points = species_points_list[[species_name]],
+      current_stack = current_stack,
+      model_config = model_config,
+      algo_tbl = algo_tbl,
+      provinces = provinces,
+      future_stacks = future_stacks,
+      province_thresholds = province_thresholds
+    )
+  }
+  species_results <- if (worker_count > 1L) {
+    cl <- parallel::makePSOCKcluster(worker_count)
+    on.exit(parallel::stopCluster(cl), add = TRUE)
+    parallel::clusterCall(cl, function(script_file) {
+      sys.source(script_file, envir = .GlobalEnv)
+      NULL
+    }, SCRIPT_FILE)
+    parallel::clusterExport(
+      cl,
+      varlist = c("species_points_list", "model_config", "algo_tbl", "provinces", "province_thresholds", "current_config", "china_boundary", "selected_predictors", "future_configs", "force_download"),
+      envir = environment()
+    )
+    parallel::parLapplyLB(cl, species_names, function(species_name) {
+      run_species_task(
+        species_name = species_name,
+        species_points = species_points_list[[species_name]],
+        current_stack = NULL,
+        model_config = model_config,
+        algo_tbl = algo_tbl,
+        provinces = provinces,
+        future_stacks = NULL,
+        province_thresholds = province_thresholds,
+        current_config = current_config,
+        china_boundary = china_boundary,
+        selected_predictors = selected_predictors,
+        future_configs = future_configs,
+        force_download = force_download
+      )
+    })
+  } else {
+    lapply(species_names, species_runner)
+  }
+  names(species_results) <- species_names
+
+  species_status_tbl <- bind_rows(lapply(species_results, function(x) x$status))
   if (nrow(species_status_tbl) == 0) {
     species_status_tbl <- match_tbl %>%
       transmute(
@@ -1193,9 +1373,11 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
       )
   ) %>% distinct(.data$species, .keep_all = TRUE) %>% arrange(.data$species)
 
-  metrics_tbl <- bind_rows(metric_rows)
-  province_tbl <- bind_rows(province_rows)
-  area_change_tbl <- bind_rows(area_change_rows)
+  metrics_tbl <- bind_rows(lapply(species_results, function(x) x$metrics))
+  province_tbl <- bind_rows(lapply(species_results, function(x) x$province))
+  area_change_tbl <- bind_rows(lapply(species_results, function(x) x$area_change))
+  figure_paths <- unique(unlist(lapply(species_results, function(x) x$figure_paths), use.names = FALSE))
+  summary_stats$modeled_species <- sum(species_status_tbl$model_status == "modeled", na.rm = TRUE)
 
   if (nrow(province_tbl) > 0) {
     province_summary <- province_tbl %>%
@@ -1205,7 +1387,21 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
         suitable_area_km2 = sum(.data$suitable_area_km2, na.rm = TRUE),
         .groups = "drop"
       )
+    province_potential_listing <- province_tbl %>%
+      filter(.data$presence_flag) %>%
+      left_join(
+        species_status_tbl %>%
+          filter(.data$model_status == "modeled") %>%
+          select(.data$species, .data$match_status, .data$model_status, .data$skip_reason),
+        by = "species",
+        relationship = "many-to-one"
+      ) %>%
+      filter(.data$model_status == "modeled") %>%
+      arrange(.data$species, .data$scenario, .data$gcm, .data$cell_threshold, .data$province) %>%
+      mutate(record_type = "potential_province") %>%
+      select(.data$record_type, .data$species, .data$match_status, .data$model_status, .data$skip_reason, .data$scenario, .data$gcm, .data$province, .data$cell_threshold, .data$suitable_cell_count, .data$suitable_area_km2, .data$presence_flag)
     readr::write_csv(province_tbl, PROVINCE_SUMMARY_PATH)
+    readr::write_csv(province_potential_listing, PROVINCE_POTENTIAL_LIST_PATH)
     sensitivity_plot <- plot_threshold_sensitivity(province_tbl)
     sensitivity_png <- file.path(FIGURE_SUMMARY_DIR, "fig_sensitivity_thresholds.png")
     sensitivity_pdf <- file.path(FIGURE_SUMMARY_DIR, "fig_sensitivity_thresholds.pdf")
@@ -1214,6 +1410,23 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
     figure_paths <- c(figure_paths, sensitivity_png)
   } else {
     province_summary <- tibble()
+    readr::write_csv(
+      tibble(
+        record_type = character(),
+        species = character(),
+        match_status = character(),
+        model_status = character(),
+        skip_reason = character(),
+        scenario = character(),
+        gcm = character(),
+        province = character(),
+        cell_threshold = integer(),
+        suitable_cell_count = integer(),
+        suitable_area_km2 = double(),
+        presence_flag = logical()
+      ),
+      PROVINCE_POTENTIAL_LIST_PATH
+    )
   }
 
   if (nrow(area_change_tbl) > 0) {
@@ -1231,13 +1444,16 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
   if (nrow(province_summary) > 0) {
     readr::write_csv(province_summary, file.path(TABLE_DIR, "table_province_sensitivity_compact.csv"))
   }
-  readr::write_csv(bind_rows(qa_log), QA_LOG_PATH)
+  species_qa_tbl <- bind_rows(lapply(species_results, function(x) x$qa_log))
+  readr::write_csv(bind_rows(qa_log, species_qa_tbl), QA_LOG_PATH)
 
   note_lines <- c(
     "Taxonomy review includes explicit Avibase/IOC and BirdLife review fields.",
-    "Province sensitivity analysis is written for both 3-cell and 10-cell thresholds.",
+    paste0("Province sensitivity analysis is written for ", paste0(get_province_thresholds(model_config), "-cell", collapse = ", "), " thresholds."),
     "MaxEnt uses maxent.jar when Java and the jar are available; otherwise it falls back to maxnet if installed.",
-    "Occurrence points, climate rasters, background sampling, and predictions are all restricted to the China boundary."
+    "Occurrence points, climate rasters, background sampling, and predictions are all restricted to the China boundary.",
+    "The final potential-province table only keeps successfully modeled species and lists each province, suitable-cell count, and suitable area for every active threshold.",
+    "WorldClim elevation is appended as an environmental predictor and enters the variable-screening workflow together with the bioclim variables."
   )
   write_task_summary(summary_stats, algo_tbl, note_lines = note_lines)
   write_summary_pptx(summary_stats, unique(figure_paths))
@@ -1259,6 +1475,7 @@ if (sys.nframe() == 0) {
     selected_species = selected_species,
     species_limit = species_limit,
     force_download = force_download,
-    current_only = current_only
+    current_only = current_only,
+    workers = workers
   )
 }
