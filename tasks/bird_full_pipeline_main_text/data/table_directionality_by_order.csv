@@ -1,0 +1,62 @@
+"direction","order_grp","n_records"
+"N","Passeriformes",34
+"N","Anseriformes",1
+"N","Accipitriformes",11
+"N","Pelecaniformes",3
+"N","Gruiformes",4
+"N","Columbiformes",2
+"N","Strigiformes",3
+"N","Other orders",15
+"NE","Passeriformes",115
+"NE","Charadriiformes",17
+"NE","Anseriformes",2
+"NE","Accipitriformes",21
+"NE","Pelecaniformes",14
+"NE","Gruiformes",8
+"NE","Columbiformes",8
+"NE","Strigiformes",3
+"NE","Other orders",45
+"E","Passeriformes",206
+"E","Charadriiformes",74
+"E","Anseriformes",39
+"E","Accipitriformes",22
+"E","Pelecaniformes",15
+"E","Gruiformes",5
+"E","Columbiformes",6
+"E","Strigiformes",8
+"E","Other orders",40
+"SE","Passeriformes",37
+"SE","Charadriiformes",36
+"SE","Anseriformes",12
+"SE","Accipitriformes",5
+"SE","Pelecaniformes",2
+"SE","Gruiformes",1
+"SE","Other orders",8
+"S","Passeriformes",15
+"S","Charadriiformes",9
+"S","Anseriformes",5
+"S","Gruiformes",1
+"S","Other orders",4
+"SW","Passeriformes",47
+"SW","Charadriiformes",15
+"SW","Anseriformes",5
+"SW","Accipitriformes",4
+"SW","Pelecaniformes",4
+"SW","Gruiformes",5
+"SW","Columbiformes",1
+"SW","Strigiformes",3
+"SW","Other orders",3
+"W","Passeriformes",13
+"W","Charadriiformes",1
+"W","Anseriformes",3
+"W","Accipitriformes",1
+"W","Pelecaniformes",5
+"W","Strigiformes",1
+"W","Other orders",3
+"NW","Passeriformes",26
+"NW","Charadriiformes",1
+"NW","Accipitriformes",3
+"NW","Pelecaniformes",3
+"NW","Gruiformes",1
+"NW","Columbiformes",3
+"NW","Other orders",8
