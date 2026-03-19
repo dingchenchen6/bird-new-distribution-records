@@ -34,9 +34,11 @@ provinces <- load_province_boundaries() |> dplyr::slice_head(n = 1) |> sf::st_se
 ext <- st_bbox(provinces)
 r <- rast(xmin = ext[['xmin']], xmax = ext[['xmax']], ymin = ext[['ymin']], ymax = ext[['ymax']], resolution = 0.25)
 values(r) <- 1
-province_tbl <- province_sensitivity_summary(r > 0, provinces, 'Smoke species', 'current', 'ensemble_mean', thresholds = c(3, 10))
+province_tbl <- province_sensitivity_summary(r > 0, provinces, 'Smoke species', 'current', 'ensemble_mean', thresholds = c(3, 10, 20, 50))
 safe_assert(any(province_tbl$cell_threshold == 3 & province_tbl$presence_flag), '3-cell threshold should mark presence in the toy example.')
 safe_assert(any(province_tbl$cell_threshold == 10 & province_tbl$presence_flag), '10-cell threshold should mark presence in the toy example.')
+safe_assert(any(province_tbl$cell_threshold == 20 & province_tbl$presence_flag), '20-cell threshold should mark presence in the toy example.')
+safe_assert(any(province_tbl$cell_threshold == 50 & province_tbl$presence_flag), '50-cell threshold should mark presence in the toy example.')
 
 x_span <- ext[['xmax']] - ext[['xmin']]
 y_span <- ext[['ymax']] - ext[['ymin']]

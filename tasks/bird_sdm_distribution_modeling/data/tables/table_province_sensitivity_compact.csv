@@ -1,3 +1,5 @@
 species,scenario,cell_threshold,n_provinces,suitable_area_km2
-Phasianus colchicus,current,3,33,5352642.086716887
-Phasianus colchicus,current,10,33,5352642.086716887
+Phasianus colchicus,current,3,33,3818288.1939468733
+Phasianus colchicus,current,10,33,3818288.1939468733
+Phasianus colchicus,current,20,33,3818288.1939468733
+Phasianus colchicus,current,50,33,3818288.1939468733
