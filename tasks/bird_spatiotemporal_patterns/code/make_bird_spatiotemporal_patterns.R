@@ -275,32 +275,32 @@ save_map_bundle <- function(main_plot, inset_plot, out_dir, filename_no_ext, wid
   print(ppt, target = pptx_path)
 }
 
-add_north_arrow_projected <- function(plot_obj, xlim, ylim, scale_x = 0.022, scale_y = 0.050) {
+add_north_arrow_projected <- function(plot_obj, xlim, ylim, scale_x = 0.018, scale_y = 0.040) {
   xr <- diff(xlim)
   yr <- diff(ylim)
-  x <- xlim[2] - xr * 0.072
-  y <- ylim[2] - yr * 0.112
+  x <- xlim[2] - xr * 0.055
+  y <- ylim[2] - yr * 0.085
   dx <- xr * scale_x
   dy <- yr * scale_y
 
   plot_obj +
-    annotate("text", x = x, y = y + dy * 1.22, label = "N", size = 9.4, family = "sans") +
+    annotate("text", x = x, y = y + dy * 1.14, label = "N", size = 8.2, family = "sans") +
     annotate(
       "polygon",
-      x = c(x, x - dx * 0.62, x, x + dx * 0.62),
-      y = c(y + dy * 0.88, y - dy * 1.08, y - dy * 0.08, y - dy * 1.08),
-      fill = "black", color = "black", linewidth = 0.28
+      x = c(x, x - dx * 0.55, x, x + dx * 0.55),
+      y = c(y + dy * 0.78, y - dy * 0.95, y - dy * 0.02, y - dy * 0.95),
+      fill = "black", color = "black", linewidth = 0.26
     ) +
     annotate(
       "polygon",
-      x = c(x, x - dx * 0.24, x, x + dx * 0.24),
-      y = c(y + dy * 0.53, y - dy * 0.70, y - dy * 0.02, y - dy * 0.70),
+      x = c(x, x - dx * 0.17, x, x + dx * 0.17),
+      y = c(y + dy * 0.49, y - dy * 0.62, y + dy * 0.02, y - dy * 0.62),
       fill = "white", color = "white"
     ) +
     annotate(
       "segment",
-      x = x, xend = x, y = y - dy * 0.03, yend = y + dy * 0.56,
-      linewidth = 0.18, color = "white"
+      x = x, xend = x, y = y - dy * 0.01, yend = y + dy * 0.53,
+      linewidth = 0.15, color = "white"
     )
 }
 
@@ -310,13 +310,13 @@ map_theme <- function() {
       plot.background = element_rect(fill = "white", color = NA),
       panel.background = element_rect(fill = "white", color = NA),
       panel.border = element_rect(fill = NA, color = "black", linewidth = 0.75),
-      legend.position = c(0.065, 0.135),
+      legend.position = c(0.028, 0.045),
       legend.justification = c(0, 0),
       legend.background = element_rect(fill = alpha("white", 0.9), color = NA),
       legend.title = element_text(size = 14.5, face = "bold"),
       legend.text = element_text(size = 12.4),
       legend.key.width = unit(1.2, "cm"),
-      legend.key.height = unit(0.78, "cm"),
+      legend.key.height = unit(0.64, "cm"),
       plot.margin = margin(8, 8, 8, 8)
     )
 }
@@ -327,7 +327,7 @@ point_map_theme <- function() {
       plot.background = element_rect(fill = "white", color = NA),
       panel.background = element_rect(fill = "white", color = NA),
       panel.border = element_rect(fill = NA, color = "black", linewidth = 0.75),
-      legend.position = c(0.055, 0.115),
+      legend.position = c(0.026, 0.042),
       legend.justification = c(0, 0),
       legend.background = element_rect(fill = alpha("white", 0.92), color = NA),
       legend.title = element_text(size = 15.5, face = "bold"),
@@ -336,6 +336,13 @@ point_map_theme <- function() {
       legend.key.width = unit(0.95, "cm"),
       plot.margin = margin(8, 8, 8, 8)
     )
+}
+
+add_graticule_layers <- function(plot_obj) {
+  plot_obj +
+    geom_sf(data = graticule_sf, color = alpha("#808080", 0.45), linewidth = 0.22, linetype = "22") +
+    geom_text(data = lon_label_df, aes(x = x, y = y, label = label), size = 3.0, color = "#5A5A5A", family = "sans") +
+    geom_text(data = lat_label_df, aes(x = x, y = y, label = label), size = 3.0, color = "#5A5A5A", family = "sans", hjust = 1)
 }
 
 bar_theme <- function() {
@@ -462,11 +469,32 @@ province_line_sf <- st_transform(province_line_sf_ll, china_crs)
 ten_dash_sf <- st_transform(ten_dash_sf_ll, china_crs)
 
 main_bbox <- st_bbox(province_sf)
-main_xlim <- c(main_bbox["xmin"] - 120000, main_bbox["xmax"] + 1500000)
-main_ylim <- c(main_bbox["ymin"] + 420000, main_bbox["ymax"] + 320000)
+main_xlim <- c(main_bbox["xmin"] - 760000, main_bbox["xmax"] + 560000)
+main_ylim <- c(main_bbox["ymin"] + 840000, main_bbox["ymax"] + 140000)
 inset_bbox <- build_bbox_from_longlat(104, 125, 2, 26, china_crs)
 ten_dash_main_bbox <- c(xmin = unname(as.numeric(main_xlim[1])), xmax = unname(as.numeric(main_xlim[2])), ymin = unname(as.numeric(main_ylim[1])), ymax = unname(as.numeric(main_ylim[1] + diff(main_ylim) * 0.18)))
 ten_dash_main_sf <- suppressWarnings(st_crop(ten_dash_sf, ten_dash_main_bbox))
+
+# Major graticule lines and labels for the alternative map version.
+# 经纬网版本使用主要经纬线（每 10 度）和边缘经纬度标注。
+major_lon <- seq(80, 130, by = 10)
+major_lat <- seq(20, 50, by = 10)
+graticule_ll <- st_graticule(lon = major_lon, lat = major_lat, crs = st_crs(4326))
+graticule_sf <- suppressWarnings(st_transform(st_as_sf(graticule_ll), china_crs))
+
+lon_label_sf <- st_as_sf(
+  tibble(lon = major_lon, lat = 18.2, label = paste0(major_lon, "°E")),
+  coords = c("lon", "lat"), crs = 4326
+) %>% st_transform(china_crs)
+lon_label_xy <- st_coordinates(lon_label_sf)
+lon_label_df <- lon_label_sf %>% st_drop_geometry() %>% mutate(x = lon_label_xy[, 1], y = lon_label_xy[, 2])
+
+lat_label_sf <- st_as_sf(
+  tibble(lon = 73.8, lat = major_lat, label = paste0(major_lat, "°N")),
+  coords = c("lon", "lat"), crs = 4326
+) %>% st_transform(china_crs)
+lat_label_xy <- st_coordinates(lat_label_sf)
+lat_label_df <- lat_label_sf %>% st_drop_geometry() %>% mutate(x = lat_label_xy[, 1], y = lat_label_xy[, 2])
 
 # -------------------------------
 # Step 3. Diagnose data quality and analytical assumptions
@@ -794,6 +822,69 @@ point_map_inset <- ggplot() +
   theme_void() +
   theme(panel.border = element_rect(color = "black", fill = NA, linewidth = 0.7), legend.position = "none")
 
+# Alternative versions with major graticules and geographic labels.
+# 补充制作带主要经纬网和经纬度标注的版本。
+count_map_graticule_main <- ggplot() +
+  geom_sf(data = graticule_sf, color = alpha("#808080", 0.45), linewidth = 0.22, linetype = "22") +
+  geom_sf(data = province_map_sf, aes(fill = count_class), color = "#9A9A9A", linewidth = 0.24) +
+  geom_sf(data = province_line_sf, color = "#777777", linewidth = 0.20, fill = NA) +
+  geom_sf(data = ten_dash_main_sf, color = "#272727", linewidth = 0.22, fill = NA) +
+  geom_text(data = label_df, aes(x = x, y = y, label = province_label_map, hjust = hjust, vjust = vjust), family = "sans", size = 3.85, lineheight = 0.90) +
+  geom_text(data = lon_label_df, aes(x = x, y = y, label = label), size = 3.0, color = "#5A5A5A", family = "sans") +
+  geom_text(data = lat_label_df, aes(x = x, y = y, label = label), size = 3.0, color = "#5A5A5A", family = "sans", hjust = 1) +
+  count_fill_scale +
+  coord_sf(xlim = main_xlim, ylim = main_ylim, expand = FALSE, crs = china_crs) +
+  map_theme()
+count_map_graticule_main <- add_north_arrow_projected(count_map_graticule_main, main_xlim, main_ylim)
+
+density_map_graticule_main <- ggplot() +
+  geom_sf(data = graticule_sf, color = alpha("#808080", 0.45), linewidth = 0.22, linetype = "22") +
+  geom_sf(data = province_map_sf, aes(fill = density_class), color = "#9A9A9A", linewidth = 0.24) +
+  geom_sf(data = province_line_sf, color = "#777777", linewidth = 0.20, fill = NA) +
+  geom_sf(data = ten_dash_main_sf, color = "#272727", linewidth = 0.22, fill = NA) +
+  geom_text(data = label_df, aes(x = x, y = y, label = province_label_map, hjust = hjust, vjust = vjust), family = "sans", size = 3.85, lineheight = 0.90) +
+  geom_text(data = lon_label_df, aes(x = x, y = y, label = label), size = 3.0, color = "#5A5A5A", family = "sans") +
+  geom_text(data = lat_label_df, aes(x = x, y = y, label = label), size = 3.0, color = "#5A5A5A", family = "sans", hjust = 1) +
+  density_fill_scale +
+  coord_sf(xlim = main_xlim, ylim = main_ylim, expand = FALSE, crs = china_crs) +
+  map_theme()
+density_map_graticule_main <- add_north_arrow_projected(density_map_graticule_main, main_xlim, main_ylim)
+
+point_map_graticule_main <- ggplot() +
+  geom_sf(data = graticule_sf, color = alpha("#808080", 0.45), linewidth = 0.22, linetype = "22") +
+  geom_sf(data = province_sf, fill = "white", color = "#8C8C8C", linewidth = 0.26) +
+  geom_sf(data = province_line_sf, color = "#5A5A5A", linewidth = 0.36, fill = NA) +
+  geom_sf(data = ten_dash_main_sf, color = "#4A4A4A", linewidth = 0.28, fill = NA) +
+  geom_point(data = point_map_df, aes(x = x, y = y, color = order_group, shape = order_group), size = 2.85, stroke = 0.22, alpha = 0.95) +
+  geom_text(data = lon_label_df, aes(x = x, y = y, label = label), size = 3.0, color = "#5A5A5A", family = "sans") +
+  geom_text(data = lat_label_df, aes(x = x, y = y, label = label), size = 3.0, color = "#5A5A5A", family = "sans", hjust = 1) +
+  scale_color_manual(
+    values = point_map_palette,
+    breaks = c("Passeriformes", "Charadriiformes", "Anseriformes", "Accipitriformes", "Pelecaniformes", "Others"),
+    labels = c("PASSERIFORMES", "CHARADRIIFORMES", "ANSERIFORMES", "ACCIPITRIFORMES", "PELECANIFORMES", "Others"),
+    name = "New records across orders"
+  ) +
+  scale_shape_manual(
+    values = point_map_shapes,
+    breaks = c("Passeriformes", "Charadriiformes", "Anseriformes", "Accipitriformes", "Pelecaniformes", "Others"),
+    labels = c("PASSERIFORMES", "CHARADRIIFORMES", "ANSERIFORMES", "ACCIPITRIFORMES", "PELECANIFORMES", "Others"),
+    name = "New records across orders"
+  ) +
+  coord_sf(xlim = main_xlim, ylim = main_ylim, expand = FALSE, crs = china_crs) +
+  point_map_theme() +
+  guides(
+    color = guide_legend(
+      ncol = 1, byrow = TRUE,
+      override.aes = list(
+        shape = unname(point_map_shapes[c("Passeriformes", "Charadriiformes", "Anseriformes", "Accipitriformes", "Pelecaniformes", "Others")]),
+        color = unname(point_map_palette[c("Passeriformes", "Charadriiformes", "Anseriformes", "Accipitriformes", "Pelecaniformes", "Others")]),
+        size = 4.2, alpha = 1
+      )
+    ),
+    shape = "none"
+  )
+point_map_graticule_main <- add_north_arrow_projected(point_map_graticule_main, main_xlim, main_ylim)
+
 # -------------------------------
 # Step 7. Build stacked bar-line charts
 # 第 7 步：绘制堆叠柱线图
@@ -846,9 +937,12 @@ p_year_barline_top10 <- make_barline_plot(
 # Step 8. Export figures
 # 第 8 步：导出图件
 # -------------------------------
-save_map_bundle(count_map_main, count_map_inset, figures_dir, "fig_sp01_province_new_record_count_map", width = 13.6, height = 9.4, inset_left = 0.825, inset_bottom = 0.003, inset_right = 0.995, inset_top = 0.238, plot_xlim = main_xlim, plot_ylim = main_ylim)
-save_map_bundle(density_map_main, density_map_inset, figures_dir, "fig_sp02_province_new_record_density_map", width = 13.6, height = 9.4, inset_left = 0.825, inset_bottom = 0.003, inset_right = 0.995, inset_top = 0.238, plot_xlim = main_xlim, plot_ylim = main_ylim)
-save_map_bundle(point_map_main, point_map_inset, figures_dir, "fig_sp03_across_order_point_map", width = 16.0, height = 11.0, inset_left = 0.825, inset_bottom = 0.003, inset_right = 0.995, inset_top = 0.238, plot_xlim = main_xlim, plot_ylim = main_ylim)
+save_map_bundle(count_map_main, count_map_inset, figures_dir, "fig_sp01_province_new_record_count_map", width = 13.6, height = 9.4, inset_left = 0.855, inset_bottom = 0.001, inset_right = 0.998, inset_top = 0.218, plot_xlim = main_xlim, plot_ylim = main_ylim)
+save_map_bundle(density_map_main, density_map_inset, figures_dir, "fig_sp02_province_new_record_density_map", width = 13.6, height = 9.4, inset_left = 0.855, inset_bottom = 0.001, inset_right = 0.998, inset_top = 0.218, plot_xlim = main_xlim, plot_ylim = main_ylim)
+save_map_bundle(point_map_main, point_map_inset, figures_dir, "fig_sp03_across_order_point_map", width = 16.0, height = 11.0, inset_left = 0.855, inset_bottom = 0.001, inset_right = 0.998, inset_top = 0.218, plot_xlim = main_xlim, plot_ylim = main_ylim)
+save_map_bundle(count_map_graticule_main, count_map_inset, figures_dir, "fig_sp01g_province_new_record_count_map_graticule", width = 13.6, height = 9.4, inset_left = 0.855, inset_bottom = 0.001, inset_right = 0.998, inset_top = 0.218, plot_xlim = main_xlim, plot_ylim = main_ylim)
+save_map_bundle(density_map_graticule_main, density_map_inset, figures_dir, "fig_sp02g_province_new_record_density_map_graticule", width = 13.6, height = 9.4, inset_left = 0.855, inset_bottom = 0.001, inset_right = 0.998, inset_top = 0.218, plot_xlim = main_xlim, plot_ylim = main_ylim)
+save_map_bundle(point_map_graticule_main, point_map_inset, figures_dir, "fig_sp03g_across_order_point_map_graticule", width = 16.0, height = 11.0, inset_left = 0.855, inset_bottom = 0.001, inset_right = 0.998, inset_top = 0.218, plot_xlim = main_xlim, plot_ylim = main_ylim)
 save_chart_bundle(p_province_barline, figures_dir, "fig_sp04_province_stacked_barline", width = 14.2, height = 9.1)
 save_chart_bundle(p_year_barline, figures_dir, "fig_sp05_year_stacked_barline", width = 14.2, height = 8.7)
 save_chart_bundle(p_province_barline_top10, figures_dir, "fig_sp06_province_stacked_barline_top10", width = 14.2, height = 9.1)
