@@ -9,3 +9,12 @@ This directory stores analysis tasks as independent modules. Each task follows t
 - `results`: concise result notes
 - `README.md`: task overview and file guide
 - `METHODS.md`: reproducible analytical workflow
+
+## Tasks / 任务
+- bird_directional_windrose_radar
+- bird_sankey_order_province_year
+- bird_binomial_order_pattern
+- bird_order_summary_table
+- bird_reference_style_figures
+- bird_full_pipeline_main_text
+- bird_sdm_distribution_modeling

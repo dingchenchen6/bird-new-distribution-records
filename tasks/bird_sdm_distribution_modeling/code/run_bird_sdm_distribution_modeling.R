@@ -1,0 +1,1205 @@
+#!/usr/bin/env Rscript
+
+# ============================================================
+# Bird SDM workflow for new-record bird species in China
+# Workflow: species screening -> taxonomy review -> occurrence cleaning ->
+# climate preparation -> SDM fitting -> province sensitivity analysis ->
+# figures / tables / summary outputs.
+#
+# Design goals:
+# 1. Only model bird species that are part of the new-record species pool.
+# 2. Use occurrence points exclusively from the local species-distribution SHP.
+# 3. Keep the pipeline robust when some modeling dependencies are unavailable.
+# 4. Emit taxonomy review tables and QA outputs even before heavy modeling runs.
+# ============================================================
+
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(readr)
+  library(stringr)
+  library(tidyr)
+  library(tibble)
+  library(sf)
+  library(terra)
+  library(ggplot2)
+  library(pROC)
+  library(geodata)
+  library(dismo)
+  library(mgcv)
+  library(officer)
+})
+
+select <- dplyr::select
+rename <- dplyr::rename
+
+set.seed(20260319)
+options(stringsAsFactors = FALSE)
+
+`%||%` <- function(x, y) {
+  if (is.null(x) || length(x) == 0) y else x
+}
+
+safe_message <- function(...) {
+  cat(paste0(..., "\n"))
+}
+
+ensure_dir <- function(path) {
+  dir.create(path, recursive = TRUE, showWarnings = FALSE)
+  path
+}
+
+script_path <- function() {
+  cmd_args <- commandArgs(trailingOnly = FALSE)
+  file_arg <- grep("^--file=", cmd_args, value = TRUE)
+  if (length(file_arg) > 0) {
+    return(normalizePath(sub("^--file=", "", file_arg[[1]])))
+  }
+  this_file <- tryCatch(normalizePath(sys.frames()[[1]]$ofile), error = function(e) NULL)
+  this_file %||% normalizePath(".")
+}
+
+normalize_species_name <- function(x) {
+  x %>%
+    str_replace_all("\\[|\\]", "") %>%
+    str_replace_all("[^A-Za-z ]", " ") %>%
+    str_squish() %>%
+    str_to_sentence(locale = "en")
+}
+
+normalize_species_key <- function(x) {
+  normalize_species_name(x) %>% str_to_lower()
+}
+
+extract_genus <- function(x) {
+  str_split(normalize_species_name(x), " ", simplify = TRUE)[, 1] %>% str_squish()
+}
+
+extract_epithet <- function(x) {
+  tokens <- str_split(normalize_species_name(x), " ", simplify = TRUE)
+  if (ncol(tokens) < 2) {
+    return(rep(NA_character_, nrow(tokens)))
+  }
+  str_squish(tokens[, 2])
+}
+
+args <- commandArgs(trailingOnly = TRUE)
+prepare_only <- any(args == "--prepare-only")
+force_download <- any(args == "--force-download")
+selected_species_arg <- args[grepl("^--species=", args)]
+species_limit_arg <- args[grepl("^--species-limit=", args)]
+selected_species <- if (length(selected_species_arg)) sub("^--species=", "", selected_species_arg[[1]]) else NA_character_
+species_limit <- if (length(species_limit_arg)) as.integer(sub("^--species-limit=", "", species_limit_arg[[1]])) else NA_integer_
+
+SCRIPT_FILE <- script_path()
+TASK_ROOT <- normalizePath(file.path(dirname(SCRIPT_FILE), ".."), mustWork = FALSE)
+CODE_DIR <- file.path(TASK_ROOT, "code")
+DATA_DIR <- ensure_dir(file.path(TASK_ROOT, "data"))
+FIGURE_DIR <- ensure_dir(file.path(TASK_ROOT, "figures"))
+RESULT_DIR <- ensure_dir(file.path(TASK_ROOT, "results"))
+CLIMATE_DIR <- ensure_dir(file.path(DATA_DIR, "climate"))
+RASTER_DIR <- ensure_dir(file.path(DATA_DIR, "rasters"))
+TABLE_DIR <- ensure_dir(file.path(DATA_DIR, "tables"))
+FIGURE_MAP_DIR <- ensure_dir(file.path(FIGURE_DIR, "species_maps"))
+FIGURE_SUMMARY_DIR <- ensure_dir(file.path(FIGURE_DIR, "summaries"))
+
+PROJECT_ROOT <- normalizePath(file.path(TASK_ROOT, "..", ".."), mustWork = FALSE)
+SOURCE_DATA_DIR <- file.path(PROJECT_ROOT, "source_data")
+NEW_RECORD_PATH <- file.path(SOURCE_DATA_DIR, "bird_new_records_clean.csv")
+SPECIES_POOL_PATH <- file.path(SOURCE_DATA_DIR, "bird_species_pool_with_traits.csv")
+OCCURRENCE_SHP_PATH <- "/Users/dingchenchen/Documents/SDMs/物种分布/物种分布.shp"
+PROVINCE_SHP_PATH <- "/Users/dingchenchen/Documents/New records/tmp_shp_extract/shp格式的数据（调整过行政区划代码，补全省市县信息）/省.shp"
+GADM_FALLBACK_PATH <- "/Users/dingchenchen/Documents/New records/bird_new_records_R_output/data_clean/gadm/gadm41_CHN_1_pk.rds"
+
+MANUAL_OVERRIDE_PATH <- file.path(DATA_DIR, "taxonomy_manual_overrides.csv")
+SCENARIO_CONFIG_PATH <- file.path(DATA_DIR, "climate_scenario_config.csv")
+MODEL_CONFIG_PATH <- file.path(DATA_DIR, "model_config.csv")
+MATCH_TABLE_PATH <- file.path(TABLE_DIR, "table_species_name_review.csv")
+MASTER_SPECIES_PATH <- file.path(TABLE_DIR, "table_species_master.csv")
+ENV_SELECTION_PATH <- file.path(TABLE_DIR, "table_environment_variable_selection.csv")
+ALGO_AVAILABILITY_PATH <- file.path(TABLE_DIR, "table_algorithm_availability.csv")
+SPECIES_STATUS_PATH <- file.path(TABLE_DIR, "table_species_status_summary.csv")
+QA_LOG_PATH <- file.path(TABLE_DIR, "table_qa_log.csv")
+UNMATCHED_PATH <- file.path(TABLE_DIR, "table_unmatched_species_list.csv")
+PROVINCE_SUMMARY_PATH <- file.path(TABLE_DIR, "table_province_prediction_summary.csv")
+AREA_CHANGE_PATH <- file.path(TABLE_DIR, "table_scenario_area_change_summary.csv")
+METRIC_SUMMARY_PATH <- file.path(TABLE_DIR, "table_model_metrics_summary.csv")
+TASK_SUMMARY_PATH <- file.path(RESULT_DIR, "task_summary.md")
+PPTX_SUMMARY_PATH <- file.path(RESULT_DIR, "bird_sdm_summary.pptx")
+
+create_default_manual_overrides <- function(path) {
+  if (!file.exists(path)) {
+    template <- tibble(
+      new_record_species = character(),
+      matched_species = character(),
+      taxonomy_source = character(),
+      review_flag = character(),
+      avibase_ioc_review = character(),
+      birdlife_review = character(),
+      note = character()
+    )
+    readr::write_csv(template, path)
+  }
+  suppressMessages(readr::read_csv(path, show_col_types = FALSE))
+}
+
+create_default_scenario_config <- function(path) {
+  if (!file.exists(path)) {
+    scenarios <- tribble(
+      ~scenario, ~period, ~ssp, ~gcm, ~res_minutes, ~enabled,
+      "current", "current", "current", "WorldClim2.1", 2.5, TRUE,
+      "2050s_SSP245_BCC-CSM2-MR", "2050s", "245", "BCC-CSM2-MR", 2.5, TRUE,
+      "2050s_SSP245_CNRM-CM6-1", "2050s", "245", "CNRM-CM6-1", 2.5, TRUE,
+      "2050s_SSP245_MIROC6", "2050s", "245", "MIROC6", 2.5, TRUE,
+      "2050s_SSP585_BCC-CSM2-MR", "2050s", "585", "BCC-CSM2-MR", 2.5, TRUE,
+      "2050s_SSP585_CNRM-CM6-1", "2050s", "585", "CNRM-CM6-1", 2.5, TRUE,
+      "2050s_SSP585_MIROC6", "2050s", "585", "MIROC6", 2.5, TRUE,
+      "2070s_SSP245_BCC-CSM2-MR", "2070s", "245", "BCC-CSM2-MR", 2.5, TRUE,
+      "2070s_SSP245_CNRM-CM6-1", "2070s", "245", "CNRM-CM6-1", 2.5, TRUE,
+      "2070s_SSP245_MIROC6", "2070s", "245", "MIROC6", 2.5, TRUE,
+      "2070s_SSP585_BCC-CSM2-MR", "2070s", "585", "BCC-CSM2-MR", 2.5, TRUE,
+      "2070s_SSP585_CNRM-CM6-1", "2070s", "585", "CNRM-CM6-1", 2.5, TRUE,
+      "2070s_SSP585_MIROC6", "2070s", "585", "MIROC6", 2.5, TRUE
+    ) %>%
+      mutate(
+        raster_path = file.path(CLIMATE_DIR, scenario),
+        ensemble_group = case_when(
+          scenario == "current" ~ "current",
+          TRUE ~ paste(period, paste0("SSP", ssp), sep = "_")
+        )
+      )
+    readr::write_csv(scenarios, path)
+  }
+  suppressMessages(readr::read_csv(path, show_col_types = FALSE))
+}
+
+create_default_model_config <- function(path) {
+  if (!file.exists(path)) {
+    cfg <- tibble(
+      key = c(
+        "presence_cell_threshold",
+        "pseudoabsence_multiplier",
+        "pseudoabsence_minimum",
+        "cv_folds",
+        "cv_presence_threshold_spatial",
+        "tss_selection_threshold",
+        "province_threshold_a",
+        "province_threshold_b",
+        "buffer_km",
+        "correlation_cutoff"
+      ),
+      value = c("10", "3", "1000", "5", "20", "0.6", "3", "10", "500", "0.7")
+    )
+    readr::write_csv(cfg, path)
+  }
+  suppressMessages(readr::read_csv(path, show_col_types = FALSE))
+}
+
+get_config_value <- function(cfg, key, default = NA_character_) {
+  value <- cfg %>% filter(.data$key == !!key) %>% pull(value)
+  if (length(value) == 0) default else value[[1]]
+}
+
+log_qa <- function(category, item, status, detail = NA_character_) {
+  tibble(
+    timestamp = format(Sys.time(), "%Y-%m-%d %H:%M:%S"),
+    category = category,
+    item = item,
+    status = status,
+    detail = detail
+  )
+}
+
+load_province_boundaries <- function() {
+  if (file.exists(PROVINCE_SHP_PATH)) {
+    provinces <- st_read(PROVINCE_SHP_PATH, quiet = TRUE)
+    provinces <- provinces %>%
+      transmute(
+        province_cn = as.character(.data$省名),
+        province_code = as.character(.data$省代码),
+        geometry = geometry
+      )
+  } else if (file.exists(GADM_FALLBACK_PATH)) {
+    provinces <- terra::unwrap(readRDS(GADM_FALLBACK_PATH)) %>% sf::st_as_sf()
+    provinces <- provinces %>%
+      transmute(
+        province_cn = as.character(.data$NL_NAME_1 %||% .data$NAME_1),
+        province_code = as.character(.data$GID_1),
+        geometry = geometry
+      )
+  } else {
+    stop("No province boundary source found.")
+  }
+  provinces %>% st_make_valid() %>% st_transform(4326)
+}
+
+load_new_record_data <- function() {
+  if (!file.exists(NEW_RECORD_PATH)) stop("Missing new-record source data: ", NEW_RECORD_PATH)
+  if (!file.exists(SPECIES_POOL_PATH)) stop("Missing species pool data: ", SPECIES_POOL_PATH)
+  new_records <- suppressMessages(readr::read_csv(NEW_RECORD_PATH, show_col_types = FALSE))
+  species_pool <- suppressMessages(readr::read_csv(SPECIES_POOL_PATH, show_col_types = FALSE))
+  list(new_records = new_records, species_pool = species_pool)
+}
+
+build_species_master <- function(new_records, species_pool) {
+  order_lookup <- species_pool %>%
+    filter(.data$new_record == 1) %>%
+    distinct(species, order)
+
+  new_records %>%
+    mutate(species = normalize_species_name(.data$species)) %>%
+    group_by(species) %>%
+    summarise(
+      record_count_new_record = n(),
+      first_year = suppressWarnings(min(.data$year, na.rm = TRUE)),
+      provinces_recorded = paste(sort(unique(.data$province)), collapse = " | "),
+      .groups = "drop"
+    ) %>%
+    left_join(order_lookup, by = "species") %>%
+    rename(new_record_order = order) %>%
+    mutate(
+      first_year = ifelse(is.infinite(.data$first_year), NA_integer_, .data$first_year),
+      species_key = normalize_species_key(.data$species),
+      genus = extract_genus(.data$species),
+      epithet = extract_epithet(.data$species)
+    ) %>%
+    arrange(species)
+}
+
+load_occurrence_points <- function() {
+  if (!file.exists(OCCURRENCE_SHP_PATH)) stop("Missing occurrence shapefile: ", OCCURRENCE_SHP_PATH)
+  shp <- st_read(OCCURRENCE_SHP_PATH, quiet = TRUE) %>% st_transform(4326)
+  birds <- shp %>%
+    mutate(
+      class_value = str_to_lower(str_squish(as.character(.data$Class))),
+      useclass_value = str_to_lower(str_squish(as.character(.data$useclass))),
+      shp_species = normalize_species_name(coalesce(as.character(.data$Scientific), as.character(.data$name_sci))),
+      order_occurrence = str_to_title(str_to_lower(str_squish(as.character(.data$Order_)))),
+      family_occurrence = str_squish(as.character(.data$Family)),
+      longitude = as.numeric(.data$Longitude),
+      latitude = as.numeric(.data$Latitude)
+    ) %>%
+    filter(.data$class_value == "aves" | .data$useclass_value == "bird") %>%
+    filter(!is.na(.data$shp_species), .data$shp_species != "") %>%
+    filter(st_geometry_type(geometry) == "POINT") %>%
+    transmute(
+      shp_species,
+      shp_species_key = normalize_species_key(.data$shp_species),
+      order_occurrence,
+      family_occurrence,
+      longitude,
+      latitude,
+      geometry = geometry
+    )
+  birds
+}
+
+prepare_manual_overrides <- function(overrides_tbl) {
+  if (nrow(overrides_tbl) == 0) {
+    return(tibble(
+      new_record_species = character(),
+      matched_species = character(),
+      taxonomy_source = character(),
+      review_flag = character(),
+      avibase_ioc_review = character(),
+      birdlife_review = character(),
+      note = character(),
+      new_record_species_key = character(),
+      matched_species_key = character()
+    ))
+  }
+  overrides_tbl %>%
+    mutate(
+      new_record_species = normalize_species_name(.data$new_record_species),
+      matched_species = normalize_species_name(.data$matched_species),
+      new_record_species_key = normalize_species_key(.data$new_record_species),
+      matched_species_key = normalize_species_key(.data$matched_species),
+      taxonomy_source = if_else(is.na(.data$taxonomy_source) | .data$taxonomy_source == "", "Manual review", .data$taxonomy_source),
+      review_flag = if_else(is.na(.data$review_flag) | .data$review_flag == "", "manual_confirmed", .data$review_flag),
+      avibase_ioc_review = .data$avibase_ioc_review %||% "reviewed",
+      birdlife_review = .data$birdlife_review %||% "reviewed"
+    )
+}
+
+build_taxonomy_review_table <- function(species_master, occurrence_birds, overrides_tbl) {
+  occurrence_species <- occurrence_birds %>%
+    st_drop_geometry() %>%
+    distinct(shp_species, shp_species_key, order_occurrence, family_occurrence) %>%
+    mutate(
+      genus = extract_genus(.data$shp_species),
+      epithet = extract_epithet(.data$shp_species)
+    )
+
+  overrides_tbl <- prepare_manual_overrides(overrides_tbl)
+
+  review_rows <- lapply(seq_len(nrow(species_master)), function(i) {
+    sp <- species_master[i, ]
+    manual_match <- overrides_tbl %>% filter(.data$new_record_species_key == sp$species_key)
+    exact_match <- occurrence_species %>% filter(.data$shp_species_key == sp$species_key)
+    same_order_epithet <- occurrence_species %>%
+      filter(!is.na(.data$epithet), .data$epithet == sp$epithet)
+    if (!is.na(sp$new_record_order)) {
+      same_order_epithet <- same_order_epithet %>% filter(.data$order_occurrence == sp$new_record_order)
+    }
+    any_order_epithet <- occurrence_species %>%
+      filter(!is.na(.data$epithet), .data$epithet == sp$epithet)
+
+    candidate_reason <- NA_character_
+    match_status <- "unmatched"
+    match_type <- "unmatched"
+    matched_species <- NA_character_
+    taxonomy_source <- "Pending Avibase/IOC + BirdLife review"
+    review_flag <- "review_needed"
+    avibase_ioc_review <- "pending"
+    birdlife_review <- "pending"
+    candidate_species <- character(0)
+    note <- NA_character_
+
+    if (nrow(manual_match) > 0) {
+      matched_species <- manual_match$matched_species[[1]]
+      match_status <- "matched"
+      match_type <- "manual_override"
+      taxonomy_source <- manual_match$taxonomy_source[[1]]
+      review_flag <- manual_match$review_flag[[1]]
+      avibase_ioc_review <- manual_match$avibase_ioc_review[[1]]
+      birdlife_review <- manual_match$birdlife_review[[1]]
+      note <- manual_match$note[[1]]
+    } else if (nrow(exact_match) > 0) {
+      matched_species <- exact_match$shp_species[[1]]
+      match_status <- "matched"
+      match_type <- "direct_exact"
+      taxonomy_source <- "Direct match in SHP"
+      review_flag <- "not_required"
+      avibase_ioc_review <- "not_required"
+      birdlife_review <- "not_required"
+    } else if (nrow(same_order_epithet) == 1) {
+      matched_species <- same_order_epithet$shp_species[[1]]
+      match_status <- "matched"
+      match_type <- "auto_epithet_same_order"
+      taxonomy_source <- "High-confidence auto candidate; review basis Avibase/IOC + BirdLife"
+      review_flag <- "auto_high_confidence"
+      avibase_ioc_review <- "candidate"
+      birdlife_review <- "candidate"
+    } else if (nrow(any_order_epithet) == 1) {
+      matched_species <- any_order_epithet$shp_species[[1]]
+      match_status <- "matched"
+      match_type <- "auto_epithet_unique"
+      taxonomy_source <- "Auto candidate; cross-check with Avibase/IOC + BirdLife recommended"
+      review_flag <- "auto_medium_confidence"
+      avibase_ioc_review <- "candidate"
+      birdlife_review <- "candidate"
+    } else {
+      candidate_pool <- bind_rows(same_order_epithet, any_order_epithet) %>%
+        distinct(shp_species, order_occurrence, family_occurrence)
+      if (nrow(candidate_pool) == 0) {
+        genus_candidates <- occurrence_species %>% filter(.data$genus == sp$genus)
+        candidate_pool <- genus_candidates %>% distinct(shp_species, order_occurrence, family_occurrence)
+        candidate_reason <- "same genus"
+      } else {
+        candidate_reason <- "same epithet"
+      }
+      if (nrow(candidate_pool) > 0) {
+        candidate_species <- head(candidate_pool$shp_species, 5)
+      }
+      note <- if (length(candidate_species)) paste(candidate_reason, paste(candidate_species, collapse = " | ")) else NA_character_
+    }
+
+    tibble(
+      new_record_species = sp$species,
+      new_record_order = sp$new_record_order,
+      record_count_new_record = sp$record_count_new_record,
+      first_year = sp$first_year,
+      provinces_recorded = sp$provinces_recorded,
+      matched_species = matched_species,
+      match_status = match_status,
+      match_type = match_type,
+      taxonomy_source = taxonomy_source,
+      review_flag = review_flag,
+      avibase_ioc_review = avibase_ioc_review,
+      birdlife_review = birdlife_review,
+      candidate_species = paste(candidate_species, collapse = " | "),
+      note = note,
+      model_ready = match_status == "matched"
+    )
+  })
+
+  bind_rows(review_rows) %>% arrange(new_record_species)
+}
+
+collect_algorithm_availability <- function() {
+  java_available <- suppressWarnings(system2("java", args = "-version", stdout = TRUE, stderr = TRUE))
+  java_ok <- !inherits(try(system2("java", args = "-version", stdout = TRUE, stderr = TRUE), silent = TRUE), "try-error")
+  maxent_jar_paths <- c(
+    file.path(Sys.getenv("HOME"), ".dismo", "maxent.jar"),
+    file.path(Sys.getenv("HOME"), "Library", "Application Support", "dismo", "maxent.jar"),
+    file.path(DATA_DIR, "maxent.jar")
+  )
+  maxent_jar <- maxent_jar_paths[file.exists(maxent_jar_paths)]
+  tibble(
+    algorithm = c("GLM", "GAM", "GBM", "RF", "MaxEnt"),
+    available = c(
+      TRUE,
+      requireNamespace("mgcv", quietly = TRUE),
+      requireNamespace("gbm", quietly = TRUE),
+      requireNamespace("randomForest", quietly = TRUE),
+      (java_ok && length(maxent_jar) > 0) || requireNamespace("maxnet", quietly = TRUE)
+    ),
+    engine = c(
+      "stats::glm",
+      ifelse(requireNamespace("mgcv", quietly = TRUE), "mgcv::gam", "missing"),
+      ifelse(requireNamespace("gbm", quietly = TRUE), "gbm::gbm", "missing"),
+      ifelse(requireNamespace("randomForest", quietly = TRUE), "randomForest::randomForest", "missing"),
+      ifelse(java_ok && length(maxent_jar) > 0, "dismo::maxent + maxent.jar",
+             ifelse(requireNamespace("maxnet", quietly = TRUE), "maxnet::maxnet", "missing"))
+    ),
+    detail = c(
+      "Base R available",
+      "Generalized additive model",
+      "Gradient boosting machine",
+      "Random forest classifier",
+      paste0("Java detected: ", java_ok, "; maxent.jar found: ", length(maxent_jar) > 0, "; maxnet installed: ", requireNamespace("maxnet", quietly = TRUE))
+    )
+  )
+}
+
+choose_environment_variables <- function(current_stack, cutoff = 0.7) {
+  sample_df <- terra::spatSample(current_stack, size = min(15000, max(1000, terra::ncell(current_stack))), method = "regular", as.data.frame = TRUE, na.rm = TRUE)
+  sample_df <- sample_df[, colnames(sample_df) %in% names(current_stack), drop = FALSE]
+  cor_mat <- stats::cor(sample_df, use = "pairwise.complete.obs")
+  priority <- intersect(c(
+    "bio_1", "bio_4", "bio_12", "bio_15", "bio_5", "bio_6", "bio_13", "bio_14",
+    "bio_2", "bio_3", "bio_7", "bio_8", "bio_9", "bio_10", "bio_11", "bio_16", "bio_17", "bio_18", "bio_19"
+  ), colnames(sample_df))
+
+  selected <- character(0)
+  dropped <- character(0)
+  for (var in priority) {
+    if (length(selected) == 0) {
+      selected <- c(selected, var)
+      next
+    }
+    cor_to_selected <- abs(cor_mat[var, selected])
+    if (all(is.na(cor_to_selected)) || all(cor_to_selected < cutoff)) {
+      selected <- c(selected, var)
+    } else {
+      dropped <- c(dropped, var)
+    }
+  }
+
+  bind_rows(
+    tibble(variable = selected, keep = TRUE, rationale = "Retained after correlation screening"),
+    tibble(variable = dropped, keep = FALSE, rationale = paste0("Dropped because |r| >= ", cutoff, " with a higher-priority variable"))
+  ) %>% arrange(desc(keep), variable)
+}
+
+load_environment_stack <- function(row, china_boundary, force_download = FALSE) {
+  scenario <- row$scenario[[1]]
+  res_value <- as.character(row$res_minutes[[1]])
+  raster_hint <- row$raster_path[[1]]
+  ensure_dir(raster_hint)
+
+  stack <- if (scenario == "current") {
+    geodata::worldclim_global(var = "bio", res = res_value, path = raster_hint)
+  } else {
+    geodata::cmip6_world(
+      model = row$gcm[[1]],
+      ssp = row$ssp[[1]],
+      time = row$period[[1]],
+      var = "bio",
+      res = res_value,
+      path = raster_hint
+    )
+  }
+
+  if (is.null(stack)) {
+    return(NULL)
+  }
+
+  names(stack) <- paste0("bio_", seq_len(terra::nlyr(stack)))
+  china_vect <- terra::vect(china_boundary)
+  stack <- terra::crop(stack, china_vect)
+  stack <- terra::mask(stack, china_vect)
+  stack
+}
+
+make_accessible_area <- function(species_points, china_boundary, buffer_km = 500) {
+  china_3857 <- st_transform(china_boundary, 3857)
+  points_3857 <- st_transform(species_points, 3857)
+  area <- points_3857 %>% st_union() %>% st_buffer(buffer_km * 1000)
+  area <- st_intersection(st_as_sf(area), st_union(china_3857))
+  st_transform(area, 4326)
+}
+
+thin_presence_by_cells <- function(species_points, current_stack) {
+  xy <- st_coordinates(species_points)
+  cell_id <- terra::cellFromXY(current_stack[[1]], xy)
+  species_points$cell_id <- cell_id
+  species_points %>%
+    filter(!is.na(.data$cell_id)) %>%
+    distinct(.data$species, .data$cell_id, .keep_all = TRUE)
+}
+
+sample_background_points <- function(area_sf, current_stack, presence_points, multiplier, minimum_n) {
+  n_presence <- nrow(presence_points)
+  n_target <- max(minimum_n, n_presence * multiplier)
+  area_vect <- terra::vect(area_sf)
+  mask_raster <- terra::crop(current_stack[[1]], area_vect)
+  mask_raster <- terra::mask(mask_raster, area_vect)
+  pres_cells <- unique(terra::cellFromXY(mask_raster, st_coordinates(presence_points)))
+  samples <- terra::spatSample(mask_raster, size = n_target * 4, method = "random", na.rm = TRUE, xy = TRUE)
+  sample_df <- as.data.frame(samples)
+  names(sample_df)[1] <- "mask_value"
+  sample_df$cell_id <- terra::cellFromXY(mask_raster, sample_df[, c("x", "y")])
+  sample_df <- sample_df %>% filter(!.data$cell_id %in% pres_cells) %>% distinct(.data$cell_id, .keep_all = TRUE) %>% slice_head(n = n_target)
+  st_as_sf(sample_df, coords = c("x", "y"), crs = 4326)
+}
+
+build_model_dataset <- function(presence_points, background_points, env_stack) {
+  pres_env <- terra::extract(env_stack, vect(presence_points)) %>% as_tibble() %>% select(-ID)
+  back_env <- terra::extract(env_stack, vect(background_points)) %>% as_tibble() %>% select(-ID)
+
+  bind_rows(
+    bind_cols(tibble(pa = 1, longitude = st_coordinates(presence_points)[, 1], latitude = st_coordinates(presence_points)[, 2]), pres_env),
+    bind_cols(tibble(pa = 0, longitude = st_coordinates(background_points)[, 1], latitude = st_coordinates(background_points)[, 2]), back_env)
+  ) %>% tidyr::drop_na()
+}
+
+make_fold_ids <- function(model_df, k = 5, spatial_threshold = 20) {
+  n_presence <- sum(model_df$pa == 1)
+  if (n_presence >= spatial_threshold) {
+    pres_idx <- which(model_df$pa == 1)
+    centers <- min(k, max(2, length(pres_idx)))
+    km <- stats::kmeans(scale(model_df[pres_idx, c("longitude", "latitude")]), centers = centers)
+    fold <- sample(rep(seq_len(k), length.out = nrow(model_df)))
+    fold[pres_idx] <- ((km$cluster - 1) %% k) + 1
+    fold[model_df$pa == 0] <- sample(rep(seq_len(k), length.out = sum(model_df$pa == 0)))
+  } else {
+    fold <- sample(rep(seq_len(k), length.out = nrow(model_df)))
+  }
+  fold
+}
+
+compute_metrics <- function(obs, pred) {
+  if (length(unique(obs)) < 2 || all(is.na(pred))) {
+    return(tibble(auc = NA_real_, tss = NA_real_, threshold = NA_real_))
+  }
+  roc_obj <- pROC::roc(obs, pred, quiet = TRUE)
+  auc_value <- as.numeric(pROC::auc(roc_obj))
+  thr_seq <- unique(stats::quantile(pred, probs = seq(0.05, 0.95, by = 0.05), na.rm = TRUE))
+  eval_tbl <- lapply(thr_seq, function(thr) {
+    bin <- ifelse(pred >= thr, 1, 0)
+    tp <- sum(obs == 1 & bin == 1)
+    fn <- sum(obs == 1 & bin == 0)
+    tn <- sum(obs == 0 & bin == 0)
+    fp <- sum(obs == 0 & bin == 1)
+    sens <- ifelse(tp + fn == 0, NA_real_, tp / (tp + fn))
+    spec <- ifelse(tn + fp == 0, NA_real_, tn / (tn + fp))
+    tibble(threshold = thr, tss = sens + spec - 1)
+  }) %>% bind_rows()
+  best <- eval_tbl %>% filter(!is.na(.data$tss)) %>% arrange(desc(.data$tss), .data$threshold) %>% slice_head(n = 1)
+  tibble(auc = auc_value, tss = best$tss[[1]] %||% NA_real_, threshold = best$threshold[[1]] %||% NA_real_)
+}
+
+fit_glm_model <- function(train_df, predictors) {
+  formula <- stats::as.formula(paste("pa ~", paste(predictors, collapse = " + ")))
+  stats::glm(formula, data = train_df, family = stats::binomial())
+}
+
+fit_gam_model <- function(train_df, predictors) {
+  smooth_terms <- paste0("s(", predictors, ", k = 4)")
+  formula <- stats::as.formula(paste("pa ~", paste(smooth_terms, collapse = " + ")))
+  mgcv::gam(formula, data = train_df, family = stats::binomial(), method = "REML")
+}
+
+fit_gbm_model <- function(train_df, predictors) {
+  gbm::gbm(
+    stats::as.formula(paste("pa ~", paste(predictors, collapse = " + "))),
+    data = train_df,
+    distribution = "bernoulli",
+    n.trees = 2500,
+    interaction.depth = 3,
+    shrinkage = 0.01,
+    bag.fraction = 0.7,
+    n.minobsinnode = 5,
+    verbose = FALSE
+  )
+}
+
+fit_rf_model <- function(train_df, predictors) {
+  train_df$pa_factor <- factor(train_df$pa, levels = c(0, 1), labels = c("abs", "pres"))
+  randomForest::randomForest(
+    x = train_df[, predictors, drop = FALSE],
+    y = train_df$pa_factor,
+    ntree = 500
+  )
+}
+
+fit_maxnet_model <- function(train_df, predictors) {
+  maxnet::maxnet(
+    p = train_df$pa,
+    data = train_df[, predictors, drop = FALSE],
+    f = maxnet::maxnet.formula(train_df$pa, train_df[, predictors, drop = FALSE], classes = "lqh")
+  )
+}
+
+fit_maxent_jar_model <- function(env_stack, presence_points, background_points) {
+  jar_paths <- c(
+    file.path(Sys.getenv("HOME"), ".dismo", "maxent.jar"),
+    file.path(Sys.getenv("HOME"), "Library", "Application Support", "dismo", "maxent.jar"),
+    file.path(DATA_DIR, "maxent.jar")
+  )
+  jar_path <- jar_paths[file.exists(jar_paths)][1]
+  if (is.na(jar_path) || is.null(jar_path)) stop("maxent.jar not found")
+  options(dismo_maxent = jar_path)
+  dismo::maxent(
+    x = raster::stack(env_stack),
+    p = st_coordinates(presence_points),
+    a = st_coordinates(background_points),
+    args = c("responsecurves=false", "pictures=false", "jackknife=false")
+  )
+}
+
+predict_table_values <- function(model, algorithm, newdata, predictors) {
+  if (algorithm == "GLM") {
+    return(as.numeric(stats::predict(model, newdata = newdata[, predictors, drop = FALSE], type = "response")))
+  }
+  if (algorithm == "GAM") {
+    return(as.numeric(stats::predict(model, newdata = newdata[, predictors, drop = FALSE], type = "response")))
+  }
+  if (algorithm == "GBM") {
+    return(as.numeric(stats::predict(model, newdata = newdata[, predictors, drop = FALSE], n.trees = model$n.trees, type = "response")))
+  }
+  if (algorithm == "RF") {
+    pred <- stats::predict(model, newdata = newdata[, predictors, drop = FALSE], type = "prob")
+    return(as.numeric(pred[, "pres"]))
+  }
+  if (algorithm == "MaxEnt" && inherits(model, "maxnet")) {
+    return(as.numeric(stats::predict(model, newdata = newdata[, predictors, drop = FALSE], type = "cloglog")))
+  }
+  rep(NA_real_, nrow(newdata))
+}
+
+predict_raster_values <- function(model, algorithm, env_stack, predictors) {
+  layer_stack <- env_stack[[predictors]]
+  if (algorithm %in% c("GLM", "GAM")) {
+    return(terra::predict(layer_stack, model, type = "response", na.rm = TRUE))
+  }
+  if (algorithm == "GBM") {
+    return(terra::predict(layer_stack, model, fun = function(m, d) stats::predict(m, newdata = as.data.frame(d), n.trees = m$n.trees, type = "response"), na.rm = TRUE))
+  }
+  if (algorithm == "RF") {
+    return(terra::predict(layer_stack, model, type = "prob", index = 2, na.rm = TRUE))
+  }
+  if (algorithm == "MaxEnt" && inherits(model, "MaxEnt")) {
+    return(terra::rast(dismo::predict(model, raster::stack(layer_stack), progress = "")))
+  }
+  if (algorithm == "MaxEnt" && inherits(model, "maxnet")) {
+    return(terra::predict(layer_stack, model, type = "cloglog", na.rm = TRUE))
+  }
+  NULL
+}
+
+fit_species_models <- function(species_name, species_points, current_stack, model_cfg, algo_tbl) {
+  presence_threshold <- as.integer(get_config_value(model_cfg, "presence_cell_threshold", "10"))
+  pseudo_mult <- as.integer(get_config_value(model_cfg, "pseudoabsence_multiplier", "3"))
+  pseudo_min <- as.integer(get_config_value(model_cfg, "pseudoabsence_minimum", "1000"))
+  cv_folds <- as.integer(get_config_value(model_cfg, "cv_folds", "5"))
+  spatial_threshold <- as.integer(get_config_value(model_cfg, "cv_presence_threshold_spatial", "20"))
+  tss_threshold <- as.numeric(get_config_value(model_cfg, "tss_selection_threshold", "0.6"))
+  buffer_km <- as.numeric(get_config_value(model_cfg, "buffer_km", "500"))
+
+  species_points <- thin_presence_by_cells(species_points, current_stack)
+  if (nrow(species_points) < presence_threshold) {
+    return(list(
+      status = tibble(
+        species = species_name,
+        match_status = "matched",
+        n_raw = nrow(species_points),
+        n_clean = nrow(species_points),
+        n_cell_unique = nrow(species_points),
+        model_status = "skipped",
+        skip_reason = "insufficient_occurrence_points",
+        cv_strategy = NA_character_,
+        maxent_engine = ifelse(any(algo_tbl$algorithm == "MaxEnt" & algo_tbl$available), algo_tbl$engine[algo_tbl$algorithm == "MaxEnt"][1], "missing")
+      ),
+      metrics = tibble(),
+      selected_algorithms = character(0),
+      fitted_models = list(),
+      threshold = NA_real_,
+      probability_current = NULL,
+      binary_current = NULL,
+      area_sf = NULL
+    ))
+  }
+
+  provinces <- load_province_boundaries()
+  china_boundary <- st_union(provinces)
+  accessible_area <- make_accessible_area(species_points, china_boundary, buffer_km = buffer_km)
+  background_points <- sample_background_points(accessible_area, current_stack, species_points, pseudo_mult, pseudo_min)
+  model_df <- build_model_dataset(species_points, background_points, current_stack)
+  predictors <- setdiff(names(model_df), c("pa", "longitude", "latitude"))
+  model_df <- model_df %>% filter(complete.cases(across(all_of(c("pa", predictors)))))
+  fold_id <- make_fold_ids(model_df, k = cv_folds, spatial_threshold = spatial_threshold)
+  cv_strategy <- ifelse(sum(model_df$pa == 1) >= spatial_threshold, "spatial_kmeans_blocks", "random_repeated")
+
+  algorithm_order <- c("GLM", "GAM", "GBM", "RF", "MaxEnt")
+  metrics_rows <- list()
+  fitted_models <- list()
+
+  for (algorithm in algorithm_order) {
+    available_row <- algo_tbl %>% filter(.data$algorithm == !!algorithm)
+    if (nrow(available_row) == 0 || !isTRUE(available_row$available[[1]])) {
+      metrics_rows[[algorithm]] <- tibble(algorithm = algorithm, fold = NA_integer_, auc = NA_real_, tss = NA_real_, threshold = NA_real_, available = FALSE)
+      next
+    }
+
+    fold_metrics <- vector("list", cv_folds)
+    for (fold in seq_len(cv_folds)) {
+      train_df <- model_df[fold_id != fold, , drop = FALSE]
+      test_df <- model_df[fold_id == fold, , drop = FALSE]
+      model_object <- NULL
+      if (algorithm == "GLM") model_object <- fit_glm_model(train_df, predictors)
+      if (algorithm == "GAM") model_object <- fit_gam_model(train_df, predictors)
+      if (algorithm == "GBM" && requireNamespace("gbm", quietly = TRUE)) model_object <- fit_gbm_model(train_df, predictors)
+      if (algorithm == "RF" && requireNamespace("randomForest", quietly = TRUE)) model_object <- fit_rf_model(train_df, predictors)
+      if (algorithm == "MaxEnt" && requireNamespace("maxnet", quietly = TRUE)) model_object <- fit_maxnet_model(train_df, predictors)
+      if (algorithm == "MaxEnt" && !requireNamespace("maxnet", quietly = TRUE) && grepl("maxent.jar", available_row$engine[[1]], fixed = TRUE)) {
+        train_presence <- st_as_sf(train_df %>% filter(.data$pa == 1), coords = c("longitude", "latitude"), crs = 4326)
+        train_background <- st_as_sf(train_df %>% filter(.data$pa == 0), coords = c("longitude", "latitude"), crs = 4326)
+        model_object <- tryCatch(fit_maxent_jar_model(current_stack[[predictors]], train_presence, train_background), error = function(e) NULL)
+      }
+      if (is.null(model_object)) {
+        fold_metrics[[fold]] <- tibble(algorithm = algorithm, fold = fold, auc = NA_real_, tss = NA_real_, threshold = NA_real_, available = FALSE)
+      } else {
+        pred <- tryCatch(predict_table_values(model_object, algorithm, test_df, predictors), error = function(e) rep(NA_real_, nrow(test_df)))
+        metric <- compute_metrics(test_df$pa, pred)
+        fold_metrics[[fold]] <- bind_cols(tibble(algorithm = algorithm, fold = fold, available = TRUE), metric)
+      }
+    }
+
+    metrics_tbl <- bind_rows(fold_metrics)
+    metrics_rows[[algorithm]] <- metrics_tbl
+
+    full_model <- NULL
+    if (algorithm == "GLM") full_model <- fit_glm_model(model_df, predictors)
+    if (algorithm == "GAM") full_model <- fit_gam_model(model_df, predictors)
+    if (algorithm == "GBM" && requireNamespace("gbm", quietly = TRUE)) full_model <- fit_gbm_model(model_df, predictors)
+    if (algorithm == "RF" && requireNamespace("randomForest", quietly = TRUE)) full_model <- fit_rf_model(model_df, predictors)
+    if (algorithm == "MaxEnt" && requireNamespace("maxnet", quietly = TRUE)) full_model <- fit_maxnet_model(model_df, predictors)
+    if (algorithm == "MaxEnt" && is.null(full_model) && grepl("maxent.jar", available_row$engine[[1]], fixed = TRUE)) {
+      full_model <- tryCatch(fit_maxent_jar_model(current_stack[[predictors]], species_points, background_points), error = function(e) NULL)
+    }
+    fitted_models[[algorithm]] <- full_model
+  }
+
+  metrics_all <- bind_rows(metrics_rows)
+  summary_metrics <- metrics_all %>%
+    group_by(.data$algorithm) %>%
+    summarise(
+      mean_auc = mean(.data$auc, na.rm = TRUE),
+      mean_tss = mean(.data$tss, na.rm = TRUE),
+      mean_threshold = mean(.data$threshold, na.rm = TRUE),
+      available = any(.data$available),
+      .groups = "drop"
+    ) %>%
+    mutate(mean_auc = ifelse(is.nan(.data$mean_auc), NA_real_, .data$mean_auc), mean_tss = ifelse(is.nan(.data$mean_tss), NA_real_, .data$mean_tss), mean_threshold = ifelse(is.nan(.data$mean_threshold), NA_real_, .data$mean_threshold))
+
+  selected_algorithms <- summary_metrics %>% filter(!is.na(.data$mean_tss), .data$mean_tss >= tss_threshold) %>% pull(.data$algorithm)
+  if (length(selected_algorithms) == 0) {
+    best_algorithm <- summary_metrics %>% filter(!is.na(.data$mean_tss)) %>% arrange(desc(.data$mean_tss)) %>% slice_head(n = 1) %>% pull(.data$algorithm)
+    selected_algorithms <- best_algorithm
+  }
+  selected_algorithms <- selected_algorithms[!is.na(selected_algorithms)]
+  ensemble_threshold <- summary_metrics %>% filter(.data$algorithm %in% selected_algorithms) %>% summarise(value = mean(.data$mean_threshold, na.rm = TRUE)) %>% pull(value)
+  ensemble_threshold <- ifelse(is.nan(ensemble_threshold), 0.5, ensemble_threshold)
+
+  probability_current <- lapply(selected_algorithms, function(algorithm) {
+    predict_raster_values(fitted_models[[algorithm]], algorithm, current_stack, predictors)
+  })
+  names(probability_current) <- selected_algorithms
+  probability_current <- probability_current[!vapply(probability_current, is.null, logical(1))]
+  ensemble_probability <- if (length(probability_current) == 0) NULL else Reduce(`+`, probability_current) / length(probability_current)
+  binary_current <- if (is.null(ensemble_probability)) NULL else ensemble_probability >= ensemble_threshold
+
+  status_tbl <- tibble(
+    species = species_name,
+    match_status = "matched",
+    n_raw = nrow(species_points),
+    n_clean = nrow(species_points),
+    n_cell_unique = nrow(species_points),
+    model_status = ifelse(length(probability_current) > 0, "modeled", "failed"),
+    skip_reason = ifelse(length(probability_current) > 0, NA_character_, "no_algorithm_available"),
+    cv_strategy = cv_strategy,
+    maxent_engine = algo_tbl %>% filter(.data$algorithm == "MaxEnt") %>% pull(engine) %>% .[[1]]
+  )
+
+  list(
+    status = status_tbl,
+    metrics = summary_metrics %>% mutate(species = species_name),
+    selected_algorithms = selected_algorithms,
+    fitted_models = fitted_models,
+    threshold = ensemble_threshold,
+    probability_current = ensemble_probability,
+    binary_current = binary_current,
+    area_sf = accessible_area,
+    predictors = predictors
+  )
+}
+
+save_raster_if_present <- function(r, path) {
+  if (!is.null(r)) {
+    terra::writeRaster(r, path, overwrite = TRUE)
+  }
+}
+
+province_sensitivity_summary <- function(binary_raster, provinces, species, scenario, gcm, thresholds = c(3, 10)) {
+  if (is.null(binary_raster)) return(tibble())
+  binary01 <- terra::ifel(binary_raster, 1, 0)
+  cell_area <- terra::cellSize(binary01, unit = "km")
+  province_vect <- terra::vect(provinces)
+  cell_count <- terra::extract(binary01, province_vect, fun = sum, na.rm = TRUE) %>% as_tibble()
+  area_sum <- terra::extract(binary01 * cell_area, province_vect, fun = sum, na.rm = TRUE) %>% as_tibble()
+  base_tbl <- provinces %>%
+    st_drop_geometry() %>%
+    mutate(ID = row_number()) %>%
+    left_join(cell_count %>% rename(suitable_cell_count = 2), by = "ID") %>%
+    left_join(area_sum %>% rename(suitable_area_km2 = 2), by = "ID") %>%
+    mutate(
+      suitable_cell_count = as.integer(round(coalesce(.data$suitable_cell_count, 0))),
+      suitable_area_km2 = as.numeric(coalesce(.data$suitable_area_km2, 0))
+    )
+  bind_rows(lapply(thresholds, function(thr) {
+    base_tbl %>% transmute(
+      species = species,
+      scenario = scenario,
+      gcm = gcm,
+      province = .data$province_cn,
+      cell_threshold = thr,
+      suitable_cell_count = .data$suitable_cell_count,
+      suitable_area_km2 = .data$suitable_area_km2,
+      presence_flag = .data$suitable_cell_count >= thr
+    )
+  }))
+}
+
+plot_probability_map <- function(probability_raster, provinces, title) {
+  raster_df <- as.data.frame(probability_raster, xy = TRUE, na.rm = TRUE)
+  names(raster_df) <- c("x", "y", "probability")
+  ggplot() +
+    geom_raster(data = raster_df, aes(x = .data$x, y = .data$y, fill = .data$probability)) +
+    geom_sf(data = provinces, fill = NA, color = "#2F2F2F", linewidth = 0.2) +
+    scale_fill_viridis_c(option = "C", name = "Suitability") +
+    coord_sf(expand = FALSE) +
+    labs(title = title, x = NULL, y = NULL) +
+    theme_minimal(base_family = "Arial") +
+    theme(plot.title = element_text(face = "bold"), legend.position = "right")
+}
+
+plot_threshold_sensitivity <- function(province_tbl) {
+  province_tbl %>%
+    filter(.data$presence_flag) %>%
+    group_by(.data$species, .data$scenario, .data$cell_threshold) %>%
+    summarise(n_provinces = n(), suitable_area_km2 = sum(.data$suitable_area_km2), .groups = "drop") %>%
+    ggplot(aes(x = factor(.data$cell_threshold), y = .data$n_provinces, fill = factor(.data$cell_threshold))) +
+    geom_boxplot(width = 0.55, alpha = 0.8) +
+    scale_fill_manual(values = c("3" = "#4C956C", "10" = "#D68C45"), name = "Threshold") +
+    labs(title = "Province sensitivity analysis", x = "Suitable-cell threshold", y = "No. potential provinces") +
+    theme_minimal(base_family = "Arial") +
+    theme(plot.title = element_text(face = "bold"))
+}
+
+plot_area_change_summary <- function(area_change_tbl) {
+  area_change_tbl %>%
+    filter(.data$scenario != "current") %>%
+    group_by(.data$scenario) %>%
+    summarise(mean_delta_km2 = mean(.data$delta_area_km2, na.rm = TRUE), .groups = "drop") %>%
+    ggplot(aes(x = reorder(.data$scenario, .data$mean_delta_km2), y = .data$mean_delta_km2, fill = .data$mean_delta_km2 > 0)) +
+    geom_col() +
+    coord_flip() +
+    scale_fill_manual(values = c("TRUE" = "#4C956C", "FALSE" = "#BC4749"), guide = "none") +
+    labs(title = "Mean area change across modeled species", x = NULL, y = "Delta suitable area (km2)") +
+    theme_minimal(base_family = "Arial") +
+    theme(plot.title = element_text(face = "bold"))
+}
+
+write_summary_pptx <- function(summary_stats, figure_paths) {
+  if (!requireNamespace("officer", quietly = TRUE)) return(invisible(NULL))
+  ppt <- officer::read_pptx()
+  ppt <- officer::add_slide(ppt, layout = "Title and Content", master = "Office Theme")
+  ppt <- officer::ph_with(ppt, "Bird SDM summary", location = officer::ph_location_type(type = "title"))
+  summary_text <- paste(
+    paste0("New-record species pool: ", summary_stats$new_species_total),
+    paste0("Matched species ready for modeling: ", summary_stats$matched_ready),
+    paste0("Successfully modeled species: ", summary_stats$modeled_species),
+    paste0("Unmatched species: ", summary_stats$unmatched_species),
+    sep = "\n"
+  )
+  ppt <- officer::ph_with(ppt, summary_text, location = officer::ph_location_type(type = "body"))
+
+  for (path in figure_paths[file.exists(figure_paths)]) {
+    ppt <- officer::add_slide(ppt, layout = "Title and Content", master = "Office Theme")
+    ppt <- officer::ph_with(ppt, basename(path), location = officer::ph_location_type(type = "title"))
+    ppt <- officer::ph_with(ppt, external_img(path, width = 9.2, height = 5.2), location = officer::ph_location(left = 0.5, top = 1.2))
+  }
+  print(ppt, target = PPTX_SUMMARY_PATH)
+}
+
+write_task_summary <- function(summary_stats, algo_tbl, note_lines = character(0)) {
+  lines <- c(
+    "# Bird SDM distribution modeling task summary",
+    "",
+    paste0("- Generated at: ", format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
+    paste0("- New-record species pool: ", summary_stats$new_species_total),
+    paste0("- Exact/manual/auto matched species ready for modeling: ", summary_stats$matched_ready),
+    paste0("- Successfully modeled species: ", summary_stats$modeled_species),
+    paste0("- Unmatched species requiring Avibase/IOC + BirdLife review: ", summary_stats$unmatched_species),
+    paste0("- Province sensitivity thresholds: 3 cells and 10 cells"),
+    "",
+    "## Algorithm availability",
+    ""
+  )
+  for (i in seq_len(nrow(algo_tbl))) {
+    lines <- c(lines, paste0("- ", algo_tbl$algorithm[[i]], ": ", ifelse(algo_tbl$available[[i]], "available", "unavailable"), " (", algo_tbl$engine[[i]], ")"))
+  }
+  if (length(note_lines)) {
+    lines <- c(lines, "", "## Notes", "", paste0("- ", note_lines))
+  }
+  writeLines(lines, TASK_SUMMARY_PATH)
+}
+
+run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_, species_limit = NA_integer_, force_download = FALSE) {
+  qa_log <- list()
+  qa_log[[length(qa_log) + 1]] <- log_qa("setup", "task_root", "ok", TASK_ROOT)
+
+  manual_overrides <- create_default_manual_overrides(MANUAL_OVERRIDE_PATH)
+  scenario_config <- create_default_scenario_config(SCENARIO_CONFIG_PATH)
+  model_config <- create_default_model_config(MODEL_CONFIG_PATH)
+  algo_tbl <- collect_algorithm_availability()
+  readr::write_csv(algo_tbl, ALGO_AVAILABILITY_PATH)
+
+  src <- load_new_record_data()
+  provinces <- load_province_boundaries()
+  china_boundary <- st_union(provinces)
+  species_master <- build_species_master(src$new_records, src$species_pool)
+  readr::write_csv(species_master %>% select(-species_key, -genus, -epithet), MASTER_SPECIES_PATH)
+
+  occurrence_birds <- load_occurrence_points()
+  if (nrow(occurrence_birds) == 0) stop("No bird occurrence points were found after filtering the shapefile.")
+  qa_log[[length(qa_log) + 1]] <- log_qa("input", "bird_occurrence_records", "ok", as.character(nrow(occurrence_birds)))
+
+  match_tbl <- build_taxonomy_review_table(species_master, occurrence_birds, manual_overrides)
+  readr::write_csv(match_tbl, MATCH_TABLE_PATH)
+  readr::write_csv(match_tbl %>% filter(!.data$model_ready), UNMATCHED_PATH)
+
+  summary_stats <- list(
+    new_species_total = nrow(species_master),
+    matched_ready = sum(match_tbl$model_ready, na.rm = TRUE),
+    modeled_species = 0L,
+    unmatched_species = sum(!match_tbl$model_ready, na.rm = TRUE)
+  )
+
+  if (prepare_only) {
+    write_task_summary(summary_stats, algo_tbl, note_lines = c(
+      "Prepare-only mode completed: generated taxonomy review tables and configuration templates.",
+      "Fill taxonomy_manual_overrides.csv after Avibase/IOC + BirdLife review to recover more unmatched species."
+    ))
+    readr::write_csv(bind_rows(qa_log), QA_LOG_PATH)
+    return(invisible(list(summary = summary_stats, match_table = match_tbl, algorithm_table = algo_tbl)))
+  }
+
+  current_config <- scenario_config %>% filter(.data$scenario == "current", .data$enabled)
+  current_stack <- load_environment_stack(current_config, china_boundary, force_download = force_download)
+  if (is.null(current_stack)) {
+    qa_log[[length(qa_log) + 1]] <- log_qa("climate", "current", "missing", "Could not load or download current climate rasters.")
+    write_task_summary(summary_stats, algo_tbl, note_lines = c(
+      "Current climate rasters were unavailable. Matching outputs were generated, but SDM fitting did not run.",
+      "Re-run after enabling WorldClim download or placing rasters under the configured climate directory."
+    ))
+    readr::write_csv(bind_rows(qa_log), QA_LOG_PATH)
+    return(invisible(list(summary = summary_stats, match_table = match_tbl, algorithm_table = algo_tbl)))
+  }
+
+  env_selection <- choose_environment_variables(current_stack, cutoff = as.numeric(get_config_value(model_config, "correlation_cutoff", "0.7")))
+  readr::write_csv(env_selection, ENV_SELECTION_PATH)
+  selected_predictors <- env_selection %>% filter(.data$keep) %>% pull(.data$variable)
+  current_stack <- current_stack[[selected_predictors]]
+
+  modelable_species <- match_tbl %>% filter(.data$model_ready)
+  if (!is.na(selected_species) && nzchar(selected_species)) {
+    modelable_species <- modelable_species %>% filter(.data$new_record_species == normalize_species_name(selected_species))
+  }
+  if (!is.na(species_limit)) {
+    modelable_species <- modelable_species %>% slice_head(n = species_limit)
+  }
+
+  occurrence_ready <- occurrence_birds %>%
+    left_join(modelable_species %>% select(new_record_species, matched_species), by = c("shp_species" = "matched_species")) %>%
+    filter(!is.na(.data$new_record_species)) %>%
+    transmute(species = .data$new_record_species, shp_species, order_occurrence, family_occurrence, longitude, latitude, geometry = geometry) %>%
+    filter(!is.na(.data$longitude), !is.na(.data$latitude), between(.data$longitude, 70, 140), between(.data$latitude, 0, 60)) %>%
+    st_as_sf()
+
+  species_status_rows <- list()
+  metric_rows <- list()
+  province_rows <- list()
+  area_change_rows <- list()
+  figure_paths <- character(0)
+
+  for (species_name in unique(occurrence_ready$species)) {
+    safe_message("Modeling species: ", species_name)
+    sp_points <- occurrence_ready %>% filter(.data$species == !!species_name) %>% distinct(.data$species, .data$longitude, .data$latitude, .keep_all = TRUE)
+    model_fit <- fit_species_models(species_name, sp_points, current_stack, model_config, algo_tbl)
+    species_status_rows[[species_name]] <- model_fit$status
+    metric_rows[[species_name]] <- model_fit$metrics
+
+    if (!identical(model_fit$status$model_status[[1]], "modeled")) {
+      next
+    }
+
+    summary_stats$modeled_species <- summary_stats$modeled_species + 1L
+    species_slug <- str_replace_all(tolower(species_name), "[^a-z0-9]+", "_")
+    species_dir <- ensure_dir(file.path(RASTER_DIR, species_slug))
+    save_raster_if_present(model_fit$probability_current, file.path(species_dir, paste0(species_slug, "_current_probability.tif")))
+    save_raster_if_present(model_fit$binary_current, file.path(species_dir, paste0(species_slug, "_current_binary.tif")))
+
+    current_province <- province_sensitivity_summary(model_fit$binary_current, provinces, species_name, "current", "ensemble_mean", thresholds = c(3, 10))
+    province_rows[[paste0(species_name, "_current")]] <- current_province
+
+    current_area <- current_province %>%
+      filter(.data$cell_threshold == 3) %>%
+      summarise(total_area_km2 = sum(.data$suitable_area_km2, na.rm = TRUE)) %>%
+      pull(total_area_km2)
+    area_change_rows[[paste0(species_name, "_current")]] <- tibble(species = species_name, scenario = "current", gcm = "ensemble_mean", total_area_km2 = current_area, delta_area_km2 = 0)
+
+    current_map <- plot_probability_map(model_fit$probability_current, provinces, paste0(species_name, " - current suitability"))
+    current_png <- file.path(FIGURE_MAP_DIR, paste0(species_slug, "_current_probability.png"))
+    current_pdf <- file.path(FIGURE_MAP_DIR, paste0(species_slug, "_current_probability.pdf"))
+    ggsave(current_png, current_map, width = 8.5, height = 6.0, dpi = 320, bg = "white")
+    ggsave(current_pdf, current_map, width = 8.5, height = 6.0, device = cairo_pdf, bg = "white")
+    figure_paths <- c(figure_paths, current_png)
+
+    future_configs <- scenario_config %>% filter(.data$scenario != "current", .data$enabled)
+    scenario_probability <- list(current = model_fit$probability_current)
+    for (row_i in seq_len(nrow(future_configs))) {
+      row <- future_configs[row_i, , drop = FALSE]
+      future_stack <- load_environment_stack(row, china_boundary, force_download = force_download)
+      if (is.null(future_stack)) {
+        qa_log[[length(qa_log) + 1]] <- log_qa("climate", row$scenario[[1]], "missing", "Future climate raster unavailable")
+        next
+      }
+      future_stack <- future_stack[[model_fit$predictors]]
+      probability_layers <- lapply(model_fit$selected_algorithms, function(algorithm) {
+        predict_raster_values(model_fit$fitted_models[[algorithm]], algorithm, future_stack, model_fit$predictors)
+      })
+      probability_layers <- probability_layers[!vapply(probability_layers, is.null, logical(1))]
+      if (length(probability_layers) == 0) next
+      future_probability <- Reduce(`+`, probability_layers) / length(probability_layers)
+      future_binary <- future_probability >= model_fit$threshold
+      scenario_probability[[row$scenario[[1]]]] <- future_probability
+      save_raster_if_present(future_probability, file.path(species_dir, paste0(species_slug, "_", row$scenario[[1]], "_probability.tif")))
+      save_raster_if_present(future_binary, file.path(species_dir, paste0(species_slug, "_", row$scenario[[1]], "_binary.tif")))
+      province_tbl <- province_sensitivity_summary(future_binary, provinces, species_name, row$ensemble_group[[1]], row$gcm[[1]], thresholds = c(3, 10))
+      province_rows[[paste0(species_name, "_", row$scenario[[1]])]] <- province_tbl
+      future_area <- province_tbl %>% filter(.data$cell_threshold == 3) %>% summarise(total_area_km2 = sum(.data$suitable_area_km2, na.rm = TRUE)) %>% pull(total_area_km2)
+      area_change_rows[[paste0(species_name, "_", row$scenario[[1]])]] <- tibble(species = species_name, scenario = row$ensemble_group[[1]], gcm = row$gcm[[1]], total_area_km2 = future_area, delta_area_km2 = future_area - current_area)
+    }
+  }
+
+  species_status_tbl <- bind_rows(species_status_rows)
+  if (nrow(species_status_tbl) == 0) {
+    species_status_tbl <- match_tbl %>%
+      transmute(
+        species = .data$new_record_species,
+        match_status = ifelse(.data$model_ready, "matched", "unmatched"),
+        n_raw = NA_integer_,
+        n_clean = NA_integer_,
+        n_cell_unique = NA_integer_,
+        model_status = ifelse(.data$model_ready, "not_run", "unmatched"),
+        skip_reason = ifelse(.data$model_ready, NA_character_, "taxonomy_unmatched"),
+        cv_strategy = NA_character_,
+        maxent_engine = algo_tbl %>% filter(.data$algorithm == "MaxEnt") %>% pull(engine) %>% .[[1]]
+      )
+  }
+  species_status_tbl <- bind_rows(
+    species_status_tbl,
+    match_tbl %>%
+      filter(!.data$model_ready) %>%
+      transmute(
+        species = .data$new_record_species,
+        match_status = "unmatched",
+        n_raw = NA_integer_,
+        n_clean = NA_integer_,
+        n_cell_unique = NA_integer_,
+        model_status = "unmatched",
+        skip_reason = "taxonomy_unmatched",
+        cv_strategy = NA_character_,
+        maxent_engine = algo_tbl %>% filter(.data$algorithm == "MaxEnt") %>% pull(engine) %>% .[[1]]
+      )
+  ) %>% distinct(.data$species, .keep_all = TRUE) %>% arrange(.data$species)
+
+  metrics_tbl <- bind_rows(metric_rows)
+  province_tbl <- bind_rows(province_rows)
+  area_change_tbl <- bind_rows(area_change_rows)
+
+  if (nrow(province_tbl) > 0) {
+    province_summary <- province_tbl %>%
+      group_by(.data$species, .data$scenario, .data$cell_threshold) %>%
+      summarise(
+        n_provinces = sum(.data$presence_flag),
+        suitable_area_km2 = sum(.data$suitable_area_km2, na.rm = TRUE),
+        .groups = "drop"
+      )
+    readr::write_csv(province_tbl, PROVINCE_SUMMARY_PATH)
+    sensitivity_plot <- plot_threshold_sensitivity(province_tbl)
+    sensitivity_png <- file.path(FIGURE_SUMMARY_DIR, "fig_sensitivity_thresholds.png")
+    sensitivity_pdf <- file.path(FIGURE_SUMMARY_DIR, "fig_sensitivity_thresholds.pdf")
+    ggsave(sensitivity_png, sensitivity_plot, width = 8.0, height = 5.5, dpi = 320, bg = "white")
+    ggsave(sensitivity_pdf, sensitivity_plot, width = 8.0, height = 5.5, device = cairo_pdf, bg = "white")
+    figure_paths <- c(figure_paths, sensitivity_png)
+  } else {
+    province_summary <- tibble()
+  }
+
+  if (nrow(area_change_tbl) > 0) {
+    area_plot <- plot_area_change_summary(area_change_tbl)
+    area_png <- file.path(FIGURE_SUMMARY_DIR, "fig_area_change_summary.png")
+    area_pdf <- file.path(FIGURE_SUMMARY_DIR, "fig_area_change_summary.pdf")
+    ggsave(area_png, area_plot, width = 8.0, height = 5.5, dpi = 320, bg = "white")
+    ggsave(area_pdf, area_plot, width = 8.0, height = 5.5, device = cairo_pdf, bg = "white")
+    figure_paths <- c(figure_paths, area_png)
+    readr::write_csv(area_change_tbl, AREA_CHANGE_PATH)
+  }
+
+  readr::write_csv(species_status_tbl, SPECIES_STATUS_PATH)
+  readr::write_csv(metrics_tbl, METRIC_SUMMARY_PATH)
+  if (nrow(province_summary) > 0) {
+    readr::write_csv(province_summary, file.path(TABLE_DIR, "table_province_sensitivity_compact.csv"))
+  }
+  readr::write_csv(bind_rows(qa_log), QA_LOG_PATH)
+
+  note_lines <- c(
+    "Taxonomy review includes explicit Avibase/IOC and BirdLife review fields.",
+    "Province sensitivity analysis is written for both 3-cell and 10-cell thresholds.",
+    "MaxEnt uses maxent.jar when Java and the jar are available; otherwise it falls back to maxnet if installed."
+  )
+  write_task_summary(summary_stats, algo_tbl, note_lines = note_lines)
+  write_summary_pptx(summary_stats, unique(figure_paths))
+
+  invisible(list(
+    summary = summary_stats,
+    match_table = match_tbl,
+    algorithm_table = algo_tbl,
+    species_status = species_status_tbl,
+    metrics = metrics_tbl,
+    province = province_tbl,
+    area_change = area_change_tbl
+  ))
+}
+
+if (sys.nframe() == 0) {
+  run_pipeline(
+    prepare_only = prepare_only,
+    selected_species = selected_species,
+    species_limit = species_limit,
+    force_download = force_download
+  )
+}
