@@ -48,6 +48,17 @@ ensure_dir <- function(path) {
   path
 }
 
+build_china_boundary <- function(provinces) {
+  old_s2 <- sf::sf_use_s2()
+  on.exit(sf::sf_use_s2(old_s2), add = TRUE)
+  sf::sf_use_s2(FALSE)
+  provinces %>%
+    st_make_valid() %>%
+    st_union() %>%
+    st_make_valid() %>%
+    st_as_sf()
+}
+
 script_path <- function() {
   cmd_args <- commandArgs(trailingOnly = FALSE)
   file_arg <- grep("^--file=", cmd_args, value = TRUE)
@@ -89,6 +100,7 @@ selected_species_arg <- args[grepl("^--species=", args)]
 species_limit_arg <- args[grepl("^--species-limit=", args)]
 selected_species <- if (length(selected_species_arg)) sub("^--species=", "", selected_species_arg[[1]]) else NA_character_
 species_limit <- if (length(species_limit_arg)) as.integer(sub("^--species-limit=", "", species_limit_arg[[1]])) else NA_integer_
+current_only <- any(args == "--current-only")
 
 SCRIPT_FILE <- script_path()
 TASK_ROOT <- normalizePath(file.path(dirname(SCRIPT_FILE), ".."), mustWork = FALSE)
@@ -265,7 +277,7 @@ build_species_master <- function(new_records, species_pool) {
     arrange(species)
 }
 
-load_occurrence_points <- function() {
+load_occurrence_points <- function(china_boundary) {
   if (!file.exists(OCCURRENCE_SHP_PATH)) stop("Missing occurrence shapefile: ", OCCURRENCE_SHP_PATH)
   shp <- st_read(OCCURRENCE_SHP_PATH, quiet = TRUE) %>% st_transform(4326)
   birds <- shp %>%
@@ -290,6 +302,8 @@ load_occurrence_points <- function() {
       latitude,
       geometry = geometry
     )
+    china_sf <- st_as_sf(china_boundary)
+  birds <- birds %>% st_filter(china_sf, .predicate = st_intersects)
   birds
 }
 
@@ -426,8 +440,11 @@ build_taxonomy_review_table <- function(species_master, occurrence_birds, overri
 }
 
 collect_algorithm_availability <- function() {
-  java_available <- suppressWarnings(system2("java", args = "-version", stdout = TRUE, stderr = TRUE))
-  java_ok <- !inherits(try(system2("java", args = "-version", stdout = TRUE, stderr = TRUE), silent = TRUE), "try-error")
+  java_check <- suppressWarnings(tryCatch(
+    system2("java", args = "-version", stdout = TRUE, stderr = TRUE),
+    error = function(e) structure(character(), status = 1)
+  ))
+  java_ok <- is.null(attr(java_check, "status")) || identical(attr(java_check, "status"), 0L)
   maxent_jar_paths <- c(
     file.path(Sys.getenv("HOME"), ".dismo", "maxent.jar"),
     file.path(Sys.getenv("HOME"), "Library", "Application Support", "dismo", "maxent.jar"),
@@ -491,23 +508,47 @@ choose_environment_variables <- function(current_stack, cutoff = 0.7) {
   ) %>% arrange(desc(keep), variable)
 }
 
+repair_worldclim_bioclim_files <- function(res_value, climate_root) {
+  fres <- ifelse(res_value == "0.5", "30s", paste0(res_value, "m"))
+  out_dir <- file.path(climate_root, "climate", paste0("wc2.1_", fres))
+  zip_path <- file.path(out_dir, paste0("wc2.1_", fres, "_bio.zip"))
+  tif_paths <- file.path(out_dir, paste0("wc2.1_", fres, "_bio_", seq_len(19), ".tif"))
+  if (!all(file.exists(tif_paths)) && file.exists(zip_path)) {
+    try(utils::unzip(zip_path, exdir = out_dir), silent = TRUE)
+  }
+  tif_paths[file.exists(tif_paths)]
+}
+
 load_environment_stack <- function(row, china_boundary, force_download = FALSE) {
   scenario <- row$scenario[[1]]
   res_value <- as.character(row$res_minutes[[1]])
-  raster_hint <- row$raster_path[[1]]
-  ensure_dir(raster_hint)
+  climate_root <- DATA_DIR
+  ensure_dir(file.path(climate_root, "climate"))
 
   stack <- if (scenario == "current") {
-    geodata::worldclim_global(var = "bio", res = res_value, path = raster_hint)
-  } else {
-    geodata::cmip6_world(
-      model = row$gcm[[1]],
-      ssp = row$ssp[[1]],
-      time = row$period[[1]],
-      var = "bio",
-      res = res_value,
-      path = raster_hint
+    tryCatch(
+      geodata::worldclim_global(var = "bio", res = res_value, path = climate_root),
+      error = function(e) NULL
     )
+  } else {
+    tryCatch(
+      geodata::cmip6_world(
+        model = row$gcm[[1]],
+        ssp = row$ssp[[1]],
+        time = row$period[[1]],
+        var = "bio",
+        res = res_value,
+        path = climate_root
+      ),
+      error = function(e) NULL
+    )
+  }
+
+  if (is.null(stack) && scenario == "current") {
+    repaired_files <- repair_worldclim_bioclim_files(res_value = res_value, climate_root = climate_root)
+    if (length(repaired_files) == 19) {
+      stack <- terra::rast(repaired_files)
+    }
   }
 
   if (is.null(stack)) {
@@ -525,7 +566,7 @@ make_accessible_area <- function(species_points, china_boundary, buffer_km = 500
   china_3857 <- st_transform(china_boundary, 3857)
   points_3857 <- st_transform(species_points, 3857)
   area <- points_3857 %>% st_union() %>% st_buffer(buffer_km * 1000)
-  area <- st_intersection(st_as_sf(area), st_union(china_3857))
+  area <- st_intersection(st_as_sf(area), st_as_sf(china_3857))
   st_transform(area, 4326)
 }
 
@@ -547,10 +588,22 @@ sample_background_points <- function(area_sf, current_stack, presence_points, mu
   pres_cells <- unique(terra::cellFromXY(mask_raster, st_coordinates(presence_points)))
   samples <- terra::spatSample(mask_raster, size = n_target * 4, method = "random", na.rm = TRUE, xy = TRUE)
   sample_df <- as.data.frame(samples)
-  names(sample_df)[1] <- "mask_value"
-  sample_df$cell_id <- terra::cellFromXY(mask_raster, sample_df[, c("x", "y")])
-  sample_df <- sample_df %>% filter(!.data$cell_id %in% pres_cells) %>% distinct(.data$cell_id, .keep_all = TRUE) %>% slice_head(n = n_target)
-  st_as_sf(sample_df, coords = c("x", "y"), crs = 4326)
+  coord_cols <- intersect(c("x", "y"), names(sample_df))
+  if (length(coord_cols) != 2) {
+    stop("Background sampling did not return x/y coordinates.")
+  }
+  value_cols <- setdiff(names(sample_df), coord_cols)
+  if (length(value_cols) > 0) {
+    names(sample_df)[match(value_cols[[1]], names(sample_df))] <- "mask_value"
+  } else {
+    sample_df$mask_value <- 1
+  }
+  sample_df$cell_id <- terra::cellFromXY(mask_raster, sample_df[, coord_cols, drop = FALSE])
+  sample_df <- sample_df %>%
+    filter(!.data$cell_id %in% pres_cells) %>%
+    distinct(.data$cell_id, .keep_all = TRUE) %>%
+    slice_head(n = n_target)
+  st_as_sf(sample_df, coords = coord_cols, crs = 4326)
 }
 
 build_model_dataset <- function(presence_points, background_points, env_stack) {
@@ -732,7 +785,7 @@ fit_species_models <- function(species_name, species_points, current_stack, mode
   }
 
   provinces <- load_province_boundaries()
-  china_boundary <- st_union(provinces)
+  china_boundary <- build_china_boundary(provinces)
   accessible_area <- make_accessible_area(species_points, china_boundary, buffer_km = buffer_km)
   background_points <- sample_background_points(accessible_area, current_stack, species_points, pseudo_mult, pseudo_min)
   model_df <- build_model_dataset(species_points, background_points, current_stack)
@@ -966,7 +1019,7 @@ write_task_summary <- function(summary_stats, algo_tbl, note_lines = character(0
   writeLines(lines, TASK_SUMMARY_PATH)
 }
 
-run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_, species_limit = NA_integer_, force_download = FALSE) {
+run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_, species_limit = NA_integer_, force_download = FALSE, current_only = FALSE) {
   qa_log <- list()
   qa_log[[length(qa_log) + 1]] <- log_qa("setup", "task_root", "ok", TASK_ROOT)
 
@@ -978,11 +1031,11 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
 
   src <- load_new_record_data()
   provinces <- load_province_boundaries()
-  china_boundary <- st_union(provinces)
+  china_boundary <- build_china_boundary(provinces)
   species_master <- build_species_master(src$new_records, src$species_pool)
   readr::write_csv(species_master %>% select(-species_key, -genus, -epithet), MASTER_SPECIES_PATH)
 
-  occurrence_birds <- load_occurrence_points()
+  occurrence_birds <- load_occurrence_points(china_boundary)
   if (nrow(occurrence_birds) == 0) stop("No bird occurrence points were found after filtering the shapefile.")
   qa_log[[length(qa_log) + 1]] <- log_qa("input", "bird_occurrence_records", "ok", as.character(nrow(occurrence_birds)))
 
@@ -1036,7 +1089,8 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
     filter(!is.na(.data$new_record_species)) %>%
     transmute(species = .data$new_record_species, shp_species, order_occurrence, family_occurrence, longitude, latitude, geometry = geometry) %>%
     filter(!is.na(.data$longitude), !is.na(.data$latitude), between(.data$longitude, 70, 140), between(.data$latitude, 0, 60)) %>%
-    st_as_sf()
+    st_as_sf() %>%
+    st_filter(st_as_sf(china_boundary), .predicate = st_intersects)
 
   species_status_rows <- list()
   metric_rows <- list()
@@ -1078,6 +1132,9 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
     figure_paths <- c(figure_paths, current_png)
 
     future_configs <- scenario_config %>% filter(.data$scenario != "current", .data$enabled)
+    if (current_only) {
+      future_configs <- future_configs[0, , drop = FALSE]
+    }
     scenario_probability <- list(current = model_fit$probability_current)
     for (row_i in seq_len(nrow(future_configs))) {
       row <- future_configs[row_i, , drop = FALSE]
@@ -1179,7 +1236,8 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
   note_lines <- c(
     "Taxonomy review includes explicit Avibase/IOC and BirdLife review fields.",
     "Province sensitivity analysis is written for both 3-cell and 10-cell thresholds.",
-    "MaxEnt uses maxent.jar when Java and the jar are available; otherwise it falls back to maxnet if installed."
+    "MaxEnt uses maxent.jar when Java and the jar are available; otherwise it falls back to maxnet if installed.",
+    "Occurrence points, climate rasters, background sampling, and predictions are all restricted to the China boundary."
   )
   write_task_summary(summary_stats, algo_tbl, note_lines = note_lines)
   write_summary_pptx(summary_stats, unique(figure_paths))
@@ -1200,6 +1258,7 @@ if (sys.nframe() == 0) {
     prepare_only = prepare_only,
     selected_species = selected_species,
     species_limit = species_limit,
-    force_download = force_download
+    force_download = force_download,
+    current_only = current_only
   )
 }

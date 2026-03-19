@@ -1,9 +1,9 @@
 # Bird SDM distribution modeling task summary
 
-- Generated at: 2026-03-19 19:46:40
+- Generated at: 2026-03-19 20:36:17
 - New-record species pool: 578
 - Exact/manual/auto matched species ready for modeling: 196
-- Successfully modeled species: 0
+- Successfully modeled species: 1
 - Unmatched species requiring Avibase/IOC + BirdLife review: 382
 - Province sensitivity thresholds: 3 cells and 10 cells
 
@@ -17,5 +17,7 @@
 
 ## Notes
 
-- Prepare-only mode completed: generated taxonomy review tables and configuration templates.
-- Fill taxonomy_manual_overrides.csv after Avibase/IOC + BirdLife review to recover more unmatched species.
+- Taxonomy review includes explicit Avibase/IOC and BirdLife review fields.
+- Province sensitivity analysis is written for both 3-cell and 10-cell thresholds.
+- MaxEnt uses maxent.jar when Java and the jar are available; otherwise it falls back to maxnet if installed.
+- Occurrence points, climate rasters, background sampling, and predictions are all restricted to the China boundary.
