@@ -310,13 +310,13 @@ map_theme <- function() {
       plot.background = element_rect(fill = "white", color = NA),
       panel.background = element_rect(fill = "white", color = NA),
       panel.border = element_rect(fill = NA, color = "black", linewidth = 0.75),
-      legend.position = c(0.028, 0.045),
+      legend.position = c(0.022, 0.018),
       legend.justification = c(0, 0),
       legend.background = element_rect(fill = alpha("white", 0.9), color = NA),
       legend.title = element_text(size = 14.5, face = "bold"),
       legend.text = element_text(size = 12.4),
       legend.key.width = unit(1.2, "cm"),
-      legend.key.height = unit(0.64, "cm"),
+      legend.key.height = unit(0.60, "cm"),
       plot.margin = margin(8, 8, 8, 8)
     )
 }
@@ -327,12 +327,12 @@ point_map_theme <- function() {
       plot.background = element_rect(fill = "white", color = NA),
       panel.background = element_rect(fill = "white", color = NA),
       panel.border = element_rect(fill = NA, color = "black", linewidth = 0.75),
-      legend.position = c(0.026, 0.042),
+      legend.position = c(0.021, 0.016),
       legend.justification = c(0, 0),
       legend.background = element_rect(fill = alpha("white", 0.92), color = NA),
       legend.title = element_text(size = 15.5, face = "bold"),
       legend.text = element_text(size = 15.0),
-      legend.key.height = unit(0.72, "cm"),
+      legend.key.height = unit(0.68, "cm"),
       legend.key.width = unit(0.95, "cm"),
       plot.margin = margin(8, 8, 8, 8)
     )
@@ -609,7 +609,7 @@ manual_label_override_ll <- tribble(
   "Hong Kong",        114.50, 22.20,
   "Hainan",           109.35, 18.90,
   "Chongqing",        106.95, 29.92,
-  "Inner Mongolia",   111.10, 44.05,
+  "Inner Mongolia",   111.20, 43.20,
   "Ningxia",          106.10, 37.45,
   "Shanxi",           112.00, 37.62,
   "Shaanxi",          108.55, 35.08,
@@ -653,7 +653,7 @@ label_just_df <- tribble(
   "Hong Kong",        0.00,   0.55,
   "Hainan",           0.50,   0.50,
   "Chongqing",        0.45,   0.55,
-  "Inner Mongolia",   0.50,   0.55,
+  "Inner Mongolia",   0.50,   0.30,
   "Ningxia",          0.50,   0.50,
   "Shanxi",           0.50,   0.55,
   "Shaanxi",          0.45,   0.55,
@@ -937,12 +937,12 @@ p_year_barline_top10 <- make_barline_plot(
 # Step 8. Export figures
 # 第 8 步：导出图件
 # -------------------------------
-save_map_bundle(count_map_main, count_map_inset, figures_dir, "fig_sp01_province_new_record_count_map", width = 13.6, height = 9.4, inset_left = 0.855, inset_bottom = 0.001, inset_right = 0.998, inset_top = 0.218, plot_xlim = main_xlim, plot_ylim = main_ylim)
-save_map_bundle(density_map_main, density_map_inset, figures_dir, "fig_sp02_province_new_record_density_map", width = 13.6, height = 9.4, inset_left = 0.855, inset_bottom = 0.001, inset_right = 0.998, inset_top = 0.218, plot_xlim = main_xlim, plot_ylim = main_ylim)
-save_map_bundle(point_map_main, point_map_inset, figures_dir, "fig_sp03_across_order_point_map", width = 16.0, height = 11.0, inset_left = 0.855, inset_bottom = 0.001, inset_right = 0.998, inset_top = 0.218, plot_xlim = main_xlim, plot_ylim = main_ylim)
-save_map_bundle(count_map_graticule_main, count_map_inset, figures_dir, "fig_sp01g_province_new_record_count_map_graticule", width = 13.6, height = 9.4, inset_left = 0.855, inset_bottom = 0.001, inset_right = 0.998, inset_top = 0.218, plot_xlim = main_xlim, plot_ylim = main_ylim)
-save_map_bundle(density_map_graticule_main, density_map_inset, figures_dir, "fig_sp02g_province_new_record_density_map_graticule", width = 13.6, height = 9.4, inset_left = 0.855, inset_bottom = 0.001, inset_right = 0.998, inset_top = 0.218, plot_xlim = main_xlim, plot_ylim = main_ylim)
-save_map_bundle(point_map_graticule_main, point_map_inset, figures_dir, "fig_sp03g_across_order_point_map_graticule", width = 16.0, height = 11.0, inset_left = 0.855, inset_bottom = 0.001, inset_right = 0.998, inset_top = 0.218, plot_xlim = main_xlim, plot_ylim = main_ylim)
+save_map_bundle(count_map_main, count_map_inset, figures_dir, "fig_sp01_province_new_record_count_map", width = 13.6, height = 9.4, inset_left = 0.842, inset_bottom = 0.0005, inset_right = 0.998, inset_top = 0.232, plot_xlim = main_xlim, plot_ylim = main_ylim)
+save_map_bundle(density_map_main, density_map_inset, figures_dir, "fig_sp02_province_new_record_density_map", width = 13.6, height = 9.4, inset_left = 0.842, inset_bottom = 0.0005, inset_right = 0.998, inset_top = 0.232, plot_xlim = main_xlim, plot_ylim = main_ylim)
+save_map_bundle(point_map_main, point_map_inset, figures_dir, "fig_sp03_across_order_point_map", width = 16.0, height = 11.0, inset_left = 0.842, inset_bottom = 0.0005, inset_right = 0.998, inset_top = 0.232, plot_xlim = main_xlim, plot_ylim = main_ylim)
+save_map_bundle(count_map_graticule_main, count_map_inset, figures_dir, "fig_sp01g_province_new_record_count_map_graticule", width = 13.6, height = 9.4, inset_left = 0.842, inset_bottom = 0.0005, inset_right = 0.998, inset_top = 0.232, plot_xlim = main_xlim, plot_ylim = main_ylim)
+save_map_bundle(density_map_graticule_main, density_map_inset, figures_dir, "fig_sp02g_province_new_record_density_map_graticule", width = 13.6, height = 9.4, inset_left = 0.842, inset_bottom = 0.0005, inset_right = 0.998, inset_top = 0.232, plot_xlim = main_xlim, plot_ylim = main_ylim)
+save_map_bundle(point_map_graticule_main, point_map_inset, figures_dir, "fig_sp03g_across_order_point_map_graticule", width = 16.0, height = 11.0, inset_left = 0.842, inset_bottom = 0.0005, inset_right = 0.998, inset_top = 0.232, plot_xlim = main_xlim, plot_ylim = main_ylim)
 save_chart_bundle(p_province_barline, figures_dir, "fig_sp04_province_stacked_barline", width = 14.2, height = 9.1)
 save_chart_bundle(p_year_barline, figures_dir, "fig_sp05_year_stacked_barline", width = 14.2, height = 8.7)
 save_chart_bundle(p_province_barline_top10, figures_dir, "fig_sp06_province_stacked_barline_top10", width = 14.2, height = 9.1)
