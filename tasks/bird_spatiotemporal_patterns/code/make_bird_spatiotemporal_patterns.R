@@ -160,12 +160,12 @@ point_map_palette <- c(
 )
 
 point_map_shapes <- c(
-  "Passeriformes" = 21,
-  "Charadriiformes" = 22,
-  "Anseriformes" = 24,
-  "Accipitriformes" = 23,
-  "Pelecaniformes" = 25,
-  "Others" = 21
+  "Passeriformes" = 16,
+  "Charadriiformes" = 15,
+  "Anseriformes" = 17,
+  "Accipitriformes" = 18,
+  "Pelecaniformes" = 8,
+  "Others" = 16
 )
 
 build_bbox_from_longlat <- function(xmin, xmax, ymin, ymax, target_crs) {
@@ -254,8 +254,8 @@ save_map_bundle <- function(main_plot, inset_plot, out_dir, filename_no_ext, wid
 add_north_arrow_projected <- function(plot_obj, xlim, ylim, scale_x = 0.030, scale_y = 0.068) {
   xr <- diff(xlim)
   yr <- diff(ylim)
-  x <- xlim[2] - xr * 0.08
-  y <- ylim[2] - yr * 0.15
+  x <- xlim[2] - xr * 0.06
+  y <- ylim[2] - yr * 0.14
   dx <- xr * scale_x
   dy <- yr * scale_y
 
@@ -433,8 +433,8 @@ province_line_sf <- st_transform(province_line_sf_ll, china_crs)
 ten_dash_sf <- st_transform(ten_dash_sf_ll, china_crs)
 
 main_bbox <- st_bbox(province_sf)
-main_xlim <- c(main_bbox["xmin"] - 1200000, main_bbox["xmax"] + 300000)
-main_ylim <- c(main_bbox["ymin"] - 450000, main_bbox["ymax"] + 420000)
+main_xlim <- c(main_bbox["xmin"] - 240000, main_bbox["xmax"] + 1380000)
+main_ylim <- c(main_bbox["ymin"] - 120000, main_bbox["ymax"] + 230000)
 inset_bbox <- build_bbox_from_longlat(104, 125, 2, 26, china_crs)
 
 # -------------------------------
@@ -482,23 +482,34 @@ label_df <- province_map_sf %>%
   select(province_std, province_label_map, x, y)
 
 manual_label_override_ll <- tribble(
-  ~province_std,       ~lon,  ~lat,
-  "Beijing",          116.85, 40.80,
-  "Tianjin",          117.70, 39.45,
-  "Shanghai",         121.55, 31.20,
-  "Hong Kong",        114.35, 22.45,
-  "Macau",            113.60, 22.22,
-  "Chongqing",        107.55, 30.20,
-  "Inner Mongolia",   111.20, 43.50,
-  "Ningxia",          106.40, 37.55,
-  "Xizang",            88.10, 31.20,
-  "Hainan",           109.75, 19.25,
-  "Taiwan",           121.10, 23.75,
-  "Jiangsu",          119.35, 33.15,
-  "Anhui",            117.25, 31.70,
-  "Guangdong",        113.55, 23.15,
-  "Fujian",           118.35, 25.70,
-  "Zhejiang",         120.20, 29.00
+  ~province_std,       ~lon,   ~lat,
+  "Beijing",          116.08, 41.08,
+  "Tianjin",          117.72, 40.10,
+  "Hebei",            115.35, 39.15,
+  "Liaoning",         122.15, 41.50,
+  "Jilin",            125.05, 43.45,
+  "Heilongjiang",     127.60, 47.30,
+  "Shandong",         118.85, 36.20,
+  "Jiangsu",          119.80, 33.05,
+  "Shanghai",         122.10, 31.05,
+  "Anhui",            117.10, 31.40,
+  "Zhejiang",         120.65, 28.70,
+  "Fujian",           118.75, 25.00,
+  "Jiangxi",          116.25, 27.60,
+  "Guangdong",        112.70, 22.85,
+  "Hong Kong",        114.50, 22.20,
+  "Hainan",           109.35, 18.90,
+  "Chongqing",        106.95, 29.92,
+  "Inner Mongolia",   111.10, 44.05,
+  "Ningxia",          106.10, 37.45,
+  "Shanxi",           112.00, 37.62,
+  "Shaanxi",          108.55, 35.08,
+  "Henan",            113.35, 34.10,
+  "Hubei",            112.35, 30.50,
+  "Hunan",            111.55, 27.72,
+  "Xizang",            87.95, 31.00,
+  "Taiwan",           121.15, 23.45,
+  "Macau",            113.58, 22.13
 )
 
 manual_label_override <- st_as_sf(manual_label_override_ll, coords = c("lon", "lat"), crs = 4326) %>%
@@ -511,7 +522,40 @@ manual_label_df <- manual_label_override %>%
 
 label_df <- label_df %>%
   rows_update(manual_label_df, by = "province_std") %>%
-  filter(province_std != "Macau")
+  filter(province_std != "Macau") %>%
+  mutate(hjust = 0.5, vjust = 0.5)
+
+label_just_df <- tribble(
+  ~province_std,      ~hjust, ~vjust,
+  "Beijing",          0.15,   0.15,
+  "Tianjin",          0.05,   0.05,
+  "Hebei",            0.50,   0.65,
+  "Liaoning",         0.55,   0.55,
+  "Jilin",            0.55,   0.50,
+  "Heilongjiang",     0.55,   0.50,
+  "Shandong",         0.45,   0.60,
+  "Jiangsu",          0.30,   0.55,
+  "Shanghai",         0.00,   0.45,
+  "Anhui",            0.45,   0.45,
+  "Zhejiang",         0.25,   0.45,
+  "Fujian",           0.45,   0.60,
+  "Jiangxi",          0.50,   0.55,
+  "Guangdong",        0.20,   0.70,
+  "Hong Kong",        0.00,   0.55,
+  "Hainan",           0.50,   0.50,
+  "Chongqing",        0.45,   0.55,
+  "Inner Mongolia",   0.50,   0.55,
+  "Ningxia",          0.50,   0.50,
+  "Shanxi",           0.50,   0.55,
+  "Shaanxi",          0.45,   0.55,
+  "Henan",            0.45,   0.55,
+  "Hubei",            0.45,   0.55,
+  "Hunan",            0.45,   0.55,
+  "Taiwan",           0.50,   0.55
+)
+
+label_df <- label_df %>%
+  rows_update(label_just_df, by = "province_std")
 
 point_orders <- c("Passeriformes", "Charadriiformes", "Anseriformes", "Accipitriformes", "Pelecaniformes")
 point_map_df <- clean %>%
@@ -583,7 +627,7 @@ count_map_main <- ggplot() +
   geom_sf(data = province_map_sf, aes(fill = count_class), color = "#9A9A9A", linewidth = 0.24) +
   geom_sf(data = province_line_sf, color = "#777777", linewidth = 0.20, fill = NA) +
   geom_sf(data = ten_dash_sf, color = "#272727", linewidth = 0.22, fill = NA) +
-  geom_text(data = label_df, aes(x = x, y = y, label = province_label_map), family = "sans", size = 4.4) +
+  geom_text(data = label_df, aes(x = x, y = y, label = province_label_map, hjust = hjust, vjust = vjust), family = "sans", size = 3.85, lineheight = 0.90) +
   count_fill_scale +
   coord_sf(xlim = main_xlim, ylim = main_ylim, expand = FALSE, crs = china_crs) +
   map_theme()
@@ -602,7 +646,7 @@ density_map_main <- ggplot() +
   geom_sf(data = province_map_sf, aes(fill = density_class), color = "#9A9A9A", linewidth = 0.24) +
   geom_sf(data = province_line_sf, color = "#777777", linewidth = 0.20, fill = NA) +
   geom_sf(data = ten_dash_sf, color = "#272727", linewidth = 0.22, fill = NA) +
-  geom_text(data = label_df, aes(x = x, y = y, label = province_label_map), family = "sans", size = 4.4) +
+  geom_text(data = label_df, aes(x = x, y = y, label = province_label_map, hjust = hjust, vjust = vjust), family = "sans", size = 3.85, lineheight = 0.90) +
   density_fill_scale +
   coord_sf(xlim = main_xlim, ylim = main_ylim, expand = FALSE, crs = china_crs) +
   map_theme()
@@ -618,15 +662,15 @@ density_map_inset <- ggplot() +
   theme(panel.border = element_rect(color = "black", fill = NA, linewidth = 0.7), legend.position = "none")
 
 point_map_main <- ggplot() +
-  geom_sf(data = province_sf, fill = "white", color = "#B0B0B0", linewidth = 0.16) +
-  geom_sf(data = province_line_sf, color = "#2A2A2A", linewidth = 0.24, fill = NA) +
-  geom_sf(data = ten_dash_sf, color = "#222222", linewidth = 0.22, fill = NA) +
+  geom_sf(data = province_sf, fill = "white", color = "#D0D0D0", linewidth = 0.20) +
+  geom_sf(data = province_line_sf, color = "#BEBEBE", linewidth = 0.24, fill = NA) +
+  geom_sf(data = ten_dash_sf, color = "#5C5C5C", linewidth = 0.26, fill = NA) +
   geom_point(
     data = point_map_df,
-    aes(x = x, y = y, fill = order_group, shape = order_group),
-    size = 2.9, stroke = 0.35, color = "black", alpha = 0.98
+    aes(x = x, y = y, color = order_group, shape = order_group),
+    size = 2.85, stroke = 0.22, alpha = 0.95
   ) +
-  scale_fill_manual(
+  scale_color_manual(
     values = point_map_palette,
     breaks = c("Passeriformes", "Charadriiformes", "Anseriformes", "Accipitriformes", "Pelecaniformes", "Others"),
     labels = c("PASSERIFORMES", "CHARADRIIFORMES", "ANSERIFORMES", "ACCIPITRIFORMES", "PELECANIFORMES", "Others"),
@@ -640,16 +684,18 @@ point_map_main <- ggplot() +
   ) +
   coord_sf(xlim = main_xlim, ylim = main_ylim, expand = FALSE, crs = china_crs) +
   point_map_theme() +
-  guides(fill = guide_legend(
-    ncol = 1,
-    byrow = TRUE,
-    override.aes = list(
-      shape = unname(point_map_shapes[c("Passeriformes", "Charadriiformes", "Anseriformes", "Accipitriformes", "Pelecaniformes", "Others")]),
-      fill = unname(point_map_palette[c("Passeriformes", "Charadriiformes", "Anseriformes", "Accipitriformes", "Pelecaniformes", "Others")]),
-      color = "black",
-      size = 4
-    )
-  ), shape = "none")
+  guides(
+    color = guide_legend(
+      ncol = 1,
+      byrow = TRUE,
+      override.aes = list(
+        shape = unname(point_map_shapes[c("Passeriformes", "Charadriiformes", "Anseriformes", "Accipitriformes", "Pelecaniformes", "Others")]),
+        color = unname(point_map_palette[c("Passeriformes", "Charadriiformes", "Anseriformes", "Accipitriformes", "Pelecaniformes", "Others")]),
+        size = 4.2, alpha = 1
+      )
+    ),
+    shape = "none"
+  )
 point_map_main <- add_north_arrow_projected(point_map_main, main_xlim, main_ylim)
 
 point_map_inset <- ggplot() +
