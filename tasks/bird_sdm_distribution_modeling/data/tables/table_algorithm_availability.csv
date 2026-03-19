@@ -1,0 +1,6 @@
+algorithm,available,engine,detail
+GLM,TRUE,stats::glm,Base R available
+GAM,TRUE,mgcv::gam,Generalized additive model
+GBM,TRUE,gbm::gbm,Gradient boosting machine
+RF,TRUE,randomForest::randomForest,Random forest classifier
+MaxEnt,TRUE,maxnet::maxnet,Java detected: TRUE; maxent.jar found: FALSE; maxnet installed: TRUE
