@@ -325,11 +325,18 @@ p_overall_radar <- ggradar(
     plot.margin = margin(8, 8, 8, 8)
   )
 
-focal_order <- overall_overlay_orders[1]
+focal_order <- if ("Passeriformes" %in% overall_overlay_orders) "Passeriformes" else overall_overlay_orders[1]
 focal_north <- overall_overlay_df %>% filter(order == focal_order, direction == "North") %>% pull(count)
 focal_total <- overall_overlay_df %>% filter(order == focal_order) %>% distinct(order, n_total) %>% pull(n_total)
-focal_half <- max(1, round(focal_north / 2))
+focal_north <- if (length(focal_north) == 0) 0 else focal_north
+focal_total <- if (length(focal_total) == 0) 0 else focal_total
+focal_prop <- if (focal_total > 0) focal_north / focal_total else 0
 overall_windrose_ymax <- max(overall_overlay_df$count) * 1.08
+focal_annotation_df <- tibble(
+  direction = factor("North", levels = direction_levels),
+  y = overall_windrose_ymax * 0.5,
+  label = paste0(focal_north, "(", percent(focal_prop, accuracy = 0.1), ")")
+)
 
 p_overall_windrose <- ggplot(
   overall_overlay_df,
@@ -339,14 +346,7 @@ p_overall_windrose <- ggplot(
   geom_line(linewidth = 1.05) +
   geom_point(size = 3.0) +
   geom_text(
-    data = tibble(
-      direction = factor("North", levels = direction_levels),
-      y = c(focal_half, focal_north),
-      label = c(
-        paste0(focal_half, "(", percent(focal_half / focal_total, accuracy = 1), ")"),
-        paste0(focal_north, "(", percent(focal_north / focal_total, accuracy = 1), ")")
-      )
-    ),
+    data = focal_annotation_df,
     aes(x = direction, y = y, label = label),
     inherit.aes = FALSE,
     size = 5.3,
@@ -358,7 +358,7 @@ p_overall_windrose <- ggplot(
   scale_fill_manual(values = order_palette[overall_overlay_orders]) +
   scale_y_continuous(
     limits = c(0, overall_windrose_ymax),
-    breaks = c(focal_half, focal_north),
+    breaks = c(overall_windrose_ymax * 0.5, overall_windrose_ymax),
     labels = NULL
   ) +
   coord_polar(start = -pi / 8) +
