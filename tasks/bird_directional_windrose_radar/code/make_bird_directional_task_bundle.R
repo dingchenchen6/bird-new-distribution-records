@@ -21,9 +21,11 @@
 # 5. Recreate publication-style directional figures in two forms:
 #    radar-style plots and wind-rose-style plots.
 #    以两种形式重建发表风格方向图：雷达图和风玫瑰图。
-# 6. Export main 4x4 order-panel figures, top-order overlay figures, and
-#    individual order-specific plots in PNG, PDF, and PPTX formats.
-#    导出 4x4 主图、主要目叠加图及各目单独图，统一输出为 PNG、PDF、PPTX。
+# 6. Export overall overlay figures based on major orders, combined 4x4
+#    order-panel figures, and individual order-specific plots in PNG, PDF,
+#    and PPTX formats.
+#    导出以主要目叠加的 overall 图、4x4 按目组合图及各目单独图，统一输出为
+#    PNG、PDF、PPTX。
 # 7. Save cleaned plotting tables and write a bilingual result summary.
 #    保存整理后的作图数据表，并输出中英文结果描述摘要。
 # ============================================================
@@ -248,7 +250,7 @@ selected_orders <- order_totals %>%
   slice_head(n = 16) %>%
   pull(order)
 
-top_orders <- order_totals %>%
+overall_overlay_orders <- order_totals %>%
   slice_head(n = 6) %>%
   pull(order)
 
@@ -270,6 +272,10 @@ write_csv(
   tibble(order = selected_orders, rank = seq_along(selected_orders)),
   file.path(data_dir, "bird_direction_selected_orders.csv")
 )
+write_csv(
+  tibble(order = overall_overlay_orders, rank = seq_along(overall_overlay_orders)),
+  file.path(data_dir, "bird_direction_overall_overlay_orders.csv")
+)
 
 top_direction_by_order <- order_counts %>%
   group_by(order) %>%
@@ -280,8 +286,102 @@ top_direction_by_order <- order_counts %>%
 write_csv(top_direction_by_order, file.path(data_dir, "bird_direction_top_direction_by_order.csv"))
 
 # -------------------------------
-# Step 6. Build and export main 4x4 order-panel figures
-# 第 6 步：构建并导出 4x4 按目主图
+# Step 6. Build and export overall overlay figures
+# 第 6 步：构建并导出总体叠加图
+# -------------------------------
+overall_overlay_df <- order_counts %>%
+  filter(order %in% overall_overlay_orders) %>%
+  mutate(order = factor(order, levels = overall_overlay_orders))
+
+overall_radar_input <- overall_overlay_df %>%
+  select(order, direction, proportion) %>%
+  pivot_wider(names_from = direction, values_from = proportion, values_fill = 0) %>%
+  mutate(across(where(is.numeric), ~ . * 100)) %>%
+  rename(group = order) %>%
+  select(group, all_of(direction_levels))
+
+p_overall_radar <- ggradar(
+  overall_radar_input,
+  grid.min = 0,
+  grid.mid = 50,
+  grid.max = 100,
+  values.radar = c("", "", ""),
+  group.line.width = 1.2,
+  group.point.size = 3.0,
+  background.circle.colour = "white",
+  gridline.mid.colour = "#222222",
+  gridline.max.colour = "#222222",
+  gridline.min.colour = "#222222",
+  axis.label.size = 4.4,
+  grid.label.size = 0,
+  legend.position = "right",
+  group.colours = alpha(order_palette[overall_overlay_orders], 0.78)
+) +
+  theme(
+    plot.background = element_rect(fill = "white", color = NA),
+    panel.background = element_rect(fill = "white", color = NA),
+    legend.text = element_text(size = 12.5),
+    axis.text = element_text(size = 13, color = "#222222"),
+    plot.margin = margin(8, 8, 8, 8)
+  )
+
+focal_order <- overall_overlay_orders[1]
+focal_north <- overall_overlay_df %>% filter(order == focal_order, direction == "North") %>% pull(count)
+focal_total <- overall_overlay_df %>% filter(order == focal_order) %>% distinct(order, n_total) %>% pull(n_total)
+focal_half <- max(1, round(focal_north / 2))
+overall_windrose_ymax <- max(overall_overlay_df$count) * 1.08
+
+p_overall_windrose <- ggplot(
+  overall_overlay_df,
+  aes(x = direction, y = count, group = order, color = order, fill = order)
+) +
+  geom_polygon(alpha = 0.22, linewidth = 1.05) +
+  geom_line(linewidth = 1.05) +
+  geom_point(size = 3.0) +
+  geom_text(
+    data = tibble(
+      direction = factor("North", levels = direction_levels),
+      y = c(focal_half, focal_north),
+      label = c(
+        paste0(focal_half, "(", percent(focal_half / focal_total, accuracy = 1), ")"),
+        paste0(focal_north, "(", percent(focal_north / focal_total, accuracy = 1), ")")
+      )
+    ),
+    aes(x = direction, y = y, label = label),
+    inherit.aes = FALSE,
+    size = 5.3,
+    color = "#222222"
+  ) +
+  annotate("segment", x = 1:8, xend = 1:8, y = 0, yend = overall_windrose_ymax,
+           color = "#111111", linewidth = 0.65) +
+  scale_color_manual(values = order_palette[overall_overlay_orders]) +
+  scale_fill_manual(values = order_palette[overall_overlay_orders]) +
+  scale_y_continuous(
+    limits = c(0, overall_windrose_ymax),
+    breaks = c(focal_half, focal_north),
+    labels = NULL
+  ) +
+  coord_polar(start = -pi / 8) +
+  labs(x = NULL, y = NULL, color = NULL, fill = NULL) +
+  theme_minimal(base_size = 14) +
+  theme(
+    panel.grid.major = element_line(color = "#111111", linewidth = 0.8, linetype = "22"),
+    panel.grid.minor = element_blank(),
+    axis.text.y = element_blank(),
+    axis.text.x = element_text(size = 15, color = "#222222"),
+    legend.position = "right",
+    legend.text = element_text(size = 13.5),
+    plot.background = element_rect(fill = "white", color = NA),
+    panel.background = element_rect(fill = "white", color = NA),
+    plot.margin = margin(12, 12, 12, 12)
+  )
+
+save_plot_bundle(p_overall_radar, figures_overall_dir, "overall_direction_radar", width = 13.0, height = 8.8)
+save_plot_bundle(p_overall_windrose, figures_overall_dir, "overall_direction_windrose", width = 13.0, height = 8.8)
+
+# -------------------------------
+# Step 7. Build and export combined 4x4 order-panel figures
+# 第 7 步：构建并导出 4x4 按目组合图
 # -------------------------------
 radar_panels_main <- lapply(selected_orders, function(ord) {
   radar_df <- order_counts %>%
@@ -305,79 +405,8 @@ windrose_panels_main <- lapply(selected_orders, function(ord) {
 main_radar_4x4 <- wrap_plots(radar_panels_main, ncol = 4)
 main_windrose_4x4 <- wrap_plots(windrose_panels_main, ncol = 4)
 
-save_plot_bundle(main_radar_4x4, figures_overall_dir, "overall_direction_radar", width = 14.6, height = 14.6)
-save_plot_bundle(main_windrose_4x4, figures_overall_dir, "overall_direction_windrose", width = 14.6, height = 14.6)
-
-# -------------------------------
-# Step 7. Build and export top-order overlay figures
-# 第 7 步：构建并导出主要目叠加图
-# -------------------------------
-top6_radar_df <- order_counts %>%
-  filter(order %in% top_orders) %>%
-  select(order, direction, proportion) %>%
-  pivot_wider(names_from = direction, values_from = proportion, values_fill = 0) %>%
-  mutate(across(where(is.numeric), ~ . * 100)) %>%
-  rename(group = order) %>%
-  select(group, all_of(direction_levels))
-
-p_top6_radar <- ggradar(
-  top6_radar_df,
-  grid.min = 0,
-  grid.mid = 50,
-  grid.max = 100,
-  values.radar = c("0%", "50%", "100%"),
-  group.line.width = 1.2,
-  group.point.size = 2.4,
-  background.circle.colour = "white",
-  gridline.mid.colour = "#79CBE3",
-  gridline.max.colour = "#79CBE3",
-  gridline.min.colour = "#79CBE3",
-  axis.label.size = 3.2,
-  grid.label.size = 2.5,
-  legend.position = "right",
-  group.colours = alpha(order_palette[top_orders], 0.72)
-) +
-  theme(
-    plot.background = element_rect(fill = "white", color = NA),
-    panel.background = element_rect(fill = "white", color = NA),
-    legend.text = element_text(size = 11.5),
-    plot.margin = margin(8, 8, 8, 8)
-  )
-
-overlay_df <- order_counts %>%
-  filter(order %in% top_orders) %>%
-  mutate(order = factor(order, levels = top_orders))
-
-overlay_ymax <- max(overlay_df$count) * 1.06
-
-p_top6_windrose <- ggplot(
-  overlay_df,
-  aes(x = direction, y = count, group = order, color = order, fill = order)
-) +
-  geom_polygon(alpha = 0.24, linewidth = 0.82) +
-  geom_line(linewidth = 0.92) +
-  geom_point(size = 2.3) +
-  annotate("segment", x = 1:8, xend = 1:8, y = 0, yend = overlay_ymax,
-           color = "#4E4E4E", linewidth = 0.42) +
-  scale_color_manual(values = order_palette[top_orders]) +
-  scale_fill_manual(values = order_palette[top_orders]) +
-  coord_polar(start = -pi / 8) +
-  labs(x = NULL, y = NULL, color = NULL, fill = NULL) +
-  theme_minimal(base_size = 13) +
-  theme(
-    panel.grid.major = element_line(color = "#79CBE3", linewidth = 0.55, linetype = "22"),
-    panel.grid.minor = element_blank(),
-    axis.text.y = element_blank(),
-    axis.text.x = element_text(size = 11.2, color = "#222222"),
-    legend.position = "right",
-    legend.text = element_text(size = 11.5),
-    plot.background = element_rect(fill = "white", color = NA),
-    panel.background = element_rect(fill = "white", color = NA),
-    plot.margin = margin(10, 10, 10, 10)
-  )
-
-save_plot_bundle(p_top6_radar, figures_combined_dir, "top6_direction_radar_overlay", width = 12.8, height = 8.6)
-save_plot_bundle(p_top6_windrose, figures_combined_dir, "top6_direction_windrose_overlay", width = 12.8, height = 8.6)
+save_plot_bundle(main_radar_4x4, figures_combined_dir, "order_direction_radar_facets", width = 14.6, height = 14.6)
+save_plot_bundle(main_windrose_4x4, figures_combined_dir, "order_direction_windrose_facets", width = 14.6, height = 14.6)
 
 # -------------------------------
 # Step 8. Export individual order-specific radar and wind-rose plots
@@ -419,8 +448,10 @@ summary_lines <- c(
   "## Overview / 总体概况",
   paste0("- Total bird new-record species used in directional analysis: ", overall_total, "."),
   paste0("- 纳入方向分析的鸟类新纪录物种总数：", overall_total, "。"),
-  paste0("- Main 4x4 figures include the top ", length(selected_orders), " orders ranked by species counts."),
-  paste0("- 4x4 主图纳入新纪录物种数排名前 ", length(selected_orders), " 的鸟类目。"),
+  paste0("- Overall overlay figures include the top ", length(overall_overlay_orders), " orders ranked by species counts."),
+  paste0("- overall 叠加图纳入新纪录物种数排名前 ", length(overall_overlay_orders), " 的鸟类目。"),
+  paste0("- Combined 4x4 figures include the top ", length(selected_orders), " orders ranked by species counts."),
+  paste0("- combined 4x4 图纳入新纪录物种数排名前 ", length(selected_orders), " 的鸟类目。"),
   "",
   "## Overall dominant directions / 总体优势方向",
   paste0("- Top overall directions: ",
@@ -433,21 +464,20 @@ summary_lines <- c(
          "。"),
   "",
   "## Included and omitted orders / 纳入与舍弃的目",
-  paste0("- Included orders: ", paste(selected_orders, collapse = ", "), "."),
+  paste0("- Included overlay orders: ", paste(overall_overlay_orders, collapse = ", "), "."),
+  paste0("- Included 4x4 orders: ", paste(selected_orders, collapse = ", "), "."),
   paste0("- Dropped small-count orders: ", if (length(dropped_orders) > 0) paste(dropped_orders, collapse = ", ") else "None", "."),
-  paste0("- 纳入的目：", paste(selected_orders, collapse = "、"), "。"),
+  paste0("- 纳入 overall 叠加的目：", paste(overall_overlay_orders, collapse = "、"), "。"),
+  paste0("- 纳入 combined 4x4 的目：", paste(selected_orders, collapse = "、"), "。"),
   paste0("- 舍弃的小样本目：", if (length(dropped_orders) > 0) paste(dropped_orders, collapse = "、") else "无", "。"),
   "",
   "## Output structure / 输出结构",
-  "- `figures/overall`: main 4x4 order-panel figures used as the primary directional summary.",
-  "- `figures/combined`: top-order overlay comparison figures.",
+  "- `figures/overall`: overlay radar and overlay wind-rose figures based on major orders.",
+  "- `figures/combined`: 4x4 order-panel radar and wind-rose figures.",
   "- `figures/radar_by_order` and `figures/windrose_by_order`: individual order-specific plots.",
-  "- `figures/overall`：4x4 按目主图。",
-  "- `figures/combined`：主要目叠加对比图。",
+  "- `figures/overall`：主要目叠加的 radar 和 wind-rose 图。",
+  "- `figures/combined`：4x4 按目组合 radar 和 wind-rose 图。",
   "- `figures/radar_by_order` 和 `figures/windrose_by_order`：各目单独图。"
 )
 
 writeLines(summary_lines, file.path(results_dir, "directional_results_summary.md"))
-
-cat("Directional task bundle exported successfully.\n")
-cat("Task folder: ", task_dir, "\n", sep = "")
