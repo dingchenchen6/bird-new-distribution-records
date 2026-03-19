@@ -5,23 +5,51 @@
 # 鸟类新纪录时空格局任务脚本
 # ============================================================
 #
-# Analysis steps / 分析步骤
-# 1. Read the cleaned bird new-record table and the user-provided province-level
-#    shapefile base map, provincial boundary line layer, and ten-dash-line layer.
+# Scientific question / 科学问题
+# How are bird new-distribution records in China distributed across space and time,
+# and do the observed provincial hotspots and annual peaks remain robust after
+# basic data-quality screening and area standardization?
+# 中国鸟类新纪录在空间和时间上如何分布？在完成基础数据质量筛查和面积标准化后，
+# 观察到的省级热点与年度峰值是否仍然稳定存在？
+#
+# Objective / 研究目标
+# 1. Build publication-ready spatiotemporal maps and stacked bar-line figures for bird new records.
+#    构建可直接用于论文的鸟类新纪录时空地图与堆叠柱线图。
+# 2. Quantify provincial record totals, area-standardized provincial densities, annual totals,
+#    and taxonomic composition across provinces and years.
+#    定量计算省级记录总数、面积标准化密度、年度总量以及省份和年份尺度下的分类组成。
+# 3. Perform explicit data checking, assumption screening, anomaly flagging, and diagnostic reporting
+#    before figure generation, so that descriptive conclusions are traceable and reproducible.
+#    在制图前明确完成数据检查、假设筛查、异常值标记和诊断汇总，确保描述性结论可追踪、可复现。
+#
+# Analytical idea / 分析思路
+# 1. Read the cleaned bird new-record table and the user-provided province-level shapefile base map,
+#    provincial boundary line layer, and ten-dash-line layer.
 #    读取清洗后的鸟类新纪录表，以及用户提供的省级底图、省界线和十段线图层。
-# 2. Transform all spatial layers into a China-suitable projected coordinate
-#    system based on CGCS2000 Albers Equal Area.
-#    将所有空间图层统一转换到适合中国制图的 CGCS2000 Albers Equal Area 投影。
-# 3. Standardize province names, compute provincial counts, area-standardized
-#    density, annual counts, and order-level composition tables.
-#    标准化省份名称，并计算省级新纪录数量、面积标准化密度、年度记录数及按目组成表。
-# 4. Rebuild publication-style spatiotemporal figures, including two choropleth
-#    maps, one projected point-distribution map, and stacked bar-line charts.
-#    重建投稿风格的时空格局图，包括两张分级设色地图、一张投影后的记录点分布图，以及堆叠柱线图。
-# 5. Export all figures in PNG, PDF, and editable vector PPTX formats.
-#    将所有图件导出为 PNG、PDF 和可编辑矢量 PPTX 格式。
-# 6. Save plot-ready data tables and write bilingual task documentation.
-#    保存作图数据表，并输出中英文任务说明与结果摘要。
+# 2. Transform all spatial layers into a China-suitable projected coordinate system based on
+#    CGCS2000-compatible Albers Equal Area parameters.
+#    将所有空间图层统一转换到兼容 CGCS2000 的 Albers Equal Area 投影，便于中国尺度制图。
+# 3. Check key variables (year, province, order, longitude, latitude), summarize missingness,
+#    inspect coordinate ranges, screen duplicated record combinations, and save diagnostics.
+#    检查 year、province、order、longitude、latitude 等关键变量，汇总缺失值、筛查坐标范围、
+#    检查重复记录组合，并保存诊断结果。
+# 4. Standardize province names, compute provincial counts, area-standardized density, annual counts,
+#    and order-level composition tables used by the figures.
+#    标准化省份名称，并计算用于绘图的省级数量、面积标准化密度、年度数量和按目组成表。
+# 5. Rebuild publication-style spatiotemporal figures, including two choropleth maps,
+#    one projected point-distribution map, and stacked bar-line charts.
+#    重建投稿风格的时空格局图，包括两张分级设色地图、一张投影记录点图和堆叠柱线图。
+# 6. Export all figures in PNG, PDF, and editable vector PPTX formats via graph2ppt(),
+#    and save plot-ready data plus bilingual task documentation.
+#    通过 graph2ppt() 导出 PNG、PDF 和可编辑矢量 PPTX，并保存作图数据与中英文任务文档。
+#
+# Diagnostics and validation / 诊断与验证
+# - This task is descriptive rather than inferential; therefore no regression model is fitted.
+#   本任务属于描述性分析而非推断建模，因此不拟合回归模型。
+# - Instead of model diagnostics, we explicitly perform data-quality diagnostics: missingness checks,
+#   coordinate-range checks, duplicate screening, class-break validation, and visual inspection of outputs.
+#   因此使用数据质量诊断替代模型诊断：包括缺失值检查、坐标范围检查、重复值筛查、分级断点核验
+#   以及成图后的可视化检查。
 # ============================================================
 
 suppressPackageStartupMessages({
@@ -35,6 +63,7 @@ suppressPackageStartupMessages({
   library(forcats)
   library(tibble)
   library(officer)
+  library(export)
   library(rvg)
   library(units)
 })
@@ -173,32 +202,23 @@ build_bbox_from_longlat <- function(xmin, xmax, ymin, ymax, target_crs) {
   st_bbox(st_transform(bbox_ll, target_crs))
 }
 
-slide_dims <- function() {
-  ppt <- read_pptx()
-  slide_size(ppt)
-}
-
 save_chart_bundle <- function(plot_obj, out_dir, filename_no_ext, width, height, dpi = 450) {
   png_path <- file.path(out_dir, paste0(filename_no_ext, ".png"))
   pdf_path <- file.path(out_dir, paste0(filename_no_ext, ".pdf"))
-  pptx_path <- file.path(out_dir, paste0(filename_no_ext, ".pptx"))
+  pptx_base <- file.path(out_dir, filename_no_ext)
 
+  # Export high-resolution raster and vector PDF for journal submission and peer review.
+  # 导出高分辨率 PNG 和矢量 PDF，用于投稿、审稿和后续排版。
   ggsave(png_path, plot_obj, width = width, height = height, dpi = dpi, bg = "white")
   ggsave(pdf_path, plot_obj, width = width, height = height, device = cairo_pdf, bg = "white")
 
-  ppt <- read_pptx()
-  dims <- slide_size(ppt)
-  ppt <- add_slide(ppt, layout = "Blank", master = "Office Theme")
-  ppt <- ph_with(
-    ppt,
-    dml(ggobj = plot_obj),
-    location = ph_location(left = 0, top = 0, width = dims$width, height = dims$height)
-  )
-  print(ppt, target = pptx_path)
+  # Export editable PPTX using graph2ppt(); internally this relies on officer + vector graphic embedding.
+  # 使用 graph2ppt() 导出可编辑 PPTX；底层依赖 officer 和矢量图嵌入。
+  export::graph2ppt(x = plot_obj, file = pptx_base, width = width, height = height, append = FALSE, vector.graphic = TRUE)
 }
 
 save_map_bundle <- function(main_plot, inset_plot, out_dir, filename_no_ext, width, height, dpi = 450,
-                            inset_left = 0.80, inset_bottom = 0.02, inset_right = 0.995, inset_top = 0.31,
+                            inset_left = 0.815, inset_bottom = 0.005, inset_right = 0.995, inset_top = 0.245,
                             plot_xlim, plot_ylim) {
   png_path <- file.path(out_dir, paste0(filename_no_ext, ".png"))
   pdf_path <- file.path(out_dir, paste0(filename_no_ext, ".pdf"))
@@ -217,9 +237,13 @@ save_map_bundle <- function(main_plot, inset_plot, out_dir, filename_no_ext, wid
       xmin = inset_xmin, xmax = inset_xmax, ymin = inset_ymin, ymax = inset_ymax
     )
 
+  # Save the final composite map as publication files.
+  # 将主图与鹰眼图合成后统一导出为投稿文件。
   ggsave(png_path, combined_plot, width = width, height = height, dpi = dpi, bg = "white")
   ggsave(pdf_path, combined_plot, width = width, height = height, device = cairo_pdf, bg = "white")
 
+  # Complex sf maps are unstable in graph2ppt()/dml on this machine, so we use EMF vector export for maps.
+  # 复杂 sf 地图在本机 graph2ppt()/dml 下不稳定，因此地图部分改用 EMF 矢量导出。
   devEMF::emf(file = emf_main_path, width = width, height = height, bg = "white")
   print(main_plot)
   dev.off()
@@ -251,27 +275,32 @@ save_map_bundle <- function(main_plot, inset_plot, out_dir, filename_no_ext, wid
   print(ppt, target = pptx_path)
 }
 
-add_north_arrow_projected <- function(plot_obj, xlim, ylim, scale_x = 0.030, scale_y = 0.068) {
+add_north_arrow_projected <- function(plot_obj, xlim, ylim, scale_x = 0.022, scale_y = 0.050) {
   xr <- diff(xlim)
   yr <- diff(ylim)
-  x <- xlim[2] - xr * 0.06
-  y <- ylim[2] - yr * 0.14
+  x <- xlim[2] - xr * 0.072
+  y <- ylim[2] - yr * 0.112
   dx <- xr * scale_x
   dy <- yr * scale_y
 
   plot_obj +
-    annotate("text", x = x, y = y + dy * 1.25, label = "N", size = 11, family = "sans") +
+    annotate("text", x = x, y = y + dy * 1.22, label = "N", size = 9.4, family = "sans") +
     annotate(
       "polygon",
-      x = c(x, x - dx, x, x + dx),
-      y = c(y + dy * 0.85, y - dy * 1.35, y - dy * 0.10, y - dy * 1.35),
-      fill = "black", color = "black", linewidth = 0.35
+      x = c(x, x - dx * 0.62, x, x + dx * 0.62),
+      y = c(y + dy * 0.88, y - dy * 1.08, y - dy * 0.08, y - dy * 1.08),
+      fill = "black", color = "black", linewidth = 0.28
     ) +
     annotate(
       "polygon",
-      x = c(x, x - dx * 0.42, x, x + dx * 0.42),
-      y = c(y + dy * 0.45, y - dy * 0.82, y - dy * 0.02, y - dy * 0.82),
+      x = c(x, x - dx * 0.24, x, x + dx * 0.24),
+      y = c(y + dy * 0.53, y - dy * 0.70, y - dy * 0.02, y - dy * 0.70),
       fill = "white", color = "white"
+    ) +
+    annotate(
+      "segment",
+      x = x, xend = x, y = y - dy * 0.03, yend = y + dy * 0.56,
+      linewidth = 0.18, color = "white"
     )
 }
 
@@ -433,13 +462,65 @@ province_line_sf <- st_transform(province_line_sf_ll, china_crs)
 ten_dash_sf <- st_transform(ten_dash_sf_ll, china_crs)
 
 main_bbox <- st_bbox(province_sf)
-main_xlim <- c(main_bbox["xmin"] - 240000, main_bbox["xmax"] + 1380000)
-main_ylim <- c(main_bbox["ymin"] - 120000, main_bbox["ymax"] + 230000)
+main_xlim <- c(main_bbox["xmin"] - 120000, main_bbox["xmax"] + 1500000)
+main_ylim <- c(main_bbox["ymin"] + 420000, main_bbox["ymax"] + 320000)
 inset_bbox <- build_bbox_from_longlat(104, 125, 2, 26, china_crs)
+ten_dash_main_bbox <- c(xmin = unname(as.numeric(main_xlim[1])), xmax = unname(as.numeric(main_xlim[2])), ymin = unname(as.numeric(main_ylim[1])), ymax = unname(as.numeric(main_ylim[1] + diff(main_ylim) * 0.18)))
+ten_dash_main_sf <- suppressWarnings(st_crop(ten_dash_sf, ten_dash_main_bbox))
 
 # -------------------------------
-# Step 3. Compute summaries
-# 第 3 步：计算统计量
+# Step 3. Diagnose data quality and analytical assumptions
+# 第 3 步：数据质量诊断与分析假设检查
+# -------------------------------
+# This figure set is descriptive rather than model-based. Therefore the key diagnostics are
+# data integrity checks, not regression residual diagnostics. We screen missingness, duplicates,
+# implausible coordinates, temporal coverage, and taxonomic/provincial breadth before mapping.
+# 本图组属于描述性分析而非模型分析，因此关键诊断是数据完整性检查而非回归残差诊断。
+# 在制图前先检查缺失值、重复记录、可疑坐标、时间覆盖范围以及分类和省域覆盖情况。
+
+china_extent_ll <- list(lon_min = 73, lon_max = 135, lat_min = 3, lat_max = 54)
+
+diagnostic_summary <- tibble(
+  metric = c(
+    "n_records_raw", "n_missing_province", "n_missing_order", "n_missing_year",
+    "n_missing_longitude", "n_missing_latitude", "n_duplicate_species_province_year",
+    "n_coordinates_outside_china_extent", "year_min", "year_max", "n_orders", "n_provinces"
+  ),
+  value = c(
+    nrow(clean),
+    sum(is.na(clean$province_std)),
+    sum(is.na(clean$order)),
+    sum(is.na(clean$year)),
+    sum(is.na(clean$longitude)),
+    sum(is.na(clean$latitude)),
+    clean %>% count(species, province_std, year) %>% filter(n > 1) %>% nrow(),
+    clean %>% filter(!is.na(longitude), !is.na(latitude)) %>%
+      filter(longitude < china_extent_ll$lon_min | longitude > china_extent_ll$lon_max | latitude < china_extent_ll$lat_min | latitude > china_extent_ll$lat_max) %>%
+      nrow(),
+    min(clean$year, na.rm = TRUE),
+    max(clean$year, na.rm = TRUE),
+    n_distinct(clean$order, na.rm = TRUE),
+    n_distinct(clean$province_std, na.rm = TRUE)
+  )
+)
+
+duplicate_screen <- clean %>%
+  count(species, province_std, year, sort = TRUE, name = "n_duplicate") %>%
+  filter(n_duplicate > 1)
+
+coordinate_screen <- clean %>%
+  mutate(
+    coordinate_flag = case_when(
+      is.na(longitude) | is.na(latitude) ~ "missing_coordinate",
+      longitude < china_extent_ll$lon_min | longitude > china_extent_ll$lon_max ~ "longitude_outside_extent",
+      latitude < china_extent_ll$lat_min | latitude > china_extent_ll$lat_max ~ "latitude_outside_extent",
+      TRUE ~ "within_extent"
+    )
+  )
+
+# -------------------------------
+# Step 4. Compute summary statistics used by the figures
+# 第 4 步：计算绘图所需统计量
 # -------------------------------
 province_area <- province_sf %>%
   mutate(area_km2 = as.numeric(st_area(.)) / 1e6) %>%
@@ -599,9 +680,12 @@ year_order_top10$bar_df <- year_order_top10$bar_df %>% mutate(year = factor(x_va
 year_order_top10$line_df <- year_order_top10$line_df %>% mutate(year = factor(x_value, levels = sort(unique(clean$year))))
 
 # -------------------------------
-# Step 4. Save standardized data tables
-# 第 4 步：保存标准化数据表
+# Step 5. Save standardized data tables and diagnostics
+# 第 5 步：保存标准化数据表与诊断结果
 # -------------------------------
+write_csv(diagnostic_summary, file.path(data_dir, "data_diagnostic_summary.csv"))
+write_csv(duplicate_screen, file.path(data_dir, "duplicate_screening.csv"))
+write_csv(coordinate_screen, file.path(data_dir, "coordinate_screening.csv"))
 write_csv(province_summary, file.path(data_dir, "province_spatiotemporal_summary.csv"))
 write_csv(st_drop_geometry(point_map_df), file.path(data_dir, "point_map_records_by_order_group.csv"))
 write_csv(label_df, file.path(data_dir, "province_label_positions.csv"))
@@ -617,16 +701,21 @@ write_csv(tibble(order = names(province_order_full$palette), color = unname(prov
 write_csv(tibble(order = names(province_order_top10$palette), color = unname(province_order_top10$palette)), file.path(data_dir, "spatiotemporal_order_palette_top10.csv"))
 
 # -------------------------------
-# Step 5. Build projected maps
-# 第 5 步：绘制投影地图
+# Step 6. Build projected maps
+# 第 6 步：绘制投影地图
 # -------------------------------
+# Key cartographic parameters are tuned to mimic the published reference style:
+# the main map is enlarged and slightly lowered; only the uppermost part of the south-sea dashed line
+# remains in the main frame; the full south-sea context is preserved in the inset map.
+# 关键制图参数参照参考图微调：主图适度放大并略向下布局；主图仅保留九段线最上部；
+# 完整的南海与台湾海峡背景放入右下角鹰眼图。
 count_fill_scale <- scale_fill_manual(values = count_fill_values, drop = FALSE, name = "Number of new records")
 density_fill_scale <- scale_fill_manual(values = density_fill_values, drop = FALSE, name = "Number of provincial-level\nnew records/100.000km2")
 
 count_map_main <- ggplot() +
   geom_sf(data = province_map_sf, aes(fill = count_class), color = "#9A9A9A", linewidth = 0.24) +
   geom_sf(data = province_line_sf, color = "#777777", linewidth = 0.20, fill = NA) +
-  geom_sf(data = ten_dash_sf, color = "#272727", linewidth = 0.22, fill = NA) +
+  geom_sf(data = ten_dash_main_sf, color = "#272727", linewidth = 0.22, fill = NA) +
   geom_text(data = label_df, aes(x = x, y = y, label = province_label_map, hjust = hjust, vjust = vjust), family = "sans", size = 3.85, lineheight = 0.90) +
   count_fill_scale +
   coord_sf(xlim = main_xlim, ylim = main_ylim, expand = FALSE, crs = china_crs) +
@@ -645,7 +734,7 @@ count_map_inset <- ggplot() +
 density_map_main <- ggplot() +
   geom_sf(data = province_map_sf, aes(fill = density_class), color = "#9A9A9A", linewidth = 0.24) +
   geom_sf(data = province_line_sf, color = "#777777", linewidth = 0.20, fill = NA) +
-  geom_sf(data = ten_dash_sf, color = "#272727", linewidth = 0.22, fill = NA) +
+  geom_sf(data = ten_dash_main_sf, color = "#272727", linewidth = 0.22, fill = NA) +
   geom_text(data = label_df, aes(x = x, y = y, label = province_label_map, hjust = hjust, vjust = vjust), family = "sans", size = 3.85, lineheight = 0.90) +
   density_fill_scale +
   coord_sf(xlim = main_xlim, ylim = main_ylim, expand = FALSE, crs = china_crs) +
@@ -662,9 +751,9 @@ density_map_inset <- ggplot() +
   theme(panel.border = element_rect(color = "black", fill = NA, linewidth = 0.7), legend.position = "none")
 
 point_map_main <- ggplot() +
-  geom_sf(data = province_sf, fill = "white", color = "#D0D0D0", linewidth = 0.20) +
-  geom_sf(data = province_line_sf, color = "#BEBEBE", linewidth = 0.24, fill = NA) +
-  geom_sf(data = ten_dash_sf, color = "#5C5C5C", linewidth = 0.26, fill = NA) +
+  geom_sf(data = province_sf, fill = "white", color = "#8C8C8C", linewidth = 0.26) +
+  geom_sf(data = province_line_sf, color = "#5A5A5A", linewidth = 0.36, fill = NA) +
+  geom_sf(data = ten_dash_main_sf, color = "#4A4A4A", linewidth = 0.28, fill = NA) +
   geom_point(
     data = point_map_df,
     aes(x = x, y = y, color = order_group, shape = order_group),
@@ -699,16 +788,20 @@ point_map_main <- ggplot() +
 point_map_main <- add_north_arrow_projected(point_map_main, main_xlim, main_ylim)
 
 point_map_inset <- ggplot() +
-  geom_sf(data = st_crop(province_line_sf, inset_bbox), color = "#2A2A2A", linewidth = 0.22, fill = NA) +
-  geom_sf(data = st_crop(ten_dash_sf, inset_bbox), color = "#222222", linewidth = 0.24, fill = NA) +
+  geom_sf(data = st_crop(province_line_sf, inset_bbox), color = "#2A2A2A", linewidth = 0.26, fill = NA) +
+  geom_sf(data = st_crop(ten_dash_sf, inset_bbox), color = "#222222", linewidth = 0.28, fill = NA) +
   coord_sf(xlim = c(inset_bbox["xmin"], inset_bbox["xmax"]), ylim = c(inset_bbox["ymin"], inset_bbox["ymax"]), expand = FALSE, crs = china_crs) +
   theme_void() +
   theme(panel.border = element_rect(color = "black", fill = NA, linewidth = 0.7), legend.position = "none")
 
 # -------------------------------
-# Step 6. Build stacked bar-line charts
-# 第 6 步：绘制堆叠柱线图
+# Step 7. Build stacked bar-line charts
+# 第 7 步：绘制堆叠柱线图
 # -------------------------------
+# The percentage line is retained as an analytical aid but intentionally removed from the legend.
+# We also generate a condensed Top-10-plus-Others version for cleaner presentation in the main text.
+# 百分比折线保留用于辅助解释，但不在图例中单独显示；同时生成 Top 10 + Others 版本，
+# 以便在正文中更紧凑地展示目级组成。
 p_province_barline <- make_barline_plot(
   bar_df = province_order_full$bar_df,
   line_df = province_order_full$line_df,
@@ -750,20 +843,20 @@ p_year_barline_top10 <- make_barline_plot(
 ) + theme(axis.text.x = element_text(angle = 35, hjust = 1))
 
 # -------------------------------
-# Step 7. Export figures
-# 第 7 步：导出图件
+# Step 8. Export figures
+# 第 8 步：导出图件
 # -------------------------------
-save_map_bundle(count_map_main, count_map_inset, figures_dir, "fig_sp01_province_new_record_count_map", width = 13.6, height = 9.4, plot_xlim = main_xlim, plot_ylim = main_ylim)
-save_map_bundle(density_map_main, density_map_inset, figures_dir, "fig_sp02_province_new_record_density_map", width = 13.6, height = 9.4, plot_xlim = main_xlim, plot_ylim = main_ylim)
-save_map_bundle(point_map_main, point_map_inset, figures_dir, "fig_sp03_across_order_point_map", width = 16.0, height = 11.0, plot_xlim = main_xlim, plot_ylim = main_ylim)
+save_map_bundle(count_map_main, count_map_inset, figures_dir, "fig_sp01_province_new_record_count_map", width = 13.6, height = 9.4, inset_left = 0.825, inset_bottom = 0.003, inset_right = 0.995, inset_top = 0.238, plot_xlim = main_xlim, plot_ylim = main_ylim)
+save_map_bundle(density_map_main, density_map_inset, figures_dir, "fig_sp02_province_new_record_density_map", width = 13.6, height = 9.4, inset_left = 0.825, inset_bottom = 0.003, inset_right = 0.995, inset_top = 0.238, plot_xlim = main_xlim, plot_ylim = main_ylim)
+save_map_bundle(point_map_main, point_map_inset, figures_dir, "fig_sp03_across_order_point_map", width = 16.0, height = 11.0, inset_left = 0.825, inset_bottom = 0.003, inset_right = 0.995, inset_top = 0.238, plot_xlim = main_xlim, plot_ylim = main_ylim)
 save_chart_bundle(p_province_barline, figures_dir, "fig_sp04_province_stacked_barline", width = 14.2, height = 9.1)
 save_chart_bundle(p_year_barline, figures_dir, "fig_sp05_year_stacked_barline", width = 14.2, height = 8.7)
 save_chart_bundle(p_province_barline_top10, figures_dir, "fig_sp06_province_stacked_barline_top10", width = 14.2, height = 9.1)
 save_chart_bundle(p_year_barline_top10, figures_dir, "fig_sp07_year_stacked_barline_top10", width = 14.2, height = 8.7)
 
 # -------------------------------
-# Step 8. Documentation and summary
-# 第 8 步：任务说明与结果摘要
+# Step 9. Documentation, diagnostics, and summary
+# 第 9 步：任务文档、诊断说明与结果摘要
 # -------------------------------
 readme_lines <- c(
   "# Bird Spatiotemporal Patterns",
