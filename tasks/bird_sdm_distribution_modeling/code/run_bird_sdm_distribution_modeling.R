@@ -158,6 +158,7 @@ METRIC_SUMMARY_PATH <- file.path(TABLE_DIR, "table_model_metrics_summary.csv")
 RASTER_MANIFEST_PATH <- file.path(TABLE_DIR, "table_raster_output_manifest.csv")
 TASK_SUMMARY_PATH <- file.path(RESULT_DIR, "task_summary.md")
 PPTX_SUMMARY_PATH <- file.path(RESULT_DIR, "bird_sdm_summary.pptx")
+MAP_CRS <- "+proj=aea +lat_1=25 +lat_2=47 +lat_0=0 +lon_0=105 +datum=WGS84 +units=m +no_defs"
 
 create_default_manual_overrides <- function(path) {
   if (!file.exists(path)) {
@@ -1145,17 +1146,20 @@ province_sensitivity_summary <- function(binary_raster, provinces, species, scen
 }
 
 plot_probability_map <- function(probability_raster, provinces, dash_line, title) {
-  raster_df <- as.data.frame(probability_raster, xy = TRUE, na.rm = TRUE)
+  map_raster <- terra::project(probability_raster, MAP_CRS, method = "bilinear")
+  raster_df <- as.data.frame(map_raster, xy = TRUE, na.rm = TRUE)
   names(raster_df) <- c("x", "y", "probability")
+  province_map <- st_transform(provinces, MAP_CRS)
+  dash_line_map <- if (is.null(dash_line) || nrow(dash_line) == 0) NULL else st_transform(dash_line, MAP_CRS)
   p <- ggplot() +
     geom_raster(data = raster_df, aes(x = .data$x, y = .data$y, fill = .data$probability)) +
-    geom_sf(data = provinces, fill = NA, color = "#2F2F2F", linewidth = 0.2)
-  if (!is.null(dash_line) && nrow(dash_line) > 0) {
-    p <- p + geom_sf(data = dash_line, inherit.aes = FALSE, color = "#4A4E69", linewidth = 0.25)
+    geom_sf(data = province_map, fill = NA, color = "#2F2F2F", linewidth = 0.2)
+  if (!is.null(dash_line_map)) {
+    p <- p + geom_sf(data = dash_line_map, inherit.aes = FALSE, color = "#4A4E69", linewidth = 0.25)
   }
   p +
     scale_fill_viridis_c(option = "C", name = "Suitability") +
-    coord_sf(expand = FALSE) +
+    coord_sf(crs = sf::st_crs(MAP_CRS), expand = FALSE) +
     labs(title = title, x = NULL, y = NULL) +
     theme_minimal(base_family = "Arial") +
     theme(plot.title = element_text(face = "bold"), legend.position = "right")
@@ -1505,7 +1509,7 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
     paste0("Province sensitivity analysis is written for ", paste0(get_province_thresholds(model_config), "-cell", collapse = ", "), " thresholds."),
     "MaxEnt uses maxent.jar when Java and the jar are available; otherwise it falls back to maxnet if installed.",
     "Occurrence points, climate rasters, background sampling, and predictions are all restricted to the China boundary.",
-    "Species maps overlay the provincial boundary together with the nine-dash line base layer.",
+    "Species maps are rendered in a China-focused equal-area projection and overlay the provincial boundary together with the nine-dash line base layer.",
     "Potential distribution GeoTIFF rasters are indexed in table_raster_output_manifest.csv for every successfully modeled species.",
     "The final potential-province table only keeps successfully modeled species and lists each province, suitable-cell count, and suitable area for every active threshold.",
     "WorldClim elevation is appended as an environmental predictor and enters the variable-screening workflow together with the bioclim variables."
