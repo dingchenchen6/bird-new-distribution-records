@@ -159,6 +159,7 @@ PROVINCE_POTENTIAL_LIST_PATH <- file.path(TABLE_DIR, "table_potential_province_l
 AREA_CHANGE_PATH <- file.path(TABLE_DIR, "table_scenario_area_change_summary.csv")
 METRIC_SUMMARY_PATH <- file.path(TABLE_DIR, "table_model_metrics_summary.csv")
 RASTER_MANIFEST_PATH <- file.path(TABLE_DIR, "table_raster_output_manifest.csv")
+CLIMATE_MANIFEST_PATH <- file.path(TABLE_DIR, "table_climate_data_manifest.csv")
 PROGRESS_DIR <- file.path(DATA_DIR, "progress")
 PROGRESS_SPECIES_DIR <- file.path(PROGRESS_DIR, "species")
 PROGRESS_SUMMARY_PATH <- file.path(PROGRESS_DIR, "progress_summary.csv")
@@ -539,8 +540,135 @@ choose_environment_variables <- function(current_stack, cutoff = 0.7) {
   ) %>% arrange(desc(keep), variable)
 }
 
+worldclim_resolution_suffix <- function(res_value) {
+  ifelse(as.character(res_value) == "0.5", "30s", paste0(as.character(res_value), "m"))
+}
+
+get_climate_search_roots <- function(climate_root = DATA_DIR) {
+  override <- Sys.getenv("BIRD_SDM_CLIMATE_SEARCH_ROOTS", unset = "")
+  if (nzchar(override)) {
+    roots <- strsplit(override, "[;,]")[[1]]
+  } else {
+    roots <- c(
+      file.path(climate_root, "climate"),
+      climate_root,
+      PROJECT_ROOT,
+      file.path(path.expand("~"), "projects"),
+      path.expand("~")
+    )
+  }
+  roots <- trimws(roots)
+  roots[nzchar(roots) & dir.exists(roots)] %>% unique()
+}
+
+validate_raster_file <- function(path, expected_layers = 1L) {
+  if (!length(path) || is.na(path) || !file.exists(path)) {
+    return(FALSE)
+  }
+  tryCatch(
+    {
+      rst <- terra::rast(path)
+      terra::nlyr(rst) >= expected_layers
+    },
+    error = function(e) FALSE
+  )
+}
+
+write_climate_manifest <- function(entries) {
+  if (is.null(entries) || !nrow(entries)) {
+    return(invisible(NULL))
+  }
+  ensure_dir(dirname(CLIMATE_MANIFEST_PATH))
+  if (file.exists(CLIMATE_MANIFEST_PATH)) {
+    existing <- suppressMessages(readr::read_csv(CLIMATE_MANIFEST_PATH, show_col_types = FALSE)) %>%
+      transmute(
+        scenario = as.character(.data$scenario),
+        res_minutes = as.character(.data$res_minutes),
+        target_name = as.character(.data$target_name),
+        path = as.character(.data$path),
+        source = as.character(.data$source),
+        readable = as.logical(.data$readable),
+        checked_at = as.character(.data$checked_at)
+      )
+  } else {
+    existing <- tibble(
+      scenario = character(),
+      res_minutes = character(),
+      target_name = character(),
+      path = character(),
+      source = character(),
+      readable = logical(),
+      checked_at = character()
+    )
+  }
+  combined <- bind_rows(existing, entries) %>%
+    mutate(
+      scenario = as.character(.data$scenario),
+      res_minutes = as.character(.data$res_minutes),
+      target_name = as.character(.data$target_name),
+      path = as.character(.data$path),
+      source = as.character(.data$source),
+      readable = as.logical(.data$readable),
+      checked_at = as.character(.data$checked_at)
+    ) %>%
+    arrange(desc(.data$checked_at)) %>%
+    distinct(.data$scenario, .data$res_minutes, .data$target_name, .keep_all = TRUE)
+  readr::write_csv(combined, CLIMATE_MANIFEST_PATH)
+  invisible(combined)
+}
+
+scan_existing_worldclim_current_files <- function(res_value, search_roots = get_climate_search_roots()) {
+  fres <- worldclim_resolution_suffix(res_value)
+  target_names <- c(paste0("wc2.1_", fres, "_bio_", seq_len(19), ".tif"), paste0("wc2.1_", fres, "_elev.tif"))
+  pattern <- paste0("^wc2\\.1_", gsub("\\.", "\\\\.", fres), "_(bio_[0-9]+|elev)\\.tif$")
+  candidate_list <- lapply(
+    search_roots,
+    function(root) {
+      hits <- list.files(root, pattern = pattern, recursive = TRUE, full.names = TRUE)
+      if (!length(hits)) {
+        return(tibble())
+      }
+      tibble(root = root, path = hits, target_name = basename(hits))
+    }
+  )
+  candidate_files <- bind_rows(candidate_list) %>%
+    filter(.data$target_name %in% target_names)
+  if (!nrow(candidate_files)) {
+    return(tibble())
+  }
+  candidate_files <- candidate_files %>%
+    group_by(.data$target_name) %>%
+    mutate(readable = vapply(.data$path, validate_raster_file, logical(1))) %>%
+    arrange(desc(.data$readable), nchar(.data$path), .by_group = TRUE) %>%
+    slice_head(n = 1) %>%
+    ungroup() %>%
+    mutate(
+      scenario = "current",
+      res_minutes = as.character(res_value),
+      source = "scan_existing",
+      checked_at = format(Sys.time(), "%Y-%m-%d %H:%M:%S")
+    ) %>%
+    select("scenario", "res_minutes", "target_name", "path", "source", "readable", "checked_at")
+  write_climate_manifest(candidate_files)
+  candidate_files
+}
+
+load_worldclim_current_from_paths <- function(bio_paths, china_boundary) {
+  if (length(bio_paths) != 19 || any(!file.exists(bio_paths))) {
+    return(NULL)
+  }
+  stack <- tryCatch(terra::rast(bio_paths), error = function(e) NULL)
+  if (is.null(stack)) {
+    return(NULL)
+  }
+  names(stack) <- paste0("bio_", seq_len(terra::nlyr(stack)))
+  china_vect <- terra::vect(china_boundary)
+  stack <- terra::crop(stack, china_vect)
+  terra::mask(stack, china_vect)
+}
+
 repair_worldclim_bioclim_files <- function(res_value, climate_root) {
-  fres <- ifelse(res_value == "0.5", "30s", paste0(res_value, "m"))
+  fres <- worldclim_resolution_suffix(res_value)
   out_dir <- file.path(climate_root, "climate", paste0("wc2.1_", fres))
   zip_path <- file.path(out_dir, paste0("wc2.1_", fres, "_bio.zip"))
   tif_paths <- file.path(out_dir, paste0("wc2.1_", fres, "_bio_", seq_len(19), ".tif"))
@@ -552,17 +680,29 @@ repair_worldclim_bioclim_files <- function(res_value, climate_root) {
 
 
 repair_worldclim_elevation_file <- function(res_value, climate_root) {
-  fres <- ifelse(res_value == "0.5", "30s", paste0(res_value, "m"))
+  fres <- worldclim_resolution_suffix(res_value)
   out_dir <- file.path(climate_root, "climate", paste0("wc2.1_", fres))
   tif_path <- file.path(out_dir, paste0("wc2.1_", fres, "_elev.tif"))
   if (file.exists(tif_path)) tif_path else character(0)
 }
 
 load_worldclim_elevation <- function(res_value, climate_root, china_boundary) {
-  elev <- tryCatch(
-    geodata::worldclim_global(var = "elev", res = res_value, path = climate_root),
-    error = function(e) NULL
-  )
+  fres <- worldclim_resolution_suffix(res_value)
+  target_name <- paste0("wc2.1_", fres, "_elev.tif")
+  existing_tbl <- scan_existing_worldclim_current_files(res_value = res_value, search_roots = get_climate_search_roots(climate_root))
+  existing_path <- existing_tbl %>%
+    filter(.data$target_name == target_name, .data$readable) %>%
+    pull(.data$path)
+  elev <- NULL
+  if (length(existing_path) >= 1) {
+    elev <- tryCatch(terra::rast(existing_path[[1]]), error = function(e) NULL)
+  }
+  if (is.null(elev)) {
+    elev <- tryCatch(
+      geodata::worldclim_global(var = "elev", res = res_value, path = climate_root),
+      error = function(e) NULL
+    )
+  }
   if (is.null(elev)) {
     elev_path <- repair_worldclim_elevation_file(res_value = res_value, climate_root = climate_root)
     if (length(elev_path) == 1) {
@@ -585,13 +725,28 @@ load_environment_stack <- function(row, china_boundary, force_download = FALSE) 
   climate_root <- DATA_DIR
   ensure_dir(file.path(climate_root, "climate"))
 
-  stack <- if (scenario == "current") {
-    tryCatch(
+  stack <- NULL
+  if (scenario == "current" && !force_download) {
+    existing_tbl <- scan_existing_worldclim_current_files(res_value = res_value, search_roots = get_climate_search_roots(climate_root))
+    bio_paths <- existing_tbl %>%
+      filter(grepl("_bio_[0-9]+\\.tif$", .data$target_name), .data$readable) %>%
+      mutate(bio_id = readr::parse_number(.data$target_name)) %>%
+      arrange(.data$bio_id) %>%
+      pull(.data$path)
+    stack <- load_worldclim_current_from_paths(bio_paths = bio_paths, china_boundary = china_boundary)
+    if (!is.null(stack)) {
+      safe_message("Loaded current WorldClim bioclim stack from existing server files.")
+    }
+  }
+
+  if (is.null(stack) && scenario == "current") {
+    safe_message("No readable existing current WorldClim bioclim stack found; trying geodata download for ", row$scenario[[1]], ".")
+    stack <- tryCatch(
       geodata::worldclim_global(var = "bio", res = res_value, path = climate_root),
       error = function(e) NULL
     )
-  } else {
-    tryCatch(
+  } else if (is.null(stack)) {
+    stack <- tryCatch(
       geodata::cmip6_world(
         model = row$gcm[[1]],
         ssp = row$ssp[[1]],
@@ -607,7 +762,7 @@ load_environment_stack <- function(row, china_boundary, force_download = FALSE) 
   if (is.null(stack) && scenario == "current") {
     repaired_files <- repair_worldclim_bioclim_files(res_value = res_value, climate_root = climate_root)
     if (length(repaired_files) == 19) {
-      stack <- terra::rast(repaired_files)
+      stack <- tryCatch(terra::rast(repaired_files), error = function(e) NULL)
     }
   }
 
@@ -1680,6 +1835,7 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
     "Occurrence points, climate rasters, background sampling, and predictions are all restricted to the China boundary.",
     "Species maps are rendered in a China-focused equal-area projection and overlay the provincial boundary together with the nine-dash line base layer.",
     "Potential distribution GeoTIFF rasters are indexed in table_raster_output_manifest.csv for every successfully modeled species.",
+    "Current-climate preparation first scans existing server directories for readable WorldClim bioclim and elevation files, and writes the validation result to table_climate_data_manifest.csv.",
     "Run progress is written to data/progress/progress_summary.csv and data/progress/progress_events.log during batch execution.",
     "The final potential-province table only keeps successfully modeled species and lists each province, suitable-cell count, and suitable area for every active threshold.",
     "WorldClim elevation is appended as an environmental predictor and enters the variable-screening workflow together with the bioclim variables."

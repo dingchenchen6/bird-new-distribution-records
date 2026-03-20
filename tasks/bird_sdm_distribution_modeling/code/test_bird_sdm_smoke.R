@@ -58,4 +58,18 @@ safe_assert(nrow(background_pts) == 5, 'Background sampling should return the re
 algo_tbl <- read_csv(ALGO_AVAILABILITY_PATH, show_col_types = FALSE)
 safe_assert('MaxEnt' %in% algo_tbl$algorithm, 'Algorithm availability table is missing MaxEnt.')
 
+tmp_climate_root <- file.path(tempdir(), 'bird_sdm_climate_scan')
+dir.create(tmp_climate_root, recursive = TRUE, showWarnings = FALSE)
+wc_dir <- file.path(tmp_climate_root, 'wc2.1_2.5m')
+dir.create(wc_dir, recursive = TRUE, showWarnings = FALSE)
+toy_raster <- rast(xmin = 70, xmax = 71, ymin = 20, ymax = 21, resolution = 0.5)
+values(toy_raster) <- 1
+for (i in seq_len(19)) {
+  writeRaster(toy_raster, file.path(wc_dir, paste0('wc2.1_2.5m_bio_', i, '.tif')), overwrite = TRUE)
+}
+writeRaster(toy_raster, file.path(wc_dir, 'wc2.1_2.5m_elev.tif'), overwrite = TRUE)
+climate_scan_tbl <- scan_existing_worldclim_current_files('2.5', search_roots = tmp_climate_root)
+safe_assert(nrow(climate_scan_tbl) == 20, 'Existing climate scan should find 19 bioclim files plus one elevation file.')
+safe_assert(all(climate_scan_tbl$readable), 'Scanned climate rasters should be readable by terra.')
+
 cat('Smoke test completed successfully.\n')
