@@ -120,9 +120,17 @@ PROJECT_ROOT <- normalizePath(file.path(TASK_ROOT, "..", ".."), mustWork = FALSE
 SOURCE_DATA_DIR <- file.path(PROJECT_ROOT, "source_data")
 NEW_RECORD_PATH <- file.path(SOURCE_DATA_DIR, "bird_new_records_clean.csv")
 SPECIES_POOL_PATH <- file.path(SOURCE_DATA_DIR, "bird_species_pool_with_traits.csv")
-OCCURRENCE_SHP_PATH <- "/Users/dingchenchen/Documents/SDMs/物种分布/物种分布.shp"
-PROVINCE_SHP_PATH <- "/Users/dingchenchen/Documents/New records/tmp_shp_extract/shp格式的数据（调整过行政区划代码，补全省市县信息）/省.shp"
-GADM_FALLBACK_PATH <- "/Users/dingchenchen/Documents/New records/bird_new_records_R_output/data_clean/gadm/gadm41_CHN_1_pk.rds"
+DEFAULT_OCCURRENCE_SHP_PATH <- "/Users/dingchenchen/Documents/SDMs/物种分布/物种分布.shp"
+DEFAULT_PROVINCE_SHP_PATH <- file.path(
+  PROJECT_ROOT,
+  "tasks",
+  "bird_spatiotemporal_patterns",
+  "data",
+  "shapefile_base",
+  "省.shp"
+)
+OCCURRENCE_SHP_PATH <- Sys.getenv("BIRD_SDM_OCCURRENCE_SHP_PATH", unset = DEFAULT_OCCURRENCE_SHP_PATH)
+PROVINCE_SHP_PATH <- Sys.getenv("BIRD_SDM_PROVINCE_SHP_PATH", unset = DEFAULT_PROVINCE_SHP_PATH)
 
 MANUAL_OVERRIDE_PATH <- file.path(DATA_DIR, "taxonomy_manual_overrides.csv")
 SCENARIO_CONFIG_PATH <- file.path(DATA_DIR, "climate_scenario_config.csv")
@@ -227,25 +235,16 @@ log_qa <- function(category, item, status, detail = NA_character_) {
 }
 
 load_province_boundaries <- function() {
-  if (file.exists(PROVINCE_SHP_PATH)) {
-    provinces <- st_read(PROVINCE_SHP_PATH, quiet = TRUE)
-    provinces <- provinces %>%
-      transmute(
-        province_cn = as.character(.data$省名),
-        province_code = as.character(.data$省代码),
-        geometry = geometry
-      )
-  } else if (file.exists(GADM_FALLBACK_PATH)) {
-    provinces <- terra::unwrap(readRDS(GADM_FALLBACK_PATH)) %>% sf::st_as_sf()
-    provinces <- provinces %>%
-      transmute(
-        province_cn = as.character(.data$NL_NAME_1 %||% .data$NAME_1),
-        province_code = as.character(.data$GID_1),
-        geometry = geometry
-      )
-  } else {
-    stop("No province boundary source found.")
+  if (!file.exists(PROVINCE_SHP_PATH)) {
+    stop("Missing province boundary shapefile: ", PROVINCE_SHP_PATH)
   }
+  provinces <- st_read(PROVINCE_SHP_PATH, quiet = TRUE)
+  provinces <- provinces %>%
+    transmute(
+      province_cn = as.character(.data$省名),
+      province_code = as.character(.data$省代码),
+      geometry = geometry
+    )
   provinces %>% st_make_valid() %>% st_transform(4326)
 }
 
@@ -943,11 +942,16 @@ save_raster_if_present <- function(r, path) {
 }
 
 normalize_worker_count <- function(workers, n_tasks) {
-  detected <- suppressWarnings(parallel::detectCores(logical = FALSE))
-  if (is.na(detected) || detected < 1) detected <- 1L
-  max_workers <- max(1L, min(as.integer(detected), as.integer(n_tasks)))
   requested <- suppressWarnings(as.integer(workers))
   if (is.na(requested) || requested < 1) requested <- 1L
+  detected <- suppressWarnings(parallel::detectCores(logical = FALSE))
+  if (is.na(detected) || detected < 1) {
+    detected <- suppressWarnings(parallel::detectCores(logical = TRUE))
+  }
+  if (is.na(detected) || detected < 1) {
+    detected <- requested
+  }
+  max_workers <- max(1L, min(as.integer(detected), as.integer(n_tasks)))
   min(requested, max_workers)
 }
 
