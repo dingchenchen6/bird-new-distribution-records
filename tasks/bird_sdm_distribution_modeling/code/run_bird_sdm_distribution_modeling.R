@@ -159,6 +159,10 @@ PROVINCE_POTENTIAL_LIST_PATH <- file.path(TABLE_DIR, "table_potential_province_l
 AREA_CHANGE_PATH <- file.path(TABLE_DIR, "table_scenario_area_change_summary.csv")
 METRIC_SUMMARY_PATH <- file.path(TABLE_DIR, "table_model_metrics_summary.csv")
 RASTER_MANIFEST_PATH <- file.path(TABLE_DIR, "table_raster_output_manifest.csv")
+PROGRESS_DIR <- file.path(DATA_DIR, "progress")
+PROGRESS_SPECIES_DIR <- file.path(PROGRESS_DIR, "species")
+PROGRESS_SUMMARY_PATH <- file.path(PROGRESS_DIR, "progress_summary.csv")
+PROGRESS_EVENT_LOG_PATH <- file.path(PROGRESS_DIR, "progress_events.log")
 TASK_SUMMARY_PATH <- file.path(RESULT_DIR, "task_summary.md")
 PPTX_SUMMARY_PATH <- file.path(RESULT_DIR, "bird_sdm_summary.pptx")
 MAP_CRS <- "+proj=aea +lat_1=25 +lat_2=47 +lat_0=0 +lon_0=105 +datum=WGS84 +units=m +no_defs"
@@ -990,8 +994,148 @@ get_province_thresholds <- function(model_cfg) {
   unique(thresholds)
 }
 
+progress_record_path <- function(species_name) {
+  file.path(PROGRESS_SPECIES_DIR, paste0(normalize_species_key(species_name), ".csv"))
+}
+
+build_progress_row <- function(species_name, progress_status, model_status = NA_character_, skip_reason = NA_character_, detail = NA_character_) {
+  tibble(
+    species = species_name,
+    progress_status = progress_status,
+    model_status = model_status,
+    skip_reason = skip_reason,
+    detail = detail,
+    updated_at = format(Sys.time(), "%Y-%m-%d %H:%M:%S")
+  )
+}
+
+write_progress_summary <- function() {
+  ensure_dir(PROGRESS_DIR)
+  ensure_dir(PROGRESS_SPECIES_DIR)
+  progress_files <- list.files(PROGRESS_SPECIES_DIR, pattern = "\\.csv$", full.names = TRUE)
+  if (length(progress_files) == 0) {
+    summary_tbl <- tibble(
+      total_species = 0L,
+      queued = 0L,
+      running = 0L,
+      completed = 0L,
+      skipped = 0L,
+      failed = 0L,
+      finished = 0L,
+      remaining = 0L,
+      last_update = NA_character_,
+      running_species = NA_character_
+    )
+  } else {
+    progress_tbl <- bind_rows(lapply(progress_files, function(path) suppressMessages(readr::read_csv(path, show_col_types = FALSE))))
+    last_update_value <- suppressWarnings(max(progress_tbl$updated_at, na.rm = TRUE))
+    if (!is.finite(last_update_value)) last_update_value <- NA_character_
+    summary_tbl <- tibble(
+      total_species = nrow(progress_tbl),
+      queued = sum(progress_tbl$progress_status == "queued", na.rm = TRUE),
+      running = sum(progress_tbl$progress_status == "running", na.rm = TRUE),
+      completed = sum(progress_tbl$progress_status == "completed", na.rm = TRUE),
+      skipped = sum(progress_tbl$progress_status == "skipped", na.rm = TRUE),
+      failed = sum(progress_tbl$progress_status == "failed", na.rm = TRUE),
+      finished = sum(progress_tbl$progress_status %in% c("completed", "skipped", "failed"), na.rm = TRUE),
+      remaining = sum(progress_tbl$progress_status %in% c("queued", "running"), na.rm = TRUE),
+      last_update = as.character(last_update_value),
+      running_species = paste(progress_tbl$species[progress_tbl$progress_status == "running"], collapse = " | ")
+    )
+  }
+  tmp_path <- paste0(PROGRESS_SUMMARY_PATH, ".tmp_", Sys.getpid())
+  readr::write_csv(summary_tbl, tmp_path)
+  file.rename(tmp_path, PROGRESS_SUMMARY_PATH)
+  invisible(summary_tbl)
+}
+
+update_progress_record <- function(species_name, progress_status, model_status = NA_character_, skip_reason = NA_character_, detail = NA_character_) {
+  ensure_dir(PROGRESS_DIR)
+  ensure_dir(PROGRESS_SPECIES_DIR)
+  row <- build_progress_row(species_name, progress_status, model_status = model_status, skip_reason = skip_reason, detail = detail)
+  record_path <- progress_record_path(species_name)
+  tmp_path <- paste0(record_path, ".tmp_", Sys.getpid())
+  readr::write_csv(row, tmp_path)
+  file.rename(tmp_path, record_path)
+  cat(
+    paste(row$updated_at[[1]], row$species[[1]], row$progress_status[[1]], row$model_status[[1]] %||% "", row$skip_reason[[1]] %||% "", row$detail[[1]] %||% "", sep = "	"),
+    "
+",
+    file = PROGRESS_EVENT_LOG_PATH,
+    append = TRUE
+  )
+  write_progress_summary()
+  invisible(row)
+}
+
+initialize_progress_tracking <- function(species_names) {
+  ensure_dir(PROGRESS_DIR)
+  ensure_dir(PROGRESS_SPECIES_DIR)
+  old_progress_files <- list.files(PROGRESS_SPECIES_DIR, pattern = "\\.csv$", full.names = TRUE)
+  if (length(old_progress_files) > 0) unlink(old_progress_files, force = TRUE)
+  if (file.exists(PROGRESS_SUMMARY_PATH)) unlink(PROGRESS_SUMMARY_PATH, force = TRUE)
+  if (file.exists(PROGRESS_EVENT_LOG_PATH)) unlink(PROGRESS_EVENT_LOG_PATH, force = TRUE)
+  if (length(species_names) > 0) {
+    for (species_name in species_names) {
+      row <- build_progress_row(species_name, "queued", detail = "waiting_to_start")
+      readr::write_csv(row, progress_record_path(species_name))
+    }
+  }
+  write_progress_summary()
+  safe_message("Progress summary file: ", PROGRESS_SUMMARY_PATH)
+}
+
+failed_species_result <- function(species_name, species_points, algo_tbl, skip_reason = "runtime_error", detail = NA_character_) {
+  list(
+    status = tibble(
+      species = species_name,
+      match_status = "matched",
+      n_raw = nrow(species_points),
+      n_clean = nrow(species_points),
+      n_cell_unique = nrow(species_points),
+      model_status = "failed",
+      skip_reason = skip_reason,
+      cv_strategy = NA_character_,
+      maxent_engine = algo_tbl %>% filter(.data$algorithm == "MaxEnt") %>% pull(.data$engine) %>% .[[1]]
+    ),
+    metrics = tibble(),
+    province = tibble(),
+    area_change = tibble(),
+    figure_paths = character(0),
+    raster_manifest = tibble(),
+    qa_log = log_qa("model", species_name, "failed", detail)
+  )
+}
+
+execute_species_task <- function(species_name, species_points, current_stack = NULL, model_config, algo_tbl, provinces, dash_line = NULL, future_stacks = NULL, province_thresholds, current_config = NULL, china_boundary = NULL, selected_predictors = NULL, future_configs = NULL, force_download = FALSE) {
+  tryCatch(
+    run_species_task(
+      species_name = species_name,
+      species_points = species_points,
+      current_stack = current_stack,
+      model_config = model_config,
+      algo_tbl = algo_tbl,
+      provinces = provinces,
+      dash_line = dash_line,
+      future_stacks = future_stacks,
+      province_thresholds = province_thresholds,
+      current_config = current_config,
+      china_boundary = china_boundary,
+      selected_predictors = selected_predictors,
+      future_configs = future_configs,
+      force_download = force_download
+    ),
+    error = function(e) {
+      detail <- conditionMessage(e)
+      update_progress_record(species_name, "failed", model_status = "failed", skip_reason = "runtime_error", detail = detail)
+      failed_species_result(species_name, species_points, algo_tbl, skip_reason = "runtime_error", detail = detail)
+    }
+  )
+}
+
 run_species_task <- function(species_name, species_points, current_stack = NULL, model_config, algo_tbl, provinces, dash_line = NULL, future_stacks = NULL, province_thresholds, current_config = NULL, china_boundary = NULL, selected_predictors = NULL, future_configs = NULL, force_download = FALSE) {
   safe_message("Modeling species: ", species_name)
+  update_progress_record(species_name, "running", detail = "worker_started")
   qa_rows <- list()
   if (is.null(current_stack)) {
     current_stack <- WORKER_CURRENT_STACK
@@ -1003,6 +1147,7 @@ run_species_task <- function(species_name, species_points, current_stack = NULL,
     }
     if (is.null(current_stack)) {
       qa_rows[[length(qa_rows) + 1]] <- log_qa("climate", species_name, "missing", "Current climate raster unavailable inside worker")
+      update_progress_record(species_name, "failed", model_status = "failed", skip_reason = "missing_current_climate", detail = "current climate unavailable inside worker")
       return(list(
         status = tibble(
           species = species_name,
@@ -1062,6 +1207,14 @@ run_species_task <- function(species_name, species_points, current_stack = NULL,
   )
 
   if (!identical(model_fit$status$model_status[[1]], "modeled")) {
+    progress_state <- if (identical(model_fit$status$model_status[[1]], "skipped")) "skipped" else "failed"
+    update_progress_record(
+      species_name,
+      progress_state,
+      model_status = model_fit$status$model_status[[1]],
+      skip_reason = model_fit$status$skip_reason[[1]],
+      detail = "model_fit_finished"
+    )
     return(result)
   }
 
@@ -1125,6 +1278,7 @@ run_species_task <- function(species_name, species_points, current_stack = NULL,
   result$province <- bind_rows(province_rows)
   result$area_change <- bind_rows(area_change_rows)
   result$raster_manifest <- bind_rows(raster_rows)
+  update_progress_record(species_name, "completed", model_status = "modeled", skip_reason = model_fit$status$skip_reason[[1]], detail = "model_outputs_written")
   result
 }
 
@@ -1352,10 +1506,11 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
     pull(.data$species)
   occurrence_ready <- occurrence_ready %>% filter(.data$species %in% species_names)
   worker_count <- normalize_worker_count(workers, length(species_names))
+  initialize_progress_tracking(species_names)
   safe_message("Running ", length(species_names), " species with workers=", worker_count)
   species_points_list <- split(occurrence_ready, occurrence_ready$species)
   species_runner <- function(species_name) {
-    run_species_task(
+    execute_species_task(
       species_name = species_name,
       species_points = species_points_list[[species_name]],
       current_stack = current_stack,
@@ -1380,7 +1535,7 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
       envir = environment()
     )
     parallel::parLapplyLB(cl, species_names, function(species_name) {
-      run_species_task(
+      execute_species_task(
         species_name = species_name,
         species_points = species_points_list[[species_name]],
         current_stack = NULL,
@@ -1402,6 +1557,7 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
   }
   names(species_results) <- species_names
 
+  write_progress_summary()
   species_status_tbl <- bind_rows(lapply(species_results, function(x) x$status))
   if (nrow(species_status_tbl) == 0) {
     species_status_tbl <- match_tbl %>%
@@ -1524,6 +1680,7 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
     "Occurrence points, climate rasters, background sampling, and predictions are all restricted to the China boundary.",
     "Species maps are rendered in a China-focused equal-area projection and overlay the provincial boundary together with the nine-dash line base layer.",
     "Potential distribution GeoTIFF rasters are indexed in table_raster_output_manifest.csv for every successfully modeled species.",
+    "Run progress is written to data/progress/progress_summary.csv and data/progress/progress_events.log during batch execution.",
     "The final potential-province table only keeps successfully modeled species and lists each province, suitable-cell count, and suitable area for every active threshold.",
     "WorldClim elevation is appended as an environmental predictor and enters the variable-screening workflow together with the bioclim variables."
   )
