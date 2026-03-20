@@ -43,6 +43,9 @@ safe_message <- function(...) {
   cat(paste0(..., "\n"))
 }
 
+WORKER_CURRENT_STACK <- NULL
+WORKER_FUTURE_STACKS <- NULL
+
 ensure_dir <- function(path) {
   dir.create(path, recursive = TRUE, showWarnings = FALSE)
   path
@@ -991,7 +994,13 @@ run_species_task <- function(species_name, species_points, current_stack = NULL,
   safe_message("Modeling species: ", species_name)
   qa_rows <- list()
   if (is.null(current_stack)) {
-    current_stack <- load_environment_stack(current_config, china_boundary, force_download = force_download)
+    current_stack <- WORKER_CURRENT_STACK
+    if (is.null(current_stack)) {
+      current_stack <- load_environment_stack(current_config, china_boundary, force_download = force_download)
+      if (!is.null(current_stack)) {
+        WORKER_CURRENT_STACK <<- current_stack
+      }
+    }
     if (is.null(current_stack)) {
       qa_rows[[length(qa_rows) + 1]] <- log_qa("climate", species_name, "missing", "Current climate raster unavailable inside worker")
       return(list(
@@ -1019,8 +1028,11 @@ run_species_task <- function(species_name, species_points, current_stack = NULL,
     }
   }
   if (is.null(future_stacks)) {
-    future_stacks <- list()
-    if (!is.null(future_configs) && nrow(future_configs) > 0) {
+    future_stacks <- WORKER_FUTURE_STACKS
+    if (is.null(future_stacks)) {
+      future_stacks <- list()
+    }
+    if (length(future_stacks) == 0 && !is.null(future_configs) && nrow(future_configs) > 0) {
       for (row_i in seq_len(nrow(future_configs))) {
         row <- future_configs[row_i, , drop = FALSE]
         future_stack <- load_environment_stack(row, china_boundary, force_download = force_download)
@@ -1033,6 +1045,7 @@ run_species_task <- function(species_name, species_points, current_stack = NULL,
         }
         future_stacks[[row$scenario[[1]]]] <- list(config = row, stack = future_stack)
       }
+      WORKER_FUTURE_STACKS <<- future_stacks
     }
   }
   sp_points <- species_points %>% distinct(.data$species, .data$longitude, .data$latitude, .keep_all = TRUE)
