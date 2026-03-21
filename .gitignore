@@ -2,3 +2,6 @@
 .Rhistory
 .RData
 tasks/bird_sdm_distribution_modeling/data/climate/
+tasks/bird_sdm_distribution_modeling/data/progress/
+tasks/bird_sdm_distribution_modeling/logs/
+tasks/bird_sdm_distribution_modeling/data/occurrence/occurrence_records_clean.csv

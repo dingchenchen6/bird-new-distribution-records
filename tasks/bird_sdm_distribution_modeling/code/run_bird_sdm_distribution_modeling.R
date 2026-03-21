@@ -1,16 +1,48 @@
 #!/usr/bin/env Rscript
 
 # ============================================================
-# Bird SDM workflow for new-record bird species in China
-# Workflow: species screening -> taxonomy review -> occurrence cleaning ->
-# climate preparation -> SDM fitting -> province sensitivity analysis ->
-# figures / tables / summary outputs.
+# Scientific Question | 科学问题
+# ------------------------------------------------------------
+# English:
+# How do bird species that are classified as "new distribution records"
+# in China differ in their current and future climatically suitable
+# geographic distributions within China?
 #
-# Design goals:
-# 1. Only model bird species that are part of the new-record species pool.
-# 2. Use occurrence points exclusively from the local species-distribution SHP.
-# 3. Keep the pipeline robust when some modeling dependencies are unavailable.
-# 4. Emit taxonomy review tables and QA outputs even before heavy modeling runs.
+# 中文：
+# 对于被识别为“中国鸟类新纪录”的物种，其在中国范围内的当前与未来
+# 气候适生分布格局如何变化？
+#
+# Research Goals | 研究目标
+# ------------------------------------------------------------
+# English:
+# 1. Build a modeling species pool strictly from the new-record bird list.
+# 2. Use occurrence points from the species-distribution shapefile only.
+# 3. Standardize taxonomy review with Avibase/IOC and BirdLife fields.
+# 4. Fit SDMs in China, diagnose model quality, and summarize province-level
+#    potential distributions under multiple suitable-cell thresholds.
+#
+# 中文：
+# 1. 严格以鸟类新纪录物种名单构建建模物种池。
+# 2. 仅使用“物种分布.shp”中的出现点作为 SDM 输入。
+# 3. 以 Avibase/IOC 和 BirdLife 审查字段规范同物异名与分类校正。
+# 4. 在中国范围内开展 SDM 建模、模型诊断，并在多个适生栅格阈值下
+#    汇总潜在分布省份。
+#
+# Workflow Framework | 研究思路框架
+# ------------------------------------------------------------
+# English:
+# Step A. Input data and taxonomy review
+# Step B. Occurrence cleaning and China-range filtering
+# Step C. Climate/elevation preparation and variable screening
+# Step D. SDM fitting, validation, and prediction
+# Step E. Province sensitivity analysis, maps, and summary tables
+#
+# 中文：
+# 步骤 A：输入数据读取与分类审查
+# 步骤 B：出现点清洗与中国范围筛选
+# 步骤 C：气候/海拔变量准备与变量筛选
+# 步骤 D：SDM 建模、验证与预测
+# 步骤 E：省级敏感性分析、地图输出与结果汇总
 # ============================================================
 
 suppressPackageStartupMessages({
@@ -37,6 +69,43 @@ options(stringsAsFactors = FALSE)
 
 `%||%` <- function(x, y) {
   if (is.null(x) || length(x) == 0) y else x
+}
+
+normalize_path_slashes <- function(path) {
+  gsub("\\\\", "/", as.character(path))
+}
+
+make_repo_relative_path <- function(path) {
+  values <- as.character(path)
+  vapply(values, function(one_path) {
+    if (is.na(one_path) || !nzchar(one_path)) {
+      return(one_path)
+    }
+    normalized_path <- tryCatch(
+      normalize_path_slashes(normalizePath(one_path, mustWork = FALSE)),
+      error = function(e) normalize_path_slashes(one_path)
+    )
+    project_root_normalized <- normalize_path_slashes(normalizePath(PROJECT_ROOT, mustWork = FALSE))
+    task_root_normalized <- normalize_path_slashes(normalizePath(TASK_ROOT, mustWork = FALSE))
+    repo_marker <- "/bird-new-distribution-records/"
+    if (startsWith(normalized_path, paste0(project_root_normalized, "/"))) {
+      return(substring(normalized_path, nchar(project_root_normalized) + 2L))
+    }
+    if (startsWith(normalized_path, paste0(task_root_normalized, "/"))) {
+      return(file.path("tasks", "bird_sdm_distribution_modeling", substring(normalized_path, nchar(task_root_normalized) + 2L)) %>% normalize_path_slashes())
+    }
+    if (grepl(repo_marker, normalized_path, fixed = TRUE)) {
+      return(sub("^.*/bird-new-distribution-records/", "", normalized_path))
+    }
+    normalized_path
+  }, character(1))
+}
+
+sanitize_log_detail <- function(detail) {
+  values <- as.character(detail)
+  path_like <- !is.na(values) & grepl("(/|\\\\)", values)
+  values[path_like] <- make_repo_relative_path(values[path_like])
+  values
 }
 
 safe_message <- function(...) {
@@ -118,12 +187,16 @@ RASTER_DIR <- ensure_dir(file.path(DATA_DIR, "rasters"))
 TABLE_DIR <- ensure_dir(file.path(DATA_DIR, "tables"))
 FIGURE_MAP_DIR <- ensure_dir(file.path(FIGURE_DIR, "species_maps"))
 FIGURE_SUMMARY_DIR <- ensure_dir(file.path(FIGURE_DIR, "summaries"))
+OCCURRENCE_INPUT_DIR <- ensure_dir(file.path(DATA_DIR, "occurrence"))
 
 PROJECT_ROOT <- normalizePath(file.path(TASK_ROOT, "..", ".."), mustWork = FALSE)
 SOURCE_DATA_DIR <- file.path(PROJECT_ROOT, "source_data")
 NEW_RECORD_PATH <- file.path(SOURCE_DATA_DIR, "bird_new_records_clean.csv")
 SPECIES_POOL_PATH <- file.path(SOURCE_DATA_DIR, "bird_species_pool_with_traits.csv")
-DEFAULT_OCCURRENCE_SHP_PATH <- "/Users/dingchenchen/Documents/SDMs/物种分布/物种分布.shp"
+# Prefer the cleaned bird-only CSV for reproducible runs. An optional shapefile
+# can still be supplied through BIRD_SDM_OCCURRENCE_SHP_PATH when needed.
+DEFAULT_OCCURRENCE_CSV_PATH <- file.path(OCCURRENCE_INPUT_DIR, "occurrence_records_clean_standardized.csv")
+DEFAULT_OCCURRENCE_SHP_PATH <- file.path(OCCURRENCE_INPUT_DIR, "occurrence_points.shp")
 DEFAULT_PROVINCE_SHP_PATH <- file.path(
   PROJECT_ROOT,
   "tasks",
@@ -140,6 +213,8 @@ DEFAULT_DASHLINE_SHP_PATH <- file.path(
   "shapefile_base",
   "十段线.shp"
 )
+OCCURRENCE_SOURCE <- Sys.getenv("BIRD_SDM_OCCURRENCE_SOURCE", unset = "auto")
+OCCURRENCE_CSV_PATH <- Sys.getenv("BIRD_SDM_OCCURRENCE_CSV_PATH", unset = DEFAULT_OCCURRENCE_CSV_PATH)
 OCCURRENCE_SHP_PATH <- Sys.getenv("BIRD_SDM_OCCURRENCE_SHP_PATH", unset = DEFAULT_OCCURRENCE_SHP_PATH)
 PROVINCE_SHP_PATH <- Sys.getenv("BIRD_SDM_PROVINCE_SHP_PATH", unset = DEFAULT_PROVINCE_SHP_PATH)
 DASHLINE_SHP_PATH <- Sys.getenv("BIRD_SDM_DASHLINE_SHP_PATH", unset = DEFAULT_DASHLINE_SHP_PATH)
@@ -249,10 +324,21 @@ log_qa <- function(category, item, status, detail = NA_character_) {
     category = category,
     item = item,
     status = status,
-    detail = detail
+    detail = sanitize_log_detail(detail)
   )
 }
 
+# ------------------------------------------------------------
+# Step A. Data input and taxonomy review | 数据输入与分类审查
+# ------------------------------------------------------------
+# English:
+# Read province boundaries, dash-line overlay, new-record tables, and the
+# occurrence shapefile. All occurrence points are filtered to China before
+# any taxonomy matching or model fitting is attempted.
+#
+# 中文：
+# 读取省级边界、九段线、新纪录数据表和出现点 shapefile。所有出现点
+# 都会先限制在中国范围内，再进入分类匹配与后续建模步骤。
 load_province_boundaries <- function() {
   if (!file.exists(PROVINCE_SHP_PATH)) {
     stop("Missing province boundary shapefile: ", PROVINCE_SHP_PATH)
@@ -309,7 +395,57 @@ build_species_master <- function(new_records, species_pool) {
     arrange(species)
 }
 
-load_occurrence_points <- function(china_boundary) {
+finalize_occurrence_points <- function(tbl, china_boundary) {
+  required_cols <- c("shp_species", "longitude", "latitude")
+  if (!all(required_cols %in% names(tbl))) {
+    stop("Occurrence table is missing required columns: ", paste(setdiff(required_cols, names(tbl)), collapse = ", "))
+  }
+  tbl <- tbl %>%
+    mutate(
+      shp_species = normalize_species_name(.data$shp_species),
+      shp_species_key = normalize_species_key(.data$shp_species),
+      order_occurrence = if ("order_occurrence" %in% names(tbl)) str_to_title(str_to_lower(str_squish(as.character(.data$order_occurrence)))) else NA_character_,
+      family_occurrence = if ("family_occurrence" %in% names(tbl)) str_squish(as.character(.data$family_occurrence)) else NA_character_,
+      longitude = as.numeric(.data$longitude),
+      latitude = as.numeric(.data$latitude)
+    ) %>%
+    filter(!is.na(.data$shp_species), .data$shp_species != "") %>%
+    filter(!is.na(.data$longitude), !is.na(.data$latitude)) %>%
+    filter(between(.data$longitude, 70, 140), between(.data$latitude, 0, 60))
+  points_sf <- st_as_sf(tbl, coords = c("longitude", "latitude"), crs = 4326, remove = FALSE)
+  points_sf %>%
+    st_filter(st_as_sf(china_boundary), .predicate = st_intersects) %>%
+    distinct(.data$shp_species, .data$longitude, .data$latitude, .keep_all = TRUE)
+}
+
+pick_first_existing_column <- function(tbl, candidates, default = NA) {
+  matched <- candidates[candidates %in% names(tbl)]
+  if (length(matched) == 0) {
+    return(rep(default, nrow(tbl)))
+  }
+  value <- tbl[[matched[[1]]]]
+  if (is.null(value)) {
+    return(rep(default, nrow(tbl)))
+  }
+  value
+}
+
+load_occurrence_points_from_csv <- function(china_boundary) {
+  if (!file.exists(OCCURRENCE_CSV_PATH)) {
+    stop("Missing occurrence CSV: ", OCCURRENCE_CSV_PATH)
+  }
+  occ <- suppressMessages(readr::read_csv(OCCURRENCE_CSV_PATH, show_col_types = FALSE))
+  standardized <- tibble(
+    shp_species = pick_first_existing_column(occ, c("species", "scientific_name", "shp_species"), default = NA_character_),
+    order_occurrence = pick_first_existing_column(occ, c("order_occurrence", "order"), default = NA_character_),
+    family_occurrence = pick_first_existing_column(occ, c("family_occurrence", "family"), default = NA_character_),
+    longitude = pick_first_existing_column(occ, c("longitude", "decimalLongitude"), default = NA_real_),
+    latitude = pick_first_existing_column(occ, c("latitude", "decimalLatitude"), default = NA_real_)
+  )
+  finalize_occurrence_points(standardized, china_boundary)
+}
+
+load_occurrence_points_from_shp <- function(china_boundary) {
   if (!file.exists(OCCURRENCE_SHP_PATH)) stop("Missing occurrence shapefile: ", OCCURRENCE_SHP_PATH)
   shp <- st_read(OCCURRENCE_SHP_PATH, quiet = TRUE) %>% st_transform(4326)
   birds <- shp %>%
@@ -323,20 +459,107 @@ load_occurrence_points <- function(china_boundary) {
       latitude = as.numeric(.data$Latitude)
     ) %>%
     filter(.data$class_value == "aves" | .data$useclass_value == "bird") %>%
-    filter(!is.na(.data$shp_species), .data$shp_species != "") %>%
-    filter(st_geometry_type(geometry) == "POINT") %>%
-    transmute(
-      shp_species,
-      shp_species_key = normalize_species_key(.data$shp_species),
-      order_occurrence,
-      family_occurrence,
-      longitude,
-      latitude,
-      geometry = geometry
+    st_drop_geometry() %>%
+    select(.data$shp_species, .data$order_occurrence, .data$family_occurrence, .data$longitude, .data$latitude)
+  finalize_occurrence_points(birds, china_boundary)
+}
+
+fetch_rgbif_occurrences_for_species <- function(query_name, limit_per_call = 1000, max_records = 20000) {
+  if (!requireNamespace("rgbif", quietly = TRUE)) {
+    stop("Package 'rgbif' is required for OCCURRENCE_SOURCE='rgbif'.")
+  }
+  all_rows <- list()
+  start_at <- 0
+  while (start_at < max_records) {
+    occ_res <- rgbif::occ_search(
+      scientificName = query_name,
+      hasCoordinate = TRUE,
+      country = "CN",
+      limit = limit_per_call,
+      start = start_at,
+      fields = "minimal"
     )
-    china_sf <- st_as_sf(china_boundary)
-  birds <- birds %>% st_filter(china_sf, .predicate = st_intersects)
-  birds
+    dat <- occ_res$data
+    if (is.null(dat) || !nrow(dat)) {
+      break
+    }
+    all_rows[[length(all_rows) + 1]] <- dat
+    if (nrow(dat) < limit_per_call) {
+      break
+    }
+    start_at <- start_at + limit_per_call
+  }
+  bind_rows(all_rows)
+}
+
+build_rgbif_query_table <- function(species_master, overrides_tbl) {
+  prepared_overrides <- prepare_manual_overrides(overrides_tbl)
+  species_master %>%
+    transmute(new_record_species = .data$species, species_key = .data$species_key) %>%
+    left_join(
+      prepared_overrides %>% select(.data$new_record_species_key, .data$matched_species),
+      by = c("species_key" = "new_record_species_key")
+    ) %>%
+    mutate(query_species = coalesce(.data$matched_species, .data$new_record_species)) %>%
+    distinct(.data$new_record_species, .data$query_species)
+}
+
+load_occurrence_points_from_rgbif <- function(china_boundary, species_master, overrides_tbl) {
+  query_tbl <- build_rgbif_query_table(species_master, overrides_tbl)
+  rgbif_rows <- lapply(seq_len(nrow(query_tbl)), function(i) {
+    row <- query_tbl[i, , drop = FALSE]
+    safe_message("Fetching RGBIF occurrences for ", row$query_species[[1]], " ...")
+    dat <- tryCatch(fetch_rgbif_occurrences_for_species(row$query_species[[1]]), error = function(e) tibble())
+    if (!nrow(dat)) {
+      return(tibble())
+    }
+    dat %>%
+      transmute(
+        shp_species = row$query_species[[1]],
+        order_occurrence = coalesce(.data$order, NA_character_),
+        family_occurrence = coalesce(.data$family, NA_character_),
+        longitude = coalesce(.data$decimalLongitude, .data$longitude),
+        latitude = coalesce(.data$decimalLatitude, .data$latitude),
+        gbif_key = as.character(.data$key),
+        occurrence_source = "rgbif"
+      )
+  })
+  occ_tbl <- bind_rows(rgbif_rows)
+  if (!nrow(occ_tbl)) {
+    stop("No RGBIF occurrence points were returned for the new-record bird species.")
+  }
+  readr::write_csv(occ_tbl, OCCURRENCE_CSV_PATH)
+  finalize_occurrence_points(occ_tbl, china_boundary)
+}
+
+load_occurrence_points <- function(china_boundary, species_master = NULL, overrides_tbl = NULL) {
+  source_mode <- str_to_lower(str_squish(OCCURRENCE_SOURCE))
+  if (source_mode == "csv") {
+    return(load_occurrence_points_from_csv(china_boundary))
+  }
+  if (source_mode == "rgbif") {
+    return(load_occurrence_points_from_rgbif(china_boundary, species_master, overrides_tbl))
+  }
+  if (source_mode == "shp") {
+    return(load_occurrence_points_from_shp(china_boundary))
+  }
+  if (file.exists(OCCURRENCE_CSV_PATH)) {
+    return(load_occurrence_points_from_csv(china_boundary))
+  }
+  if (requireNamespace("rgbif", quietly = TRUE) && !is.null(species_master) && !is.null(overrides_tbl)) {
+    return(load_occurrence_points_from_rgbif(china_boundary, species_master, overrides_tbl))
+  }
+  if (file.exists(OCCURRENCE_SHP_PATH)) {
+    return(load_occurrence_points_from_shp(china_boundary))
+  }
+  stop(
+    paste(
+      "No usable occurrence source was found.",
+      "Provide data/occurrence/occurrence_records_clean_standardized.csv,",
+      "set BIRD_SDM_OCCURRENCE_SOURCE=rgbif with the rgbif package installed,",
+      "or place an optional shapefile at", OCCURRENCE_SHP_PATH, "."
+    )
+  )
 }
 
 prepare_manual_overrides <- function(overrides_tbl) {
@@ -510,6 +733,17 @@ collect_algorithm_availability <- function() {
   )
 }
 
+# ------------------------------------------------------------
+# Step C2. Variable screening | 环境变量筛选
+# ------------------------------------------------------------
+# English:
+# Use correlation screening to retain a biologically interpretable subset of
+# predictors. Priority is given to elevation and a core set of temperature/
+# precipitation variables with broad ecological meaning.
+#
+# 中文：
+# 通过相关性筛选保留生态解释性更强的一组环境变量。优先保留海拔以及
+# 一组具有明确生态意义的核心温度/降水变量。
 choose_environment_variables <- function(current_stack, cutoff = 0.7) {
   sample_df <- terra::spatSample(current_stack, size = min(15000, max(1000, terra::ncell(current_stack))), method = "regular", as.data.frame = TRUE, na.rm = TRUE)
   sample_df <- sample_df[, colnames(sample_df) %in% names(current_stack), drop = FALSE]
@@ -540,24 +774,26 @@ choose_environment_variables <- function(current_stack, cutoff = 0.7) {
   ) %>% arrange(desc(keep), variable)
 }
 
+# ------------------------------------------------------------
+# Step C1. Climate and elevation file discovery | 气候与海拔数据定位
+# ------------------------------------------------------------
+# English:
+# Prefer cached WorldClim files inside the task data directory so repeated
+# runs do not trigger unnecessary downloads. If cached files are incomplete
+# or unreadable, the workflow falls back to geodata::worldclim_global().
+#
+# 中文：
+# 优先使用任务目录下已经缓存的 WorldClim 文件，避免重复下载；如果
+# 本地缓存不完整或不可读，则回退到 geodata::worldclim_global() 下载。
 worldclim_resolution_suffix <- function(res_value) {
   ifelse(as.character(res_value) == "0.5", "30s", paste0(as.character(res_value), "m"))
 }
 
-get_climate_search_roots <- function(climate_root = DATA_DIR) {
-  override <- Sys.getenv("BIRD_SDM_CLIMATE_SEARCH_ROOTS", unset = "")
-  if (nzchar(override)) {
-    roots <- strsplit(override, "[;,]")[[1]]
-  } else {
-    roots <- c(
-      file.path(climate_root, "climate"),
-      climate_root,
-      PROJECT_ROOT,
-      file.path(path.expand("~"), "projects"),
-      path.expand("~")
-    )
-  }
-  roots <- trimws(roots)
+get_climate_cache_roots <- function(climate_root = DATA_DIR) {
+  roots <- c(
+    file.path(climate_root, "climate"),
+    climate_root
+  )
   roots[nzchar(roots) & dir.exists(roots)] %>% unique()
 }
 
@@ -585,7 +821,7 @@ write_climate_manifest <- function(entries) {
         scenario = as.character(.data$scenario),
         res_minutes = as.character(.data$res_minutes),
         target_name = as.character(.data$target_name),
-        path = as.character(.data$path),
+        path = make_repo_relative_path(.data$path),
         source = as.character(.data$source),
         readable = as.logical(.data$readable),
         checked_at = as.character(.data$checked_at)
@@ -606,7 +842,7 @@ write_climate_manifest <- function(entries) {
       scenario = as.character(.data$scenario),
       res_minutes = as.character(.data$res_minutes),
       target_name = as.character(.data$target_name),
-      path = as.character(.data$path),
+      path = make_repo_relative_path(.data$path),
       source = as.character(.data$source),
       readable = as.logical(.data$readable),
       checked_at = as.character(.data$checked_at)
@@ -617,7 +853,7 @@ write_climate_manifest <- function(entries) {
   invisible(combined)
 }
 
-scan_existing_worldclim_current_files <- function(res_value, search_roots = get_climate_search_roots()) {
+scan_cached_worldclim_current_files <- function(res_value, search_roots = get_climate_cache_roots()) {
   fres <- worldclim_resolution_suffix(res_value)
   target_names <- c(paste0("wc2.1_", fres, "_bio_", seq_len(19), ".tif"), paste0("wc2.1_", fres, "_elev.tif"))
   pattern <- paste0("^wc2\\.1_", gsub("\\.", "\\\\.", fres), "_(bio_[0-9]+|elev)\\.tif$")
@@ -652,6 +888,9 @@ scan_existing_worldclim_current_files <- function(res_value, search_roots = get_
   write_climate_manifest(candidate_files)
   candidate_files
 }
+
+# Backward-compatible alias used by legacy helper scripts and smoke tests.
+scan_existing_worldclim_current_files <- scan_cached_worldclim_current_files
 
 load_worldclim_current_from_paths <- function(bio_paths, china_boundary) {
   if (length(bio_paths) != 19 || any(!file.exists(bio_paths))) {
@@ -689,7 +928,7 @@ repair_worldclim_elevation_file <- function(res_value, climate_root) {
 load_worldclim_elevation <- function(res_value, climate_root, china_boundary) {
   fres <- worldclim_resolution_suffix(res_value)
   target_name <- paste0("wc2.1_", fres, "_elev.tif")
-  existing_tbl <- scan_existing_worldclim_current_files(res_value = res_value, search_roots = get_climate_search_roots(climate_root))
+  existing_tbl <- scan_cached_worldclim_current_files(res_value = res_value, search_roots = get_climate_cache_roots(climate_root))
   existing_path <- existing_tbl %>%
     filter(.data$target_name == target_name, .data$readable) %>%
     pull(.data$path)
@@ -727,7 +966,7 @@ load_environment_stack <- function(row, china_boundary, force_download = FALSE) 
 
   stack <- NULL
   if (scenario == "current" && !force_download) {
-    existing_tbl <- scan_existing_worldclim_current_files(res_value = res_value, search_roots = get_climate_search_roots(climate_root))
+    existing_tbl <- scan_cached_worldclim_current_files(res_value = res_value, search_roots = get_climate_cache_roots(climate_root))
     bio_paths <- existing_tbl %>%
       filter(grepl("_bio_[0-9]+\\.tif$", .data$target_name), .data$readable) %>%
       mutate(bio_id = readr::parse_number(.data$target_name)) %>%
@@ -735,12 +974,12 @@ load_environment_stack <- function(row, china_boundary, force_download = FALSE) 
       pull(.data$path)
     stack <- load_worldclim_current_from_paths(bio_paths = bio_paths, china_boundary = china_boundary)
     if (!is.null(stack)) {
-      safe_message("Loaded current WorldClim bioclim stack from existing server files.")
+      safe_message("Loaded current WorldClim bioclim stack from cached local climate files.")
     }
   }
 
   if (is.null(stack) && scenario == "current") {
-    safe_message("No readable existing current WorldClim bioclim stack found; trying geodata download for ", row$scenario[[1]], ".")
+    safe_message("No readable cached current WorldClim stack found; trying direct download for ", row$scenario[[1]], ".")
     stack <- tryCatch(
       geodata::worldclim_global(var = "bio", res = res_value, path = climate_root),
       error = function(e) NULL
@@ -1288,7 +1527,29 @@ execute_species_task <- function(species_name, species_points, current_stack = N
   )
 }
 
+parallel_species_task_runner <- function(task) {
+  execute_species_task(
+    species_name = task$species_name,
+    species_points = task$species_points,
+    current_stack = NULL,
+    model_config = model_config,
+    algo_tbl = algo_tbl,
+    provinces = provinces,
+    dash_line = dash_line,
+    future_stacks = NULL,
+    province_thresholds = province_thresholds,
+    current_config = current_config,
+    china_boundary = china_boundary,
+    selected_predictors = selected_predictors,
+    future_configs = future_configs,
+    force_download = force_download
+  )
+}
+
 run_species_task <- function(species_name, species_points, current_stack = NULL, model_config, algo_tbl, provinces, dash_line = NULL, future_stacks = NULL, province_thresholds, current_config = NULL, china_boundary = NULL, selected_predictors = NULL, future_configs = NULL, force_download = FALSE) {
+  if (!inherits(species_points, "sf")) {
+    species_points <- st_as_sf(species_points, coords = c("longitude", "latitude"), crs = 4326, remove = FALSE)
+  }
   safe_message("Modeling species: ", species_name)
   update_progress_record(species_name, "running", detail = "worker_started")
   qa_rows <- list()
@@ -1559,6 +1820,17 @@ write_task_summary <- function(summary_stats, algo_tbl, note_lines = character(0
   writeLines(lines, TASK_SUMMARY_PATH)
 }
 
+# ------------------------------------------------------------
+# Step D-E. End-to-end SDM pipeline | 端到端 SDM 流程
+# ------------------------------------------------------------
+# English:
+# This controller function stitches together all analysis stages:
+# input loading, taxonomy review, climate preparation, SDM fitting,
+# model diagnostics, map generation, and province sensitivity analysis.
+#
+# 中文：
+# 这个总控函数负责串联整个研究流程：输入数据读取、分类审查、
+# 气候变量准备、SDM 建模、模型诊断、地图输出和省级敏感性分析。
 run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_, species_limit = NA_integer_, force_download = FALSE, current_only = FALSE, workers = 1L) {
   qa_log <- list()
   qa_log[[length(qa_log) + 1]] <- log_qa("setup", "task_root", "ok", TASK_ROOT)
@@ -1575,7 +1847,7 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
   species_master <- build_species_master(src$new_records, src$species_pool)
   readr::write_csv(species_master %>% select(-species_key, -genus, -epithet), MASTER_SPECIES_PATH)
 
-  occurrence_birds <- load_occurrence_points(china_boundary)
+  occurrence_birds <- load_occurrence_points(china_boundary, species_master = species_master, overrides_tbl = manual_overrides)
   if (nrow(occurrence_birds) == 0) stop("No bird occurrence points were found after filtering the shapefile.")
   qa_log[[length(qa_log) + 1]] <- log_qa("input", "bird_occurrence_records", "ok", as.character(nrow(occurrence_birds)))
 
@@ -1630,7 +1902,11 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
   }
 
   occurrence_ready <- occurrence_birds %>%
-    left_join(modelable_species %>% select(new_record_species, matched_species), by = c("shp_species" = "matched_species")) %>%
+    left_join(
+      modelable_species %>% select(new_record_species, matched_species),
+      by = c("shp_species" = "matched_species"),
+      relationship = "many-to-many"
+    ) %>%
     filter(!is.na(.data$new_record_species)) %>%
     transmute(species = .data$new_record_species, shp_species, order_occurrence, family_occurrence, longitude, latitude, geometry = geometry) %>%
     filter(!is.na(.data$longitude), !is.na(.data$latitude), between(.data$longitude, 70, 140), between(.data$latitude, 0, 60)) %>%
@@ -1664,6 +1940,13 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
   initialize_progress_tracking(species_names)
   safe_message("Running ", length(species_names), " species with workers=", worker_count)
   species_points_list <- split(occurrence_ready, occurrence_ready$species)
+  species_tasks <- lapply(species_names, function(species_name) {
+    list(
+      species_name = species_name,
+      species_points = species_points_list[[species_name]] %>% st_drop_geometry()
+    )
+  })
+  names(species_tasks) <- species_names
   species_runner <- function(species_name) {
     execute_species_task(
       species_name = species_name,
@@ -1678,35 +1961,24 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
     )
   }
   species_results <- if (worker_count > 1L) {
+    safe_message("Parallel setup: creating PSOCK cluster with workers=", worker_count)
     cl <- parallel::makePSOCKcluster(worker_count)
     on.exit(parallel::stopCluster(cl), add = TRUE)
+    safe_message("Parallel setup: cluster created")
     parallel::clusterCall(cl, function(script_file) {
+      Sys.setenv(BIRD_SDM_SKIP_AUTORUN = "1")
       sys.source(script_file, envir = .GlobalEnv)
       NULL
     }, SCRIPT_FILE)
+    safe_message("Parallel setup: worker script sourced")
     parallel::clusterExport(
       cl,
-      varlist = c("species_points_list", "model_config", "algo_tbl", "provinces", "dash_line", "province_thresholds", "current_config", "china_boundary", "selected_predictors", "future_configs", "force_download"),
+      varlist = c("model_config", "algo_tbl", "provinces", "dash_line", "province_thresholds", "current_config", "china_boundary", "selected_predictors", "future_configs", "force_download"),
       envir = environment()
     )
-    parallel::parLapplyLB(cl, species_names, function(species_name) {
-      execute_species_task(
-        species_name = species_name,
-        species_points = species_points_list[[species_name]],
-        current_stack = NULL,
-        model_config = model_config,
-        algo_tbl = algo_tbl,
-        provinces = provinces,
-        dash_line = dash_line,
-        future_stacks = NULL,
-        province_thresholds = province_thresholds,
-        current_config = current_config,
-        china_boundary = china_boundary,
-        selected_predictors = selected_predictors,
-        future_configs = future_configs,
-        force_download = force_download
-      )
-    })
+    safe_message("Parallel setup: worker globals exported")
+    safe_message("Parallel setup: dispatching species tasks")
+    parallel::parLapplyLB(cl, species_tasks, parallel_species_task_runner)
   } else {
     lapply(species_names, species_runner)
   }
@@ -1748,7 +2020,8 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
   metrics_tbl <- bind_rows(lapply(species_results, function(x) x$metrics))
   province_tbl <- bind_rows(lapply(species_results, function(x) x$province))
   area_change_tbl <- bind_rows(lapply(species_results, function(x) x$area_change))
-  raster_manifest_tbl <- bind_rows(lapply(species_results, function(x) x$raster_manifest))
+  raster_manifest_tbl <- bind_rows(lapply(species_results, function(x) x$raster_manifest)) %>%
+    mutate(raster_path = make_repo_relative_path(.data$raster_path))
   figure_paths <- unique(unlist(lapply(species_results, function(x) x$figure_paths), use.names = FALSE))
   summary_stats$modeled_species <- sum(species_status_tbl$model_status == "modeled", na.rm = TRUE)
 
@@ -1835,7 +2108,7 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
     "Occurrence points, climate rasters, background sampling, and predictions are all restricted to the China boundary.",
     "Species maps are rendered in a China-focused equal-area projection and overlay the provincial boundary together with the nine-dash line base layer.",
     "Potential distribution GeoTIFF rasters are indexed in table_raster_output_manifest.csv for every successfully modeled species.",
-    "Current-climate preparation first scans existing server directories for readable WorldClim bioclim and elevation files, and writes the validation result to table_climate_data_manifest.csv.",
+    "Current-climate preparation first checks the task climate cache for readable WorldClim bioclim and elevation files, and writes the validation result to table_climate_data_manifest.csv.",
     "Run progress is written to data/progress/progress_summary.csv and data/progress/progress_events.log during batch execution.",
     "The final potential-province table only keeps successfully modeled species and lists each province, suitable-cell count, and suitable area for every active threshold.",
     "WorldClim elevation is appended as an environmental predictor and enters the variable-screening workflow together with the bioclim variables."
@@ -1855,7 +2128,7 @@ run_pipeline <- function(prepare_only = FALSE, selected_species = NA_character_,
   ))
 }
 
-if (sys.nframe() == 0) {
+if (sys.nframe() == 0 && !nzchar(Sys.getenv("BIRD_SDM_SKIP_AUTORUN", unset = ""))) {
   run_pipeline(
     prepare_only = prepare_only,
     selected_species = selected_species,

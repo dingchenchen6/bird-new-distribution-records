@@ -1,0 +1,21 @@
+scenario,res_minutes,target_name,path,source,readable,checked_at
+current,2.5,wc2.1_2.5m_bio_1.tif,tasks/bird_sdm_distribution_modeling/data/climate/wc2.1_2.5m/wc2.1_2.5m_bio_1.tif,scan_existing,TRUE,2026-03-21 15:26:31
+current,2.5,wc2.1_2.5m_bio_10.tif,tasks/bird_sdm_distribution_modeling/data/climate/wc2.1_2.5m/wc2.1_2.5m_bio_10.tif,scan_existing,TRUE,2026-03-21 15:26:31
+current,2.5,wc2.1_2.5m_bio_11.tif,tasks/bird_sdm_distribution_modeling/data/climate/wc2.1_2.5m/wc2.1_2.5m_bio_11.tif,scan_existing,TRUE,2026-03-21 15:26:31
+current,2.5,wc2.1_2.5m_bio_12.tif,tasks/bird_sdm_distribution_modeling/data/climate/wc2.1_2.5m/wc2.1_2.5m_bio_12.tif,scan_existing,TRUE,2026-03-21 15:26:31
+current,2.5,wc2.1_2.5m_bio_13.tif,tasks/bird_sdm_distribution_modeling/data/climate/wc2.1_2.5m/wc2.1_2.5m_bio_13.tif,scan_existing,TRUE,2026-03-21 15:26:31
+current,2.5,wc2.1_2.5m_bio_14.tif,tasks/bird_sdm_distribution_modeling/data/climate/wc2.1_2.5m/wc2.1_2.5m_bio_14.tif,scan_existing,TRUE,2026-03-21 15:26:31
+current,2.5,wc2.1_2.5m_bio_15.tif,tasks/bird_sdm_distribution_modeling/data/climate/wc2.1_2.5m/wc2.1_2.5m_bio_15.tif,scan_existing,TRUE,2026-03-21 15:26:31
+current,2.5,wc2.1_2.5m_bio_16.tif,tasks/bird_sdm_distribution_modeling/data/climate/wc2.1_2.5m/wc2.1_2.5m_bio_16.tif,scan_existing,TRUE,2026-03-21 15:26:31
+current,2.5,wc2.1_2.5m_bio_17.tif,tasks/bird_sdm_distribution_modeling/data/climate/wc2.1_2.5m/wc2.1_2.5m_bio_17.tif,scan_existing,TRUE,2026-03-21 15:26:31
+current,2.5,wc2.1_2.5m_bio_18.tif,tasks/bird_sdm_distribution_modeling/data/climate/wc2.1_2.5m/wc2.1_2.5m_bio_18.tif,scan_existing,TRUE,2026-03-21 15:26:31
+current,2.5,wc2.1_2.5m_bio_19.tif,tasks/bird_sdm_distribution_modeling/data/climate/wc2.1_2.5m/wc2.1_2.5m_bio_19.tif,scan_existing,TRUE,2026-03-21 15:26:31
+current,2.5,wc2.1_2.5m_bio_2.tif,tasks/bird_sdm_distribution_modeling/data/climate/wc2.1_2.5m/wc2.1_2.5m_bio_2.tif,scan_existing,TRUE,2026-03-21 15:26:31
+current,2.5,wc2.1_2.5m_bio_3.tif,tasks/bird_sdm_distribution_modeling/data/climate/wc2.1_2.5m/wc2.1_2.5m_bio_3.tif,scan_existing,TRUE,2026-03-21 15:26:31
+current,2.5,wc2.1_2.5m_bio_4.tif,tasks/bird_sdm_distribution_modeling/data/climate/wc2.1_2.5m/wc2.1_2.5m_bio_4.tif,scan_existing,TRUE,2026-03-21 15:26:31
+current,2.5,wc2.1_2.5m_bio_5.tif,tasks/bird_sdm_distribution_modeling/data/climate/wc2.1_2.5m/wc2.1_2.5m_bio_5.tif,scan_existing,TRUE,2026-03-21 15:26:31
+current,2.5,wc2.1_2.5m_bio_6.tif,tasks/bird_sdm_distribution_modeling/data/climate/wc2.1_2.5m/wc2.1_2.5m_bio_6.tif,scan_existing,TRUE,2026-03-21 15:26:31
+current,2.5,wc2.1_2.5m_bio_7.tif,tasks/bird_sdm_distribution_modeling/data/climate/wc2.1_2.5m/wc2.1_2.5m_bio_7.tif,scan_existing,TRUE,2026-03-21 15:26:31
+current,2.5,wc2.1_2.5m_bio_8.tif,tasks/bird_sdm_distribution_modeling/data/climate/wc2.1_2.5m/wc2.1_2.5m_bio_8.tif,scan_existing,TRUE,2026-03-21 15:26:31
+current,2.5,wc2.1_2.5m_bio_9.tif,tasks/bird_sdm_distribution_modeling/data/climate/wc2.1_2.5m/wc2.1_2.5m_bio_9.tif,scan_existing,TRUE,2026-03-21 15:26:31
+current,2.5,wc2.1_2.5m_elev.tif,tasks/bird_sdm_distribution_modeling/data/climate/wc2.1_2.5m/wc2.1_2.5m_elev.tif,scan_existing,TRUE,2026-03-21 15:26:31
