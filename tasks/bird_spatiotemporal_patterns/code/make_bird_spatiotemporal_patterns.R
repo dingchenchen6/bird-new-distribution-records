@@ -816,8 +816,19 @@ point_map_main <- ggplot() +
 point_map_main <- add_north_arrow_projected(point_map_main, main_xlim, main_ylim)
 
 point_map_inset <- ggplot() +
-  geom_sf(data = st_crop(province_line_sf, inset_bbox), color = "#2A2A2A", linewidth = 0.26, fill = NA) +
+  geom_sf(data = st_crop(province_sf, inset_bbox), fill = "white", color = "#B8B8B8", linewidth = 0.18) +
+  geom_sf(data = st_crop(province_line_sf, inset_bbox), color = "#6A6A6A", linewidth = 0.22, fill = NA) +
   geom_sf(data = st_crop(ten_dash_sf, inset_bbox), color = "#222222", linewidth = 0.28, fill = NA) +
+  geom_sf(
+    data = st_crop(point_map_df, inset_bbox),
+    aes(color = order_group, shape = order_group),
+    size = 1.8,
+    stroke = 0.18,
+    alpha = 0.92,
+    show.legend = FALSE
+  ) +
+  scale_color_manual(values = point_map_palette, guide = "none") +
+  scale_shape_manual(values = point_map_shapes, guide = "none") +
   coord_sf(xlim = c(inset_bbox["xmin"], inset_bbox["xmax"]), ylim = c(inset_bbox["ymin"], inset_bbox["ymax"]), expand = FALSE, crs = china_crs) +
   theme_void() +
   theme(panel.border = element_rect(color = "black", fill = NA, linewidth = 0.7), legend.position = "none")
