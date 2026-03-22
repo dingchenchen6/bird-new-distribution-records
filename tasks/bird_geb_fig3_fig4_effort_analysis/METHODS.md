@@ -39,8 +39,24 @@ This task implements a two-level analytical design:
 - Province-level primary response:
   `log(1 + records per 100,000 km2)`
 - Candidate province predictors were screened for collinearity before final model selection.
+- The original mammal GEB repository includes a province-level richness field, but that field was treated as a reference-only variable here because it is taxonomically mismatched for a bird-specific analysis.
+- Current report effort and current user effort were first evaluated together in a screening model to diagnose redundancy; because their joint VIF values were extremely high, they were analysed in separate robustness models rather than forced into one final model.
 - Relative importance was estimated using manual hierarchical partitioning with bootstrap confidence intervals.
 - A count-based sensitivity model with an area offset was fitted to evaluate robustness.
+- Influence diagnostics were evaluated using Cook's distance, leverage, and DFFITS. Provinces exceeding the conventional `4/n` Cook's-distance threshold were removed in an additional sensitivity model to confirm that the main effect directions were stable.
+
+## Additional diagnostics and outputs
+
+- `data/province_predictor_source_audit.csv`
+  documents which province-level predictors were retained, screened only, or excluded because they were inherited from mammal-specific source data.
+- `data/province_candidate_model_comparison.csv`
+  compares the primary report-effort model, the alternative user-effort model, the influence-filtered model, and the count-based sensitivity model.
+- `data/province_influential_units.csv`
+  lists provinces flagged by Cook's distance in the primary province-level model.
+- `figures/fig_s0_data_screening_overview.*`
+  summarizes data distributions, effort outlier counts, and trait missingness.
+- `figures/fig_s3_province_model_robustness.*`
+  summarizes coefficient stability, model-comparison metrics, and influential provinces.
 
 ## Main script
 
