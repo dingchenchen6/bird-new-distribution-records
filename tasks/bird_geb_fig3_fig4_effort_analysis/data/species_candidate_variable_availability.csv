@@ -1,0 +1,13 @@
+"requested_variable","primary_source","derived_field","used_in_primary_phylo_model","status","note","n_nonmissing","pct_nonmissing"
+"Body mass","AVONET","log_mass",TRUE,"available","Continuous trait used in phylogenetic continuous-trait model.",1384,0.920212765957447
+"Hand-wing index (HWI)","AVONET","log_hwi",TRUE,"available","Explicitly added per user request.",1384,0.920212765957447
+"Range size","Wang bird ecological dataset","log_range_provinces",TRUE,"available","Province-count range size from Wang data is preferred here because the user requested Wang as a primary source.",1308,0.86968085106383
+"Clutch size","Wang bird ecological dataset","log_clutch_size",TRUE,"available","Mid-point parsed from clutch-size ranges when needed.",1144,0.76063829787234
+"Number of congeners","2025 national bird checklist","log_n_congeners",TRUE,"available","Derived from the 2025 checklist rather than a trait workbook.",1504,1
+"Endemicity","Wang bird ecological dataset","endemic_status",TRUE,"available","Binary endemic vs non-endemic contrast.",1308,0.86968085106383
+"Migration strategy","AVONET (primary); Wang used for cross-checking","migration_class_av",TRUE,"available","AVONET migration codes 1/2/3 collapsed into standardized mobility classes.",1384,0.920212765957447
+"Diet type","AVONET (primary); Wang used for contextual checking","diet_group_av",TRUE,"available","AVONET trophic niche collapsed into broad ecological diet guilds.",1384,0.920212765957447
+"Forest dependence / forest association","AVONET primary habitat used as a proxy","forest_association",TRUE,"proxy_available","Operationalized as forest/woodland versus non-forest primary habitat; interpreted as a proxy rather than a direct dependency metric.",1384,0.920212765957447
+"Habitat breadth","Not stably available from AVONET + Wang in this workbook",NA,FALSE,"not_available_from_requested_primary_sources","AVONET habitat field is primary habitat, not habitat breadth, so habitat breadth is not claimed directly.",NA,NA
+"Generation length","Not stably available from AVONET + Wang in this workbook",NA,FALSE,"not_available_from_requested_primary_sources","Generation length was requested but is not robustly available from the two user-specified primary sources in the current workbook.",NA,NA
+"Naming time / description year","Not stably available from AVONET + Wang in this workbook",NA,FALSE,"not_available_from_requested_primary_sources","Description year was requested but is not robustly available from the two user-specified primary sources in the current workbook.",NA,NA

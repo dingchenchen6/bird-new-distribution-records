@@ -5,3 +5,5 @@
 "ncvtest_p_heteroskedasticity",0.511881818568522
 "max_cooks_distance",128.333766474755
 "overdispersion_ratio_sensitivity",1.00665373742489
+"n_influential_provinces",2
+"influence_threshold_4_over_n",0.129032258064516

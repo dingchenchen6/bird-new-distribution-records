@@ -1,47 +1,148 @@
 # Methods
 
-## 中文概述
+## Chinese overview / 中文概述
 
-本任务围绕两个层级展开：
+本任务分为两个分析层次，并在每个层次都加入了更严格的来源审计与诊断。
 
-1. 物种层：
-   使用鸟类新纪录主表与多来源性状数据构建物种池，拟合
-   - 二元 Logistic 模型：解释某物种是否产生新省级纪录
-   - 负二项模型：解释某物种积累了多少条新省级纪录
+### 1. 物种层（Figure 3）
 
-2. 省级层：
-   使用新提供的调查努力表，将努力划分为
-   - 历史调查努力：1980-1999
-   - 当前调查努力：2000-2024
+物种层分析的目标是回答：在控制系统发育非独立性之后，哪些鸟类更容易产生新的省级分布纪录。
 
-   并计算面积标准化后的调查强度，再结合省级面积、人均 GDP、栖息地异质性等变量，解释鸟类新纪录发现强度的空间差异。
+本轮升级中，物种层的核心改动包括：
+
+- 以 `AVONET` 和 `中国鸟类生态学特征` 为主要性状来源；
+- 明确加入 `HWI`；
+- 连续性状与分类性状分开建模；
+- 使用 Hackett 鸟类系统发育树构建协方差矩阵，在 `brms` 中通过系统发育随机项控制物种间非独立性；
+- 使用后验山脊图替代传统单纯点线图，以更直观地展示估计分布、可信区间和不确定性。
+
+连续性状主模型包括：
+
+- body mass
+- hand-wing index (HWI)
+- range size (province count)
+- clutch size
+- number of congeners
+
+分类性状主模型包括：
+
+- endemicity
+- migration strategy
+- diet guild
+- forest-associated primary habitat
+
+### 2. 省级层（Figure 4）
+
+省级层分析延续 GEB 风格框架，用于回答：哪些省级结构因素与调查努力组合更容易产生鸟类新纪录。
+
+保留和升级的要点包括：
+
+- 历史调查努力：1980-1999
+- 当前调查努力：2000-2024
+- effort 以年均值和单位面积强度表示
+- 响应变量使用单位面积新纪录强度的对数转换值
+- 保留用户 effort 替代模型、Cook's distance 高影响点敏感性分析和 bootstrap 层次分解
+- Figure 4 改为更横向的 2×4 多面板布局
 
 ## English overview
 
-This task implements a two-level analytical design:
+This task implements a two-tier analytical design with explicit source auditing and diagnostics.
 
-1. Species level:
-   a bird species pool was reconstructed by integrating the bird new-record table with trait information from AVONET, the Chinese ecological trait sheet, and BIRDBASE. Two complementary models were fitted:
-   - a binomial model for whether a species produced any new provincial record;
-   - a negative-binomial model for the number of new provincial records accumulated by each species.
+### 1. Species-level analysis (Figure 3)
 
-2. Province level:
-   the newly provided survey-effort table was divided into two eras:
-   - historical effort: 1980-1999
-   - current effort: 2000-2024
+The species-level analysis asks which bird species are more likely to generate new provincial distribution records after accounting for phylogenetic non-independence.
 
-   Effort variables were annualized and area-standardized, and then linked to province-level structural covariates to explain spatial variation in discovery intensity.
+Major upgrades in this round include:
 
-## Key processing choices
+- primary trait sourcing from `AVONET` and the Wang Yanping bird ecological dataset;
+- explicit inclusion of `HWI`;
+- separate phylogenetic Bernoulli models for continuous traits and categorical ecological traits;
+- use of the Hackett bird phylogeny to model phylogenetic covariance in `brms`;
+- posterior ridge-plot visualization to communicate uncertainty, effect direction, and interval width more clearly.
 
-- Duplicate bird-record events were removed at the `species-province-year` level.
-- Effort outliers were screened using the IQR rule.
-- Province-level primary response:
-  `log(1 + records per 100,000 km2)`
-- Candidate province predictors were screened for collinearity before final model selection.
-- Relative importance was estimated using manual hierarchical partitioning with bootstrap confidence intervals.
-- A count-based sensitivity model with an area offset was fitted to evaluate robustness.
+Continuous-trait model predictors:
 
-## Main script
+- body mass
+- hand-wing index (HWI)
+- range size (province count)
+- clutch size
+- number of congeners
 
-- `code/run_bird_geb_fig3_fig4_effort_analysis.R`
+Categorical-trait model predictors:
+
+- endemicity
+- migration strategy
+- diet guild
+- forest-associated primary habitat
+
+### 2. Province-level analysis (Figure 4)
+
+The province-level analysis retains the GEB-style effort-driver framework and evaluates how effort and structural province characteristics shape discovery intensity.
+
+Retained and upgraded components:
+
+- historical effort: 1980-1999
+- current effort: 2000-2024
+- annualized and area-standardized effort metrics
+- log-transformed new-record density as the primary response
+- alternative user-effort model
+- Cook's-distance-based influence sensitivity
+- bootstrap hierarchical partitioning
+- a wider 2×4 figure layout for publication use
+
+## Source-audit rules
+
+Primary trait sources in this round were restricted to:
+
+- `AVONET traits`
+- `中国鸟类生态学特征`
+- checklist-derived taxonomic quantities from `2025中国生物物种名录`
+
+Requested variables that were **not stably supportable** from these user-specified primary sources in the current workbook were not forced into the main model. In particular:
+
+- `habitat breadth`
+- `generation length`
+- `naming/description year`
+
+were kept in the candidate-variable audit but not used as primary-model predictors.
+
+`Forest dependence` was operationalized as a proxy using AVONET primary habitat classes (`Forest` or `Woodland` versus non-forest habitats). It should therefore be interpreted as `forest-associated primary habitat`, not as a direct, independently validated dependence index.
+
+## Diagnostics and validation
+
+### Species level
+
+- duplicate-event screening
+- key-field QA checks
+- candidate-variable availability audit
+- missingness summaries
+- continuous-trait distribution checks
+- categorical-frequency screening
+- phylogeny-matching audit
+- posterior diagnostics (`Rhat`, `ESS`)
+- posterior predictive checks
+- Bayes R2
+- phylogenetic signal extraction
+- non-phylogenetic negative-binomial count sensitivity model
+
+### Province level
+
+- missingness checks for effort data
+- outlier screening for report and user counts
+- province-year coverage summaries
+- predictor-source auditing
+- correlation screening
+- VIF-based collinearity diagnostics
+- residual diagnostics
+- heteroskedasticity test
+- Cook's distance screening
+- alternative effort-proxy model
+- influence-filtered sensitivity model
+- bootstrap hierarchical partitioning
+
+## Primary scripts
+
+- current recommended script:
+  `code/run_bird_geb_fig3_fig4_effort_analysis_v2_phylo.R`
+- retained legacy script:
+  `code/run_bird_geb_fig3_fig4_effort_analysis.R`
