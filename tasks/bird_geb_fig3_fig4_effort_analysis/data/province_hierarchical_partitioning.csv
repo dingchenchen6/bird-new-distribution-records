@@ -1,0 +1,6 @@
+"term","independent_r2","percent","predictor"
+"z_hist_report_density",0.00816896007520326,1.22847935568683,"Historical survey effort"
+"z_curr_report_density",0.18901278493742,28.4244631041016,"Current survey effort"
+"z_gdp_per_capita",0.144123171120818,21.6737918618901,"Per capita GDP"
+"z_area_km2",0.314744898210639,47.3325375812785,"Area"
+"z_habitat_heterogeneity",0.00891537513084571,1.34072809704302,"Habitat heterogeneity"

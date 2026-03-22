@@ -1,0 +1,4 @@
+"group","fit","conf.low","conf.high","variable"
+"Resident/low mobility",0.296522862874829,0.2598358225618,0.336038135654577,"migration_class"
+"Partial migrant",0.385180125191552,0.32428884629748,0.449892404539631,"migration_class"
+"Full migrant",0.416878208672456,0.360087720193192,0.475963423198556,"migration_class"

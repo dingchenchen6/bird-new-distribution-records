@@ -1,0 +1,9 @@
+"metric","value"
+"Raw rows",1078
+"Rows after filtering key fields",1077
+"Rows after deduplication",1059
+"Unique species",578
+"Unique orders",23
+"Unique provinces",33
+"Year min",2000
+"Year max",2025

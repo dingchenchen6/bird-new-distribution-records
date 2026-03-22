@@ -1,0 +1,7 @@
+"metric","value"
+"n_provinces_modelled",31
+"adjusted_r2_primary",0.653264207977543
+"shapiro_p_residuals",0.0951965390723178
+"ncvtest_p_heteroskedasticity",0.511881818568522
+"max_cooks_distance",128.333766474755
+"overdispersion_ratio_sensitivity",1.00665373742489
