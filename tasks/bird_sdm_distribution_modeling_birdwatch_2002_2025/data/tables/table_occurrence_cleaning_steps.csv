@@ -1,0 +1,9 @@
+step_name,n_rows,detail
+raw_input,3628272,Rows supplied to the occurrence cleaning function.
+after_species_cleaning,3628272,Rows with non-empty standardized species names.
+after_coordinate_nonmissing,3628272,Rows with non-missing longitude and latitude.
+after_bbox_and_dedup,614969,Rows within the China bounding box after species-coordinate de-duplication.
+after_province_name_shortcut,614967,Rows retained directly by matching province_name to the China province list.
+spatial_fallback_candidates,2,Rows still requiring polygon-based China filtering after the province-name shortcut.
+after_spatial_fallback,2,Rows retained by polygon-based China filtering.
+final_retained,614969,Final cleaned occurrence rows retained for taxonomy matching and SDM fitting.

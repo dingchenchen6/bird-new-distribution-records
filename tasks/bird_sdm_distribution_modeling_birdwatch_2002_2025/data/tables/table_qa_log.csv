@@ -1,0 +1,17 @@
+timestamp,category,item,status,detail
+2026-03-22 02:47:34,setup,task_root,ok,tasks/bird_sdm_distribution_modeling_birdwatch_2002_2025
+2026-03-22 02:49:00,input,bird_occurrence_records,ok,614969
+2026-03-22 02:49:39,climate,2050s_SSP245_BCC-CSM2-MR,missing,Future climate raster unavailable
+2026-03-22 02:49:39,climate,2050s_SSP245_CNRM-CM6-1,missing,Future climate raster unavailable
+2026-03-22 02:49:39,climate,2050s_SSP245_MIROC6,missing,Future climate raster unavailable
+2026-03-22 02:49:39,climate,2050s_SSP585_BCC-CSM2-MR,missing,Future climate raster unavailable
+2026-03-22 02:49:39,climate,2050s_SSP585_CNRM-CM6-1,missing,Future climate raster unavailable
+2026-03-22 02:49:39,climate,2050s_SSP585_MIROC6,missing,Future climate raster unavailable
+2026-03-22 02:49:39,climate,2070s_SSP245_BCC-CSM2-MR,missing,Future climate raster unavailable
+2026-03-22 02:49:39,climate,2070s_SSP245_CNRM-CM6-1,missing,Future climate raster unavailable
+2026-03-22 02:49:39,climate,2070s_SSP245_MIROC6,missing,Future climate raster unavailable
+2026-03-22 02:49:39,climate,2070s_SSP585_BCC-CSM2-MR,missing,Future climate raster unavailable
+2026-03-22 02:49:39,climate,2070s_SSP585_CNRM-CM6-1,missing,Future climate raster unavailable
+2026-03-22 02:49:39,climate,2070s_SSP585_MIROC6,missing,Future climate raster unavailable
+2026-03-22 22:25:51,model,Sylviparus modestus,failed,Error: glmnet failed to complete regularization path.  Model may be infeasible.
+2026-03-23 02:10:08,model,Acrocephalus dumetorum,failed,Error: glmnet failed to complete regularization path.  Model may be infeasible.
