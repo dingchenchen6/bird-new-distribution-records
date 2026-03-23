@@ -1,0 +1,13 @@
+key,value
+presence_cell_threshold,10
+pseudoabsence_multiplier,3
+pseudoabsence_minimum,1000
+cv_folds,5
+cv_presence_threshold_spatial,20
+tss_selection_threshold,0.6
+province_threshold_a,3
+province_threshold_b,10
+province_threshold_c,20
+province_threshold_d,50
+buffer_km,500
+correlation_cutoff,0.7

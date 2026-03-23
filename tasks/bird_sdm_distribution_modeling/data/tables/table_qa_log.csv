@@ -1,0 +1,3 @@
+timestamp,category,item,status,detail
+2026-03-21 11:20:17,setup,task_root,ok,tasks/bird_sdm_distribution_modeling
+2026-03-21 11:20:18,input,bird_occurrence_records,ok,9937

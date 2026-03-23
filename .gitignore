@@ -1,3 +1,14 @@
 .DS_Store
 .Rhistory
 .RData
+tasks/bird_sdm_distribution_modeling/data/climate/
+tasks/bird_sdm_distribution_modeling/data/progress/
+tasks/bird_sdm_distribution_modeling/logs/
+tasks/bird_sdm_distribution_modeling/data/occurrence/occurrence_records_clean.csv
+tasks/bird_sdm_distribution_modeling_birdwatch_2002_2025/data/climate/
+tasks/bird_sdm_distribution_modeling_birdwatch_2002_2025/data/progress/
+tasks/bird_sdm_distribution_modeling_birdwatch_2002_2025/logs/
+tasks/bird_sdm_distribution_modeling_birdwatch_2002_2025/data/rasters/
+tasks/bird_sdm_distribution_modeling_birdwatch_2002_2025/figures/species_maps/
+tasks/bird_sdm_distribution_modeling_birdwatch_2002_2025/results/bird_sdm_summary.pptx
+tasks/bird_sdm_distribution_modeling_birdwatch_2002_2025/data/occurrence/occurrence_records_clean_standardized.csv
