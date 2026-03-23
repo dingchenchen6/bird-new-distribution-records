@@ -1,45 +1,97 @@
-# 鸟类新纪录 GEB Figure 3 / Figure 4 调查努力分析任务
+# Bird new-distribution-records: GEB-style Figure 3 and Figure 4 task
 
-本任务基于鸟类新纪录主表、用户新提供的省份-年份调查努力表，以及哺乳动物 GEB 研究中使用过的省级通用协变量，重建鸟类版的 `Figure 3` 和 `Figure 4` 分析框架。
+This task rebuilds the bird analogue of the GEB species-level and province-level analyses with the newly supplied survey-effort table and an upgraded trait framework.
 
-主要内容：
+## Current primary workflow
 
-- `Figure 3`：物种层相关因子分析
-  - 评估体重、分布范围、迁徙性和风险组对新纪录出现概率与新纪录频次的影响
-- `Figure 4`：省级调查努力驱动分析
-  - 评估历史/当前调查努力与省级结构因子对新纪录发现强度的影响
-- 模型诊断与敏感性分析
-  - 共线性筛查
-  - 残差诊断
-  - bootstrap 层次分解
-  - 面积 offset 敏感性模型
-  - 用户努力替代模型
-  - Cook's distance 影响点敏感性模型
-  - 变量来源审计
+The recommended script for the current round is:
 
-目录结构：
+- `code/run_bird_geb_fig3_fig4_effort_analysis_v2_phylo.R`
+
+A legacy non-phylogenetic script is retained for reference:
+
+- `code/run_bird_geb_fig3_fig4_effort_analysis.R`
+
+## What the upgraded workflow does
+
+### Figure 3: species-level trait correlates
+
+The upgraded Figure 3 now:
+
+- uses bird trait sources centred on `AVONET` and Wang Yanping et al.'s bird ecological dataset;
+- explicitly includes `HWI` (hand-wing index);
+- adds `clutch size`, `number of congeners`, `endemicity`, `diet type`, and `forest-associated primary habitat`;
+- separates `continuous traits` and `categorical ecological traits` into two phylogenetic Bernoulli models;
+- controls phylogenetic non-independence using the Hackett bird phylogeny;
+- visualizes posterior effects with a journal-style ridge-plot layout.
+
+### Figure 4: province-level effort drivers
+
+The upgraded Figure 4:
+
+- retains the GEB-style province-level effort framework;
+- quantifies historical effort, current effort, GDP, province area, and habitat heterogeneity;
+- keeps sensitivity checks for alternative effort proxies and influential provinces;
+- uses a wider horizontal panel layout instead of a tall vertical composition.
+
+## Data-source rules used in this round
+
+Primary species-trait sources:
+
+- `AVONET traits`
+- `中国鸟类生态学特征`
+- `2025中国生物物种名录` for taxonomic context and congener counts
+
+Important interpretation rule:
+
+- variables such as `habitat breadth`, `generation length`, and `naming/description year` were requested conceptually, but they are **not claimed as primary-model variables** unless they can be stably supported from the user-specified primary sources in the current workbook.
+- `Forest dependence` is operationalized here as a proxy based on AVONET primary habitat (`Forest` or `Woodland` versus non-forest habitats), and should therefore be interpreted as `forest-associated primary habitat`, not as a direct mechanistic dependence index.
+
+## Directory structure
 
 - `code/`
 - `data/`
 - `figures/`
 - `results/`
 
-关键输出：
+## Key outputs
+
+### Main figures
 
 - `figures/fig_geb3_species_level_correlates.*`
 - `figures/fig_geb4_province_level_effort_drivers.*`
+
+### Supplementary figures
+
 - `figures/fig_s0_data_screening_overview.*`
 - `figures/fig_s1_species_model_diagnostics.*`
 - `figures/fig_s2_province_model_diagnostics_and_sensitivity.*`
 - `figures/fig_s3_province_model_robustness.*`
+
+### Key data tables
+
+- `data/species_candidate_variable_audit.csv`
+- `data/species_candidate_variable_availability.csv`
+- `data/bird_species_continuous_model_dataset_tree_matched.csv`
+- `data/bird_species_categorical_model_dataset_tree_matched.csv`
+- `data/species_phylo_model_fit_summary.csv`
+- `data/species_phylo_continuous_effects.csv`
+- `data/species_phylo_categorical_effects.csv`
+- `data/province_candidate_model_comparison.csv`
+- `data/province_level_primary_coefficients.csv`
+- `data/province_level_robustness_coefficients.csv`
+
+### Result narratives and bundles
+
 - `results/task_summary_bilingual.md`
 - `results/figure_captions_bilingual.md`
 - `results/interpretation_bilingual.md`
 - `results/bird_geb_fig3_fig4_analysis_bundle.xlsx`
 
-说明：
+## Main modelling notes
 
-- 省级主模型使用单位面积新纪录强度的对数转换值，尽量减少大面积省份对结果的机械性影响。
-- 由于当前提供的数据中没有直接的省级鸟类总物种丰富度字段，因此本轮 `Figure 4` 重点聚焦于调查努力与省级结构因子的解释，而不是直接复刻哺乳动物研究中的“省级总丰富度”变量。
-- 哺乳动物 GEB 仓库中的 `Richness` 字段已被显式审计，但未直接迁入鸟类主模型，因为该字段对应的是哺乳动物背景数据，不适合作为鸟类省级 richness 变量。
-- 当前报告数努力与当前用户数努力在联合筛查中表现出极强共线性，因此两者不在同一主模型中同时使用，而是分别进入主模型与替代模型进行稳健性比较。
+- Species-level primary response: whether a species generated at least one new provincial record (`0/1`).
+- Species-level supplementary sensitivity response: number of new records per species.
+- Province-level primary response: `log(1 + records per 100,000 km2)`.
+- Current report effort and current user effort are not forced into the same primary model because they are strongly collinear; they are compared in alternative specifications.
+- The `Richness` field inherited from the mammal GEB repository is audited but not used as a bird richness predictor.

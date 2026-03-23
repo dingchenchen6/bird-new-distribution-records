@@ -1,15 +1,21 @@
 # Interpretation / 结果解释
 
 ## English
-The bird analogue of GEB Figure 3 indicates that mobility and spatial footprint matter more than broad conservation category for explaining which species generate new provincial records. This is consistent with a bird-specific discovery process in which widespread and migratory taxa have greater opportunities to cross administrative boundaries, occupy marginal sites intermittently, and be rediscovered under improving observation networks.
-
-At the province level, the bird analogue of GEB Figure 4 supports an observation-process explanation in which contemporary effort is a major axis of variation in discovery intensity. The positive current-effort signal remains when alternative effort proxies are considered, while the negative area effect is stable after influence filtering, suggesting that the main conclusion is not an artifact of a single province or a single effort metric.
-
-Importantly, the mammal GEB workflow included a richness predictor that is not directly transferable here because the available province richness field belongs to the mammal reference dataset rather than a bird-specific source. Excluding that taxonomically mismatched variable makes the bird workflow more defensible, even if it departs slightly from the original mammal formula.
+Bird Figure 3 was rebuilt with explicit phylogenetic control using the Hackett bird phylogeny.
+The continuous-trait phylogenetic model included 768 species and estimated a phylogenetic signal of 0.213.
+The categorical-trait phylogenetic model included 827 species and estimated a phylogenetic signal of 0.147.
+Among continuous traits, effects with 95% credible intervals excluding zero were: Range size.
+Among categorical traits, effects with 95% credible intervals excluding zero were: Long-distance migrant; Partial migrant.
+At the province level, the primary effort model explained 71.1% of the variance in log-transformed bird new-record discovery intensity.
+Current survey effort remained the dominant positive province-level predictor, whereas province area retained a negative relationship after accounting for other drivers.
+The qualitative province-level conclusions were robust to the alternative user-effort proxy and to the exclusion of influential provinces.
 
 ## 中文
-鸟类版 Figure 3 表明，与粗尺度保护等级相比，移动能力和空间分布范围更能解释哪些物种会产生新的省级纪录。这说明鸟类新纪录的形成更可能与广布、迁徙类群跨行政边界活动频繁、边缘生境间歇占据以及观测网络改善后的再次发现有关。
-
-在省级层面，鸟类版 Figure 4 支持一种明显的观测过程解释：当前调查努力是影响新纪录发现强度的重要因素。无论使用报告数还是用户数作为努力代理，该正向关系都保持一致；同时，面积的负效应在剔除高影响省份后仍然稳定，说明主结论并不是由单个省份或单一努力指标驱动的假象。
-
-需要强调的是，哺乳动物 GEB 工作流中包含的 richness 变量并不能直接照搬到这里，因为当前可用的省级 richness 字段来自哺乳动物参考数据，而不是鸟类专属来源。主动剔除这个分类单元不匹配的变量，反而使鸟类版流程在方法学上更可辩护、更严谨。
+鸟类 Figure 3 已升级为显式控制系统发育非独立性的版本，系统发育信息来自 Hackett 鸟类系统发育树。
+连续性状系统发育模型共纳入 768 个物种，估计的系统发育信号为 0.213。
+分类性状系统发育模型共纳入 827 个物种，估计的系统发育信号为 0.147。
+在连续性状中，95% 可信区间不跨 0 的变量包括：Range size。
+在分类性状中，95% 可信区间不跨 0 的变量包括：Long-distance migrant；Partial migrant。
+在省级尺度上，主效应模型解释了鸟类新纪录发现强度对数值方差的 71.1%。
+当前调查努力仍然是省级层面最重要的正向驱动因子，而省域面积在控制其他变量后仍表现为负向关系。
+无论是改用用户 effort 代理变量，还是剔除高影响省份，省级主结论都保持稳定。
