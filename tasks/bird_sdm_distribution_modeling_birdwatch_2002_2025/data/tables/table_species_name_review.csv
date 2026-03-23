@@ -1,0 +1,579 @@
+new_record_species,new_record_order,record_count_new_record,first_year,provinces_recorded,matched_species,match_status,match_type,taxonomy_source,review_flag,avibase_ioc_review,birdlife_review,candidate_species,note,model_ready
+Abroscopus albogularis,Passeriformes,5,2017,Hebei | Jiangsu | Ningxia | Shanghai | Tibet,Abroscopus albogularis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Acanthis flammea,Passeriformes,1,2015,Qinghai,Acanthis flammea,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Accipiter badius,Accipitriformes,1,2025,Hunan,Accipiter badius,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Accipiter gularis,Accipitriformes,1,2013,Xinjiang,Accipiter gularis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Accipiter soloensis,Accipitriformes,3,2015,Gansu | Heilongjiang | Inner Mongolia,Accipiter soloensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Accipiter trivirgatus,Accipitriformes,7,2001,Anhui | Beijing | Fujian | Gansu | Henan | Liaoning | Shaanxi,Accipiter trivirgatus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Accipiter virgatus,Accipitriformes,1,2012,Anhui,Accipiter virgatus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Acridotheres cristatellus,Passeriformes,1,2023,Jilin,Acridotheres cristatellus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Acridotheres tristis,Passeriformes,4,2010,Chongqing | Guizhou | Jiangxi | Shandong,Acridotheres tristis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Acrocephalus agricola,Passeriformes,1,2023,Inner Mongolia,Acrocephalus agricola,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Acrocephalus bistrigiceps,Passeriformes,2,2017,Guizhou | Tibet,Acrocephalus bistrigiceps,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Acrocephalus concinens,Passeriformes,1,2006,Shanghai,Acrocephalus concinens,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Acrocephalus dumetorum,Passeriformes,1,2017,Sichuan,Acrocephalus dumetorum,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Acrocephalus orientalis,Passeriformes,1,2024,Tibet,Acrocephalus orientalis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Acrocephalus tangorum,Passeriformes,2,2020,Hubei | Zhejiang,Acrocephalus tangorum,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Aegithalos bonvaloti,Passeriformes,1,2007,Shaanxi,Aegithalos bonvaloti,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Aegithalos caudatus,Passeriformes,2,2020,Shandong | Tianjin,Aegithalos caudatus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Aegithalos concinnus,Passeriformes,2,2020,Gansu | Hebei,Aegithalos concinnus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Aegithalos fuliginosus,Passeriformes,2,2010,Hunan | Shanxi,Aegithalos fuliginosus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Aerodramus brevirostris,Caprimulgiformes,1,2010,Guizhou,Aerodramus brevirostris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Aethopyga christinae,Passeriformes,2,2004,Anhui | Hubei,Aethopyga christinae,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Aethopyga gouldiae,Passeriformes,1,2017,Henan,Aethopyga gouldiae,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Agropsar philippensis,Passeriformes,1,2025,Shandong,Agropsar philippensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Agropsar sturninus,Passeriformes,1,2023,Tibet,Agropsar sturninus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Aix galericulata,Anseriformes,2,2015,Tibet | Xinjiang,Aix galericulata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Alauda gulgula,Passeriformes,1,2023,Inner Mongolia,Alauda gulgula,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Alaudala cheleensis,Passeriformes,1,2024,Fujian,Alaudala cheleensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Alaudala heinei,Passeriformes,1,2025,Yunnan,Alaudala heinei,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Alcedo hercules,Coraciiformes,1,2006,Fujian,Alcedo hercules,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Alcippe morrisonia,Passeriformes,1,2016,Henan,Alcippe morrisonia,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Amaurornis cinerea,Gruiformes,1,2017,Yunnan,Amaurornis cinerea,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Amaurornis phoenicurus,Gruiformes,5,2002,Heilongjiang | Inner Mongolia | Jilin | Qinghai,Amaurornis phoenicurus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Anas carolinensis,NA,1,2023,Shandong,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Anastomus oscitans,Ciconiiformes,5,2018,Hebei | Hunan | Qinghai | Shaanxi | Sichuan,Anastomus oscitans,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Anhinga melanogaster,Suliformes,1,2024,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Anous stolidus,Charadriiformes,2,2020,Anhui | Jiangsu,Anous stolidus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Anser albifrons,Anseriformes,1,2023,Gansu,Anser albifrons,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Anser anser,Anseriformes,1,2009,Hainan,Anser anser,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Anser caerulescens,Anseriformes,4,2000,Guizhou | Jilin | Liaoning | Shandong,Anser caerulescens,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Anser erythropus,Anseriformes,1,2004,Yunnan,Anser erythropus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Anser fabalis,Anseriformes,1,2016,Tibet,Anser fabalis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Anser indicus,Anseriformes,2,2007,Chongqing | Henan,Anser indicus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Anthreptes malacensis,Passeriformes,1,2010,Yunnan,Anthreptes malacensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Anthus godlewskii,Passeriformes,1,2007,Shaanxi,Anthus godlewskii,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Anthus gustavi,Passeriformes,4,2010,Anhui | Hubei | Xinjiang,Anthus gustavi,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Anthus pratensis,Passeriformes,1,2025,Jiangsu,Anthus pratensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Anthus richardi,Passeriformes,1,2017,Tibet,Anthus richardi,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Anthus roseatus,Passeriformes,1,2021,Zhejiang,Anthus roseatus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Anthus trivialis,Passeriformes,1,2024,Jiangsu,Anthus trivialis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Aquila fasciata,Accipitriformes,2,2020,Liaoning | Shaanxi,Aquila fasciata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Aquila heliaca,Accipitriformes,2,2021,Hunan | Ningxia,Aquila heliaca,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ardea intermedia,Pelecaniformes,2,2006,Jilin | Liaoning,Ardea intermedia,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ardea purpurea,Pelecaniformes,1,2019,Xinjiang,Ardea purpurea,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ardenna pacifica,Procellariiformes,2,2013,Shanghai | Zhejiang,Ardenna pacifica,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ardenna tenuirostris,Procellariiformes,2,2014,Fujian | Hebei,Ardenna tenuirostris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ardeola bacchus,Pelecaniformes,1,2001,Xinjiang,Ardeola bacchus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ardeola grayii,Pelecaniformes,2,2016,Guangdong | Yunnan,Ardeola grayii,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ardeola speciosa,Pelecaniformes,1,2025,Guangxi,Ardeola speciosa,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Arenaria interpres,Charadriiformes,2,2000,Xinjiang | Yunnan,Arenaria interpres,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Artamus fuscus,Passeriformes,3,2015,Guizhou | Hunan | Jiangxi,Artamus fuscus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Asarcornis scutulata,Anseriformes,1,2019,Yunnan,Asarcornis scutulata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Asio flammeus,Strigiformes,1,2005,Guangxi,Asio flammeus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Athene noctua,Strigiformes,2,2002,Yunnan | Zhejiang,Athene noctua,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Aviceda jerdoni,Accipitriformes,2,2018,Guangdong | Hunan,Aviceda jerdoni,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Aviceda leuphotes,Accipitriformes,4,2010,Gansu | Jiangsu | Ningxia | Shanxi,Aviceda leuphotes,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Aythya collaris,Anseriformes,1,2023,Shandong,Aythya collaris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Aythya fuligula,Anseriformes,1,2006,Hainan,Aythya fuligula,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Aythya nyroca,Anseriformes,2,2006,Fujian | Jilin,Aythya nyroca,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Bombycilla japonica,Passeriformes,3,2013,Gansu | Ningxia | Qinghai,Bombycilla japonica,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Brachyramphus perdix,Charadriiformes,1,2016,Jiangsu,Brachyramphus perdix,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Branta bernicla,Anseriformes,2,2017,Anhui | Henan,Branta bernicla,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Branta canadensis,Anseriformes,4,2017,Heilongjiang | Liaoning | Tianjin | Zhejiang,Branta canadensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Branta hutchinsii,Anseriformes,2,2016,Hebei | Hubei,Branta hutchinsii,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Branta leucopsis,Anseriformes,1,2019,Jilin,Branta leucopsis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Branta ruficollis,Anseriformes,4,2008,Hebei | Henan | Sichuan | Xinjiang,Branta ruficollis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Bubo nipalensis,Strigiformes,2,2014,Chongqing | Guangxi,Bubo nipalensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Bubulcus ibis,NA,3,2002,Heilongjiang | Shanxi | Tianjin,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Bucanetes mongolicus,Passeriformes,3,2006,Heilongjiang | Sichuan | Tibet,Bucanetes mongolicus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Bulweria bulwerii,Procellariiformes,1,2006,Yunnan,Bulweria bulwerii,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Butastur indicus,Accipitriformes,2,2013,Anhui | Gansu,Butastur indicus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Cacomantis merulinus,Cuculiformes,1,2016,Shaanxi,Cacomantis merulinus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Calandrella brachydactyla,Passeriformes,1,2024,Hunan,Calandrella brachydactyla,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Calidris acuminata,Charadriiformes,2,2010,Shaanxi | Xinjiang,Calidris acuminata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Calidris alba,Charadriiformes,1,2017,Yunnan,Calidris alba,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Calidris alpina,Charadriiformes,4,2011,Chongqing | Shaanxi | Tibet | Yunnan,Calidris alpina,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Calidris bairdii,Charadriiformes,1,2023,Zhejiang,Calidris bairdii,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Calidris canutus,Charadriiformes,1,2010,Jilin,Calidris canutus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Calidris falcinellus,Charadriiformes,2,2011,Jilin | Shaanxi,Calidris falcinellus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Calidris melanotos,Charadriiformes,6,2007,Hainan | Hunan | Liaoning | Tianjin | Yunnan | Zhejiang,Calidris melanotos,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Calidris minuta,Charadriiformes,9,2007,Hainan | Hubei | Hunan | Jilin | Liaoning | Shaanxi | Sichuan | Tianjin | Yunnan,Calidris minuta,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Calidris pugnax,Charadriiformes,5,2007,Guizhou | Henan | Liaoning | Shaanxi | Tianjin,Calidris pugnax,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Calidris pygmaea,Charadriiformes,1,2018,Shandong,Calidris pygmaea,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Calidris subminuta,Charadriiformes,2,2010,Jilin | Xinjiang,Calidris subminuta,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Calidris tenuirostris,Charadriiformes,3,2011,Jilin | Sichuan | Yunnan,Calidris tenuirostris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Callacanthis burtoni,Passeriformes,1,2015,Tibet,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Calliope obscura,Passeriformes,1,2021,Hubei,Calliope obscura,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Calonectris leucomelas,Procellariiformes,2,2012,Anhui | Tianjin,Calonectris leucomelas,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Caprimulgus macrurus,Caprimulgiformes,1,2019,Guizhou,Caprimulgus macrurus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Carduelis carduelis,Passeriformes,2,2019,Inner Mongolia | Qinghai,Carduelis carduelis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Carpodacus roborowskii,Passeriformes,1,2016,Xinjiang,Carpodacus roborowskii,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Carpodacus vinaceus,Passeriformes,1,2022,Shandong,Carpodacus vinaceus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Cecropis daurica,Passeriformes,1,2013,Xinjiang,Cecropis daurica,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Cecropis striolata,Passeriformes,1,2025,Chongqing,Cecropis striolata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Centropus bengalensis,Cuculiformes,4,2003,Hebei | Liaoning | Tibet | Zhejiang,Centropus bengalensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Cephalopyrus flammiceps,Passeriformes,2,2013,Guangxi | Hubei,Cephalopyrus flammiceps,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Certhia familiaris,Passeriformes,1,2024,Jiangsu,Certhia familiaris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Certhia himalayana,Passeriformes,1,2014,Qinghai,Certhia himalayana,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Certhia tianquanensis,Passeriformes,1,2005,Shaanxi,Certhia tianquanensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ceryle rudis,Coraciiformes,3,2011,Beijing | Liaoning | Shaanxi,Ceryle rudis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Cettia brunnifrons,Passeriformes,1,2018,Shaanxi,Cettia brunnifrons,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Cettia castaneocoronata,Passeriformes,1,2021,Hubei,Cettia castaneocoronata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Chalcophaps indica,Columbiformes,4,2011,Anhui | Hunan | Jiangxi | Zhejiang,Chalcophaps indica,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Charadrius asiaticus,Charadriiformes,1,2001,Hubei,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Charadrius mongolus | Charadrius atrifrons | Charadrius placidus | Charadrius veredus | Charadrius dealbatus,same genus Charadrius mongolus | Charadrius atrifrons | Charadrius placidus | Charadrius veredus | Charadrius dealbatus,FALSE
+Charadrius atrifrons,Charadriiformes,2,2024,Guizhou | Yunnan,Charadrius atrifrons,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Charadrius dealbatus,Charadriiformes,1,2024,Jiangxi,Charadrius dealbatus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Charadrius hiaticula,Charadriiformes,4,2010,Jiangsu | Xinjiang | Yunnan | Zhejiang,Charadrius hiaticula,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Charadrius mongolus,Charadriiformes,3,2013,Shaanxi | Yunnan,Charadrius mongolus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Charadrius placidus,Charadriiformes,1,2006,Hainan,Charadrius placidus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Charadrius veredus,Charadriiformes,4,2006,Hainan | Jilin | Xinjiang | Yunnan,Charadrius veredus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Chlidonias leucopterus,Charadriiformes,1,2008,Yunnan,Chlidonias leucopterus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Chlidonias niger,Charadriiformes,2,2021,Gansu | Hubei,Chlidonias niger,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Chloris ambigua,Passeriformes,1,2006,Guangxi,Chloris ambigua,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Chloris chloris,Passeriformes,1,2000,Xinjiang,Chloris chloris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Chloris sinica,Passeriformes,1,2006,Hainan,Chloris sinica,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Chrysolophus pictus,Galliformes,2,2007,Shanxi | Sichuan,Chrysolophus pictus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ciconia boyciana,Ciconiiformes,3,2001,Gansu | Ningxia | Tianjin,Ciconia boyciana,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ciconia episcopus,Ciconiiformes,1,2011,Yunnan,Ciconia episcopus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ciconia nigra,Ciconiiformes,1,2021,Tibet,Ciconia nigra,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Circaetus gallicus,Accipitriformes,3,2021,Guangxi | Hunan | Jiangsu,Circaetus gallicus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Circus aeruginosus,Accipitriformes,2,2025,Gansu | Ningxia,Circus aeruginosus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Circus macrourus,Accipitriformes,1,2023,Zhejiang,Circus macrourus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Circus spilonotus,Accipitriformes,1,2015,Xinjiang,Circus spilonotus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Cisticola exilis,Passeriformes,1,2007,Hainan,Cisticola exilis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Cisticola juncidis,Passeriformes,1,2006,Liaoning,Cisticola juncidis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Clamator coromandus,Cuculiformes,3,2003,Beijing | Heilongjiang | Liaoning,Clamator coromandus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Clamator jacobinus,Cuculiformes,1,2021,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Clamator coromandus,same genus Clamator coromandus,FALSE
+Clanga clanga,Accipitriformes,1,2023,Gansu,Clanga clanga,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Clangula hyemalis,Anseriformes,7,2008,Gansu | Hubei | Jiangsu | Jiangxi | Ningxia | Shandong | Yunnan,Clangula hyemalis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Columba oenas,Columbiformes,2,2017,Gansu | Inner Mongolia,Columba oenas,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Copsychus saularis,Passeriformes,1,2006,Guangxi,Copsychus saularis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Coracias garrulus,Coraciiformes,1,2022,Qinghai,Coracias garrulus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Coracina macei,Passeriformes,1,2017,Zhejiang,Coracina macei,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Coturnicops exquisitus,Gruiformes,1,2004,Yunnan,Coturnicops exquisitus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Crex crex,Gruiformes,1,2012,Yunnan,Crex crex,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Crossoptilon mantchuricum,Galliformes,1,2024,Henan,Crossoptilon mantchuricum,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Curruca communis,Passeriformes,1,2025,Tibet,Curruca communis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Curruca crassirostris,Passeriformes,1,2016,Tibet,Larus crassirostris,matched,auto_epithet_unique,Auto candidate; cross-check with Avibase/IOC + BirdLife recommended,auto_medium_confidence,candidate,candidate,,NA,TRUE
+Curruca curruca,Passeriformes,2,2022,Guizhou | Hainan,Curruca curruca,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Cutia nipalensis,Passeriformes,1,2001,Hubei,Cutia nipalensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Cyanistes cyanus,Passeriformes,1,2023,Jilin,Cyanistes cyanus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Cyanoderma pyrrhops,Passeriformes,1,2010,Tibet,Cyanoderma pyrrhops,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Cyanoderma rufifrons,NA,1,2006,Guangxi,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Cyanoderma pyrrhops,same genus Cyanoderma pyrrhops,FALSE
+Cygnus columbianus,Anseriformes,1,2011,Yunnan,Cygnus columbianus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Cygnus cygnus,Anseriformes,1,2017,Guangxi,Cygnus cygnus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Cygnus olor,Anseriformes,3,2010,Jilin | Shaanxi,Cygnus olor,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Cyornis glaucicomans,Passeriformes,3,2020,Henan | Jiangsu | Shanxi,Cyornis glaucicomans,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Cyornis hainanus,Passeriformes,1,2023,Sichuan,Cyornis hainanus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Cyornis poliogenys,Passeriformes,1,2014,Guangxi,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Cyornis hainanus | Cyornis glaucicomans | Cyornis rubeculoides,same genus Cyornis hainanus | Cyornis glaucicomans | Cyornis rubeculoides,FALSE
+Cyornis rubeculoides,Passeriformes,1,2010,Hunan,Cyornis rubeculoides,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Delichon dasypus,Passeriformes,1,2018,Henan,Delichon dasypus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Dendrocitta formosae,Passeriformes,1,2018,Shanghai,Dendrocitta formosae,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Dendrocopos hyperythrus,Piciformes,1,2015,Qinghai,Dendrocopos hyperythrus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Dendrocygna javanica,Anseriformes,1,2021,Guizhou,Dendrocygna javanica,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Dicaeum cruentatum,Passeriformes,1,2011,Jiangxi,Dicaeum cruentatum,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Dicaeum ignipectus,Passeriformes,1,2016,Henan,Dicaeum ignipectus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Dicaeum minullum,Passeriformes,1,2011,Jiangxi,Dicaeum minullum,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Dicrurus annectens,Passeriformes,1,2015,Tibet,Dicrurus annectens,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Dicrurus hottentottus,Passeriformes,3,2006,Hainan | Heilongjiang | Qinghai,Dicrurus hottentottus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Dicrurus remifer,Passeriformes,1,2019,Tibet,Dicrurus remifer,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Egretta eulophotes,Pelecaniformes,2,2003,Guangxi | Tianjin,Egretta eulophotes,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Egretta garzetta,Pelecaniformes,1,2015,Tibet,Egretta garzetta,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Egretta picata,Pelecaniformes,1,2025,Jiangsu,Egretta picata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Elachura formosa,Passeriformes,2,2019,Hubei | Tibet,Elachura formosa,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Elanus caeruleus,Accipitriformes,8,2006,Beijing | Gansu | Henan | Inner Mongolia | Liaoning | Shaanxi | Sichuan | Tianjin,Elanus caeruleus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Emberiza buchanani,Passeriformes,1,2017,Qinghai,Emberiza buchanani,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Emberiza chrysophrys,Passeriformes,2,2021,Gansu,Emberiza chrysophrys,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Emberiza citrinella,Passeriformes,1,2017,Qinghai,Emberiza citrinella,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Emberiza elegans,Passeriformes,3,2017,Heilongjiang | Qinghai | Tibet,Emberiza elegans,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Emberiza godlewskii,Passeriformes,2,2010,Heilongjiang | Hunan,Emberiza godlewskii,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Emberiza hortulana,Passeriformes,1,2023,Inner Mongolia,Emberiza hortulana,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Emberiza leucocephalos,Passeriformes,1,2013,Anhui,Emberiza leucocephalos,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Emberiza melanocephala,Passeriformes,1,2019,Guangxi,Emberiza melanocephala,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Emberiza pallasi,Passeriformes,1,2014,Guizhou,Emberiza pallasi,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Emberiza pusilla,Passeriformes,1,2014,Tibet,Emberiza pusilla,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Emberiza rustica,Passeriformes,1,2024,Guizhou,Emberiza rustica,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Emberiza siemsseni,Passeriformes,4,2013,Jiangsu | Jiangxi | Ningxia | Qinghai,Emberiza siemsseni,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Emberiza stewarti,Passeriformes,1,2013,Xinjiang,Emberiza stewarti,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Emberiza sulphurata,Passeriformes,1,2006,Zhejiang,Emberiza sulphurata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Emberiza yessoensis,Passeriformes,3,2014,Anhui | Hubei | Hunan,Emberiza yessoensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Enicurus leschenaulti,Passeriformes,1,2015,Inner Mongolia,Enicurus leschenaulti,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Enicurus maculatus,Passeriformes,2,2018,Guizhou | Zhejiang,Enicurus maculatus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Enicurus schistaceus,Passeriformes,1,2024,Anhui,Enicurus schistaceus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Eremophila alpestris,Passeriformes,1,2025,Shandong,Eremophila alpestris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Erithacus rubecula,Passeriformes,4,2010,Gansu | Jilin | Ningxia | Xinjiang,Erithacus rubecula,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Erpornis zantholeuca,Passeriformes,1,2019,Tibet,Erpornis zantholeuca,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Erythrogenys hypoleucos,Passeriformes,1,2019,Yunnan,Erythrogenys hypoleucos,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Eudynamys scolopaceus,Cuculiformes,4,2016,Liaoning | Qinghai | Shanxi | Tibet,Eudynamys scolopaceus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Eumyias thalassinus,Passeriformes,6,2018,Gansu | Hainan | Inner Mongolia | Jiangsu | Qinghai | Tianjin,Eumyias thalassinus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Falco cherrug,Falconiformes,1,2018,Yunnan,Falco cherrug,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Falco severus,Falconiformes,1,2014,Tibet,Falco severus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ficedula albicilla,Passeriformes,1,2017,Tibet,Ficedula albicilla,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ficedula elisae,Passeriformes,3,2012,Hunan | Jiangxi | Shanghai,Ficedula elisae,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ficedula erithacus,Passeriformes,2,2016,Guizhou | Hebei,Ficedula erithacus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ficedula hyperythra,Passeriformes,3,2007,Chongqing | Hunan | Shaanxi,Ficedula hyperythra,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ficedula hypoleuca,Passeriformes,1,2008,Xinjiang,Ficedula hypoleuca,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ficedula mugimaki,Passeriformes,1,2019,Guizhou,Ficedula mugimaki,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ficedula narcissina,Passeriformes,3,2011,Anhui | Jiangxi | Liaoning,Ficedula narcissina,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ficedula owstoni,Passeriformes,1,2024,Jiangsu,Ficedula owstoni,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ficedula parva,Passeriformes,4,2008,Hebei | Hong Kong | Hunan | Shanghai,Ficedula parva,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ficedula ruficauda,Passeriformes,1,2017,Sichuan,Ficedula ruficauda,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ficedula strophiata,Passeriformes,1,2017,Beijing,Ficedula strophiata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ficedula superciliaris,Passeriformes,1,2020,Hubei,Ficedula superciliaris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ficedula tricolor,Passeriformes,3,2009,Hunan | Inner Mongolia | Qinghai,Ficedula tricolor,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Fregata andrewsi,Suliformes,2,2006,Fujian | Liaoning,Fregata andrewsi,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Fregata ariel,Suliformes,4,2011,Beijing | Jiangxi | Liaoning | Shaanxi,Fregata ariel,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Fringilla coelebs,Passeriformes,6,2017,Gansu | Hubei | Hunan | Jiangsu | Qinghai | Yunnan,Fringilla coelebs,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Fringilla montifringilla,Passeriformes,1,2011,Ningxia,Fringilla montifringilla,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Galerida cristata,Passeriformes,1,2010,Heilongjiang,Galerida cristata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Gallicrex cinerea,Gruiformes,1,2020,Gansu,Gallicrex cinerea,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Garrulax canorus,Passeriformes,1,2003,Liaoning,Garrulax canorus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Garrulax maesi,Passeriformes,1,2008,Guangdong,Garrulax maesi,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Garrulax monileger,Passeriformes,3,2009,Hubei | Jiangsu | Shaanxi,Garrulax monileger,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Gavia adamsii,Gaviiformes,3,2006,Jiangsu | Jilin | Sichuan,Gavia adamsii,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Gavia arctica,Gaviiformes,3,2018,Liaoning | Shaanxi | Yunnan,Gavia arctica,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Gavia pacifica,Gaviiformes,1,2025,Zhejiang,Gavia pacifica,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Gavia stellata,Gaviiformes,2,2021,Anhui | Xinjiang,Gavia stellata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Gelochelidon nilotica,Charadriiformes,2,2020,Hubei | Hunan,Gelochelidon nilotica,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Geokichla citrina,Passeriformes,2,2009,Chongqing | Jiangxi,Geokichla citrina,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Geokichla wardii,NA,1,2024,Tibet,Geokichla wardii,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Geopelia striata,Columbiformes,1,2021,Yunnan,Geopelia striata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Glareola lactea,Charadriiformes,2,2019,Guangxi | Hainan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Glaucidium cuculoides,Strigiformes,1,2008,Beijing,Glaucidium cuculoides,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Gorsachius goisagi,Pelecaniformes,1,2025,Hainan,Gorsachius goisagi,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Gorsachius melanolophus,Pelecaniformes,2,2019,Jiangsu | Shandong,Gorsachius melanolophus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Gracupica nigricollis,Passeriformes,4,2006,Anhui | Chongqing | Hainan | Shandong,Gracupica nigricollis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Grandala coelicolor,Passeriformes,1,2009,Chongqing,Grandala coelicolor,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Grus canadensis,NA,4,2011,Anhui | Jilin | Liaoning | Yunnan,Branta canadensis,matched,auto_epithet_same_order,High-confidence auto candidate; review basis Avibase/IOC + BirdLife,auto_high_confidence,candidate,candidate,,NA,TRUE
+Grus japonensis,Gruiformes,2,2024,Fujian | Sichuan,Grus japonensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Grus monacha,Gruiformes,1,2021,Ningxia,Grus monacha,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Grus nigricollis,Gruiformes,1,2023,Inner Mongolia,Grus nigricollis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Grus vipio,NA,3,2019,Gansu | Shanxi | Sichuan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Grus japonensis | Grus monacha | Grus virgo | Grus nigricollis,same genus Grus japonensis | Grus monacha | Grus virgo | Grus nigricollis,FALSE
+Grus virgo,Gruiformes,3,2002,Anhui | Beijing | Tianjin,Grus virgo,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Gygis alba,Charadriiformes,1,2006,Fujian,Gygis alba,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Gypaetus barbatus,Accipitriformes,2,2010,Chongqing | Shaanxi,Gypaetus barbatus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Gyps himalayensis,Accipitriformes,2,2003,Guangxi | Liaoning,Gyps himalayensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Gyps tenuirostris,Accipitriformes,1,2021,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Calidris tenuirostris | Ardenna tenuirostris,same epithet Calidris tenuirostris | Ardenna tenuirostris,FALSE
+Halcyon coromanda,Coraciiformes,1,2008,Shandong,Halcyon coromanda,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Halcyon pileata,Coraciiformes,1,2018,Tibet,Halcyon pileata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Halcyon smyrnensis,Coraciiformes,5,2009,Jiangsu | Shandong | Shanghai | Tibet,Halcyon smyrnensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Haliaeetus leucoryphus,Accipitriformes,1,2010,Yunnan,Haliaeetus leucoryphus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Haliaeetus pelagicus,Accipitriformes,1,2024,Jiangsu,Haliaeetus pelagicus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Haliastur indus,Accipitriformes,1,2025,Hunan,Haliastur indus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Harpactes wardi,Trogoniformes,1,2020,Tibet,Harpactes wardi,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Helopsaltes certhiola,Passeriformes,1,2024,Tibet,Helopsaltes certhiola,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Helopsaltes ochotensis,Passeriformes,1,2013,Anhui,Helopsaltes ochotensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Helopsaltes pleskei,Passeriformes,2,2005,Guangxi | Shanghai,Helopsaltes pleskei,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Helopsaltes pryeri,Passeriformes,1,2006,Shanghai,Helopsaltes pryeri,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Hemiprocne coronata,Caprimulgiformes,1,2018,Inner Mongolia,Hemiprocne coronata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Hemitesia pallidipes,Passeriformes,1,2024,Hunan,Hemitesia pallidipes,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Hemixos castanonotus,Passeriformes,2,2010,Anhui | Shandong,Hemixos castanonotus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Heterophasia desgodinsi,Passeriformes,2,2012,Hubei | Shaanxi,Heterophasia desgodinsi,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Heteroxenicus stellatus,Passeriformes,1,2018,Sichuan,Heteroxenicus stellatus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Hieraaetus pennatus,Accipitriformes,7,2012,Gansu | Hainan | Henan | Hunan | Qinghai | Shaanxi | Tibet,Hieraaetus pennatus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Hierococcyx nisicolor,Cuculiformes,1,2016,Shaanxi,Hierococcyx nisicolor,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Hirundapus caudacutus,Caprimulgiformes,1,2014,Hunan,Hirundapus caudacutus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Hirundo rustica,Passeriformes,1,2022,Hainan,Hirundo rustica,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Hirundo smithii,Passeriformes,1,2025,Guangdong,Hirundo smithii,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Histrionicus histrionicus,Anseriformes,3,2014,Beijing | Inner Mongolia | Jiangsu,Histrionicus histrionicus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Hydrocoloeus minutus,Charadriiformes,1,2017,Zhejiang,Hydrocoloeus minutus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Hydrophasianus chirurgus,Charadriiformes,4,2015,Gansu | Liaoning | Tianjin | Yunnan,Hydrophasianus chirurgus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Hydroprogne caspia,Charadriiformes,3,2005,Hubei | Ningxia | Yunnan,Hydroprogne caspia,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Hypothymis azurea,Passeriformes,1,2020,Jiangsu,Hypothymis azurea,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Hypsipetes leucocephalus,Passeriformes,1,2021,Gansu,Hypsipetes leucocephalus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ianthocincla lunulata,Passeriformes,1,2018,Ningxia,Ianthocincla lunulata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ibidorhyncha struthersii,Charadriiformes,1,2023,Anhui,Ibidorhyncha struthersii,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ictinaetus malaiensis,Accipitriformes,2,2010,Anhui | Shandong,Ictinaetus malaiensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Iduna caligata,Passeriformes,1,2022,Zhejiang,Iduna caligata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Indicator xanthonotus,Piciformes,1,2022,Sichuan,Indicator xanthonotus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ixobrychus cinnamomeus,Pelecaniformes,1,2019,Qinghai,Ixobrychus cinnamomeus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ixobrychus eurhythmus,Pelecaniformes,1,2015,Shaanxi,Ixobrychus eurhythmus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ixobrychus minutus,Pelecaniformes,1,2020,Gansu,Ixobrychus minutus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ixos mcclellandii,Passeriformes,2,2016,Gansu | Ningxia,Ixos mcclellandii,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ketupa flavipes,Strigiformes,1,2024,Shanxi,Ketupa flavipes,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Lalage melaschistos,Passeriformes,1,2014,Liaoning,Lalage melaschistos,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Lanius borealis,Passeriformes,1,2022,Tibet,Lanius borealis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Lanius collurioides,Passeriformes,1,2017,Sichuan,Lanius collurioides,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Lanius isabellinus,Passeriformes,1,2022,Zhejiang,Lanius isabellinus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Lanius schach,Passeriformes,3,2001,Beijing | Jiangxi | Tianjin,Lanius schach,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Lanius sphenocercus,Passeriformes,1,2019,Yunnan,Lanius sphenocercus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Lanius tephronotus,Passeriformes,2,2004,Hubei | Xinjiang,Lanius tephronotus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Larus argentatus,NA,1,2025,Tibet,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Larus crassirostris | Larus canus | Larus fuscus | Larus cachinnans | Larus glaucescens,same genus Larus crassirostris | Larus canus | Larus fuscus | Larus cachinnans | Larus glaucescens,FALSE
+Larus brunnicephalus,NA,1,2024,Fujian,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Larus crassirostris | Larus canus | Larus fuscus | Larus cachinnans | Larus glaucescens,same genus Larus crassirostris | Larus canus | Larus fuscus | Larus cachinnans | Larus glaucescens,FALSE
+Larus cachinnans,Charadriiformes,1,2006,Fujian,Larus cachinnans,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Larus canus,Charadriiformes,1,2025,Tibet,Larus canus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Larus crassirostris,Charadriiformes,1,2006,Hainan,Larus crassirostris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Larus fuscus,Charadriiformes,3,2018,Hubei | Inner Mongolia | Tibet,Larus fuscus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Larus genei,NA,2,2022,Fujian | Jiangxi,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Larus crassirostris | Larus canus | Larus fuscus | Larus cachinnans | Larus glaucescens,same genus Larus crassirostris | Larus canus | Larus fuscus | Larus cachinnans | Larus glaucescens,FALSE
+Larus glaucescens,Charadriiformes,2,2018,Inner Mongolia | Shanghai,Larus glaucescens,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Larus hyperboreus,Charadriiformes,3,2015,Gansu | Shanxi | Tibet,Larus hyperboreus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Larus ichthyaetus,NA,2,2014,Anhui | Liaoning,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Larus crassirostris | Larus canus | Larus fuscus | Larus cachinnans | Larus glaucescens,same genus Larus crassirostris | Larus canus | Larus fuscus | Larus cachinnans | Larus glaucescens,FALSE
+Larus relictus,NA,1,2019,Ningxia,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Larus crassirostris | Larus canus | Larus fuscus | Larus cachinnans | Larus glaucescens,same genus Larus crassirostris | Larus canus | Larus fuscus | Larus cachinnans | Larus glaucescens,FALSE
+Larvivora akahige,Passeriformes,2,2010,Hubei | Zhejiang,Larvivora akahige,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Larvivora brunnea,Passeriformes,1,2020,Jiangsu,Larvivora brunnea,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Larvivora cyane,Passeriformes,2,2007,Hainan | Hunan,Larvivora cyane,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Leptopoecile elegans,Passeriformes,1,2011,Yunnan,Leptopoecile elegans,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Leptoptilos javanicus,Ciconiiformes,1,2014,Yunnan,Leptoptilos javanicus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Leucogeranus leucogeranus,Gruiformes,2,2013,Shaanxi | Yunnan,Leucogeranus leucogeranus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Limnodromus scolopaceus,Charadriiformes,6,2014,Guangxi | Heilongjiang | Hubei | Liaoning | Shaanxi | Sichuan,Limnodromus scolopaceus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Limnodromus semipalmatus,Charadriiformes,2,2011,Shaanxi | Xinjiang,Limnodromus semipalmatus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Limosa lapponica,Charadriiformes,1,2013,Yunnan,Limosa lapponica,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Limosa limosa,Charadriiformes,1,2011,Ningxia,Limosa limosa,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Linaria cannabina,Passeriformes,1,2023,Inner Mongolia,Linaria cannabina,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Locustella davidi,Passeriformes,2,2003,Guangxi | Liaoning,Locustella davidi,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Locustella mandelli,Passeriformes,2,2010,Guizhou | Hunan,Locustella mandelli,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Lonchura striata,Passeriformes,3,2006,Gansu | Tibet,Lonchura striata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Lophophanes dichrous,Passeriformes,1,2016,Hubei,Lophophanes dichrous,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Lophotriorchis kienerii,Accipitriformes,1,2019,Tibet,Lophotriorchis kienerii,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Lophura leucomelanos,Galliformes,1,2024,Tibet,Lophura leucomelanos,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Lophura nycthemera,Galliformes,2,2017,Guangdong | Jiangsu,Lophura nycthemera,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Loxia curvirostra,Passeriformes,1,2024,Hubei,Loxia curvirostra,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Machlolophus xanthogenys,Passeriformes,1,2010,Tibet,Machlolophus xanthogenys,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Macropygia unchall,Columbiformes,3,2016,Jiangsu | Tibet | Zhejiang,Macropygia unchall,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Mareca americana,Anseriformes,1,2007,Jilin,Mareca americana,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Mareca falcata,Anseriformes,2,2019,Gansu | Xinjiang,Mareca falcata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Megaceryle lugubris,Coraciiformes,3,2015,Inner Mongolia | Qinghai | Tibet,Megaceryle lugubris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Melanitta fusca,Anseriformes,3,2021,Guangdong | Henan | Shanghai,Melanitta fusca,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Melanitta stejnegeri,Anseriformes,3,2017,Guizhou | Shaanxi,Melanitta stejnegeri,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Melanochlora sultanea,Passeriformes,2,2018,Tibet | Zhejiang,Melanochlora sultanea,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Mergus serrator,Anseriformes,4,2017,Guizhou | Hunan | Shaanxi | Yunnan,Mergus serrator,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Merops philippinus,Coraciiformes,1,2023,Henan,Merops philippinus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Mixornis gularis,Passeriformes,1,2005,Guangxi,Mixornis gularis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Monticola gularis,Passeriformes,1,2013,Sichuan,Monticola gularis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Monticola rufiventris,Passeriformes,1,2007,Shaanxi,Monticola rufiventris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Monticola solitarius,Passeriformes,1,2019,Qinghai,Monticola solitarius,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Motacilla citreola,Passeriformes,1,2011,Hunan,Motacilla citreola,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Moupinia poecilotis,Passeriformes,1,2022,Tibet,Moupinia poecilotis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Muscicapa dauurica,Passeriformes,1,2011,Xinjiang,Muscicapa dauurica,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Muscicapa ferruginea,Passeriformes,3,2013,Gansu | Hunan | Zhejiang,Muscicapa ferruginea,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Muscicapa muttui,Passeriformes,4,2015,Henan | Hunan | Jiangsu | Shanghai,Muscicapa muttui,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Mycerobas affinis,Passeriformes,2,2009,Shaanxi | Shandong,Mycerobas affinis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Mycerobas carnipes,Passeriformes,1,2021,Henan,Mycerobas carnipes,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Mycteria leucocephala,Ciconiiformes,1,2009,Guizhou,Mycteria leucocephala,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Myiomela leucura,Passeriformes,1,2018,Jiangxi,Myiomela leucura,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Myophonus caeruleus,Passeriformes,1,2002,Guangxi,Myophonus caeruleus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Napothera malacoptila,Passeriformes,1,2000,Yunnan,Napothera malacoptila,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Neophron percnopterus,Accipitriformes,1,2012,Xinjiang,Neophron percnopterus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Netta rufina,Anseriformes,4,2017,Anhui | Jilin | Liaoning | Shanghai,Netta rufina,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Niltava davidi,Passeriformes,1,2018,Zhejiang,Niltava davidi,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Niltava grandis,Passeriformes,1,2003,Guangxi,Niltava grandis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Niltava macgrigoriae,Passeriformes,1,2023,Shandong,Niltava macgrigoriae,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Niltava sundara,Passeriformes,1,2015,Hunan,Niltava sundara,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ninox japonica,Strigiformes,1,2023,Hunan,Ninox japonica,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Nipponia nippon,Pelecaniformes,1,2024,Gansu,Nipponia nippon,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Nisaetus nipalensis,Accipitriformes,3,2007,Gansu | Guizhou,Nisaetus nipalensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Numenius madagascariensis,Charadriiformes,1,2007,Shaanxi,Numenius madagascariensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Numenius minutus,Charadriiformes,1,2025,Gansu,Numenius minutus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Numenius phaeopus,Charadriiformes,1,2013,Yunnan,Numenius phaeopus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Nycticorax nycticorax,Pelecaniformes,1,2014,Tibet,Nycticorax nycticorax,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Oceanites oceanicus,Procellariiformes,1,2022,Zhejiang,Oceanites oceanicus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Oenanthe deserti,Passeriformes,3,2012,Shanghai | Sichuan | Zhejiang,Oenanthe deserti,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Oenanthe oenanthe,Passeriformes,1,2024,Jiangsu,Oenanthe oenanthe,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Onychoprion aleuticus,Charadriiformes,4,2009,Fujian | Jiangsu | Shandong | Zhejiang,Onychoprion aleuticus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Onychoprion anaethetus,Charadriiformes,4,2013,Guangxi | Jiangsu | Shandong | Yunnan,Onychoprion anaethetus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Onychoprion fuscatus,Charadriiformes,1,2023,Yunnan,Onychoprion fuscatus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Oriolus oriolus,Passeriformes,1,2017,Qinghai,Oriolus oriolus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Oroanassa magnifica,NA,7,2000,Guangdong | Guizhou | Hunan | Shaanxi | Sichuan | Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Otocichla mupinensis,NA,6,2006,Anhui | Guangxi | Jiangsu | Jiangxi | Liaoning | Shanghai,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Otus lettia,Strigiformes,1,2024,Gansu,Otus lettia,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Otus semitorques,Strigiformes,3,2012,Henan | Inner Mongolia | Zhejiang,Otus semitorques,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Otus spilocephalus,Strigiformes,2,2011,Anhui | Jiangxi,Otus spilocephalus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Oxyura leucocephala,Anseriformes,2,2019,Shaanxi | Sichuan,Oxyura leucocephala,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Panurus biarmicus,Passeriformes,2,2020,Henan | Shaanxi,Panurus biarmicus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Paradoxornis gularis,NA,1,2011,Shaanxi,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Accipiter gularis | Monticola gularis | Mixornis gularis,same epithet Accipiter gularis | Monticola gularis | Mixornis gularis,FALSE
+Paradoxornis guttaticollis,Passeriformes,1,2014,Hunan,Paradoxornis guttaticollis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Paradoxornis heudei,Passeriformes,4,2002,Anhui | Henan | Jilin | Tianjin,Paradoxornis heudei,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Parayuhina diademata,Passeriformes,1,2014,Tibet,Parayuhina diademata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pardaliparus venustulus,Passeriformes,2,2012,Jilin | Qinghai,Pardaliparus venustulus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Parus major linnaeus,NA,1,2025,Liaoning,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Parus monticolus,same genus Parus monticolus,FALSE
+Parus monticolus,Passeriformes,1,2006,Guangxi,Parus monticolus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Passer cinnamomeus,Passeriformes,2,2004,Beijing | Inner Mongolia,Passer cinnamomeus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Passer domesticus,Passeriformes,6,2009,Hainan | Hubei | Jiangxi | Shaanxi | Yunnan | Zhejiang,Passer domesticus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Passer hispaniolensis,Passeriformes,2,2015,Inner Mongolia | Sichuan,Passer hispaniolensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Passerculus sandwichensis,Passeriformes,1,2021,Qinghai,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Pastor roseus,Passeriformes,1,2025,Jiangxi,Pastor roseus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pavo cristatus,NA,1,2025,Tibet,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Pelecanus crispus,Pelecaniformes,1,2024,Guizhou,Pelecanus crispus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pelecanus onocrotalus,Pelecaniformes,6,2004,Anhui | Jiangsu | Liaoning | Shandong | Sichuan,Pelecanus onocrotalus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pellorneum albiventre,Passeriformes,1,2025,Guangdong,Pellorneum albiventre,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pellorneum tickelli,Passeriformes,2,2006,Guangxi | Tibet,Pellorneum tickelli,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Perdix hodgsoniae,Galliformes,1,2013,Yunnan,Perdix hodgsoniae,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pericrocotus cantonensis,Passeriformes,1,2023,Tianjin,Pericrocotus cantonensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pericrocotus divaricatus,Passeriformes,1,2020,Hainan,Pericrocotus divaricatus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pericrocotus ethologus,Passeriformes,3,2014,Hunan | Inner Mongolia | Jiangsu,Pericrocotus ethologus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pericrocotus solaris,Passeriformes,2,2009,Anhui | Chongqing,Pericrocotus solaris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Periparus rubidiventris,Passeriformes,1,2017,Tibet,Periparus rubidiventris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pernis ptilorhynchus,Accipitriformes,2,2001,Tianjin,Pernis ptilorhynchus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phalaropus fulicarius,Charadriiformes,4,2011,Beijing | Hainan | Henan | Sichuan,Phalaropus fulicarius,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phalaropus lobatus,Charadriiformes,5,2009,Guizhou | Henan | Jiangxi | Shaanxi | Sichuan,Phalaropus lobatus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phasianus colchicus,Galliformes,1,2021,Shandong,Phasianus colchicus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phoebastria immutabilis,Procellariiformes,1,2005,Fujian,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Phoenicopterus roseus,Phoenicopteriformes,13,2000,Anhui | Beijing | Inner Mongolia | Liaoning | Ningxia | Qinghai | Shaanxi | Shandong | Shanghai | Sichuan | Tianjin | Xinjiang | Yunnan,Phoenicopterus roseus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phoenicurus erythronotus,Passeriformes,1,2020,Gansu,Phoenicurus erythronotus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phoenicurus frontalis,Passeriformes,2,2017,Jiangxi | Shandong,Phoenicurus frontalis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phoenicurus leucocephalus,Passeriformes,2,2010,Gansu | Xinjiang,Phoenicurus leucocephalus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phoenicurus ochruros,Passeriformes,4,2013,Hunan | Jiangsu | Shanghai | Zhejiang,Phoenicurus ochruros,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phoenicurus schisticeps,Passeriformes,1,2010,Shandong,Phoenicurus schisticeps,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phyllergates cucullatus,Passeriformes,1,2025,Guizhou,Phyllergates cucullatus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus affinis,Passeriformes,2,2010,Guangxi | Heilongjiang,Phylloscopus affinis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus borealoides,Passeriformes,3,2006,Hunan | Jiangsu | Zhejiang,Phylloscopus borealoides,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus burkii,Passeriformes,1,2002,Tianjin,Phylloscopus burkii,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus cantator,Passeriformes,2,2014,Guangxi | Tibet,Phylloscopus cantator,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus castaniceps,Passeriformes,4,2003,Anhui | Heilongjiang | Shanghai,Phylloscopus castaniceps,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus claudiae,Passeriformes,1,2018,Shanghai,Phylloscopus claudiae,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus collybita,Passeriformes,8,2007,Anhui | Guangxi | Henan | Hubei | Inner Mongolia | Jiangsu | Jiangxi | Sichuan,Phylloscopus collybita,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus coronatus,Passeriformes,1,2013,Xinjiang,Phylloscopus coronatus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus emeiensis,Passeriformes,1,2019,Hunan,Phylloscopus emeiensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus humei,Passeriformes,1,2025,Tianjin,Phylloscopus humei,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus intermedius,Passeriformes,5,2008,Guangxi | Hainan | Henan | Hunan | Shanghai,Phylloscopus intermedius,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus maculipennis,Passeriformes,1,2025,Hunan,Phylloscopus maculipennis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus magnirostris,Passeriformes,1,2014,Hunan,Phylloscopus magnirostris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus ogilviegranti,Passeriformes,1,2012,Shaanxi,Phylloscopus ogilviegranti,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus omeiensis,Passeriformes,1,2023,Hunan,Phylloscopus omeiensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus proregulus,Passeriformes,1,2015,Heilongjiang,Phylloscopus proregulus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus pulcher,Passeriformes,1,2022,Hunan,Phylloscopus pulcher,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus ricketti,Passeriformes,3,2010,Anhui | Henan | Jiangxi,Phylloscopus ricketti,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus sibilatrix,Passeriformes,1,2025,Gansu,Phylloscopus sibilatrix,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus soror,Passeriformes,4,2013,Beijing | Hunan | Jiangsu | Shanghai,Phylloscopus soror,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus subaffinis,Passeriformes,1,2023,Inner Mongolia,Phylloscopus subaffinis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus tenellipes,Passeriformes,1,2011,Henan,Phylloscopus tenellipes,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus tephrocephalus,Passeriformes,5,2012,Anhui | Gansu | Guizhou | Hunan | Tianjin,Phylloscopus tephrocephalus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus valentini,Passeriformes,1,2025,Jiangsu,Phylloscopus valentini,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Phylloscopus yunnanensis,Passeriformes,1,2012,Jiangxi,Phylloscopus yunnanensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Picumnus innominatus,Piciformes,2,2006,Guangxi | Shandong,Picumnus innominatus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Picus chlorolophus,Piciformes,1,2019,Tibet,Picus chlorolophus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pitta brachyura,NA,1,2025,Sichuan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Pitta nympha | Pitta moluccensis,same genus Pitta nympha | Pitta moluccensis,FALSE
+Pitta moluccensis,Passeriformes,1,2017,Hainan,Pitta moluccensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pitta nympha,Passeriformes,2,2011,Hubei | Jilin,Pitta nympha,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pitta sordida,Passeriformes,1,2007,Sichuan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Pitta nympha | Pitta moluccensis,same genus Pitta nympha | Pitta moluccensis,FALSE
+Platalea minor,Pelecaniformes,1,2017,Anhui,Platalea minor,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Plectrophenax nivalis,Passeriformes,2,2014,Jiangsu | Liaoning,Plectrophenax nivalis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Plegadis falcinellus,Pelecaniformes,8,2013,Hainan | Henan | Hubei | Jiangsu | Jiangxi | Tianjin | Tibet | Yunnan,Plegadis falcinellus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pluvialis apricaria,Charadriiformes,1,2021,Shandong,Pluvialis apricaria,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pnoepyga immaculata,Passeriformes,1,2010,Tibet,Pnoepyga immaculata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Podiceps auritus,Podicipediformes,2,2017,Gansu | Shaanxi,Podiceps auritus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Podiceps grisegena,Podicipediformes,1,2008,Gansu,Podiceps grisegena,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Podiceps nigricollis,Podicipediformes,2,2007,Shaanxi | Tibet,Podiceps nigricollis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Podoces biddulphi,Passeriformes,1,2009,Gansu,Podoces biddulphi,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pomatorhinus schisticeps,Passeriformes,1,2016,Tibet,Phoenicurus schisticeps,matched,auto_epithet_unique,Auto candidate; cross-check with Avibase/IOC + BirdLife recommended,auto_medium_confidence,candidate,candidate,,NA,TRUE
+Pomatorhinus superciliaris,Passeriformes,1,2020,Tibet,Pomatorhinus superciliaris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Porphyrio porphyrio,NA,1,2013,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Prinia atrogularis,Passeriformes,3,2016,Guizhou | Hunan,Prinia atrogularis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Prinia flaviventris,Passeriformes,2,2022,Hubei | Jiangsu,Prinia flaviventris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Prinia inornata,Passeriformes,2,2016,Gansu | Shaanxi,Prinia inornata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Prinia rufescens,Passeriformes,1,2025,Hunan,Prinia rufescens,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Prinia striata,Passeriformes,1,2025,Shanxi,Prinia striata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Prunella collaris,Passeriformes,1,2022,Hunan,Prunella collaris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Prunella himalayana,Passeriformes,1,2010,Shandong,Prunella himalayana,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Prunella immaculata,Passeriformes,2,2007,Shaanxi,Prunella immaculata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Prunella montanella,Passeriformes,2,2008,Jiangsu | Xinjiang,Prunella montanella,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Prunella strophiata,Passeriformes,2,2010,Guizhou | Henan,Prunella strophiata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Psarisomus dalhousiae,Passeriformes,1,2016,Tibet,Psarisomus dalhousiae,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pseudopodoces humilis,Passeriformes,1,2023,Inner Mongolia,Pseudopodoces humilis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Psilopogon faber,Piciformes,1,2018,Zhejiang,Psilopogon faber,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Psilopogon faiostrictus,Piciformes,2,2008,Guangxi | Yunnan,Psilopogon faiostrictus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Psilopogon virens,Piciformes,1,2017,Gansu,Psilopogon virens,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pterorhinus berthemyi,Passeriformes,1,2009,Jiangsu,Pterorhinus berthemyi,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pterorhinus gularis,Passeriformes,1,2007,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Accipiter gularis | Monticola gularis | Mixornis gularis,same epithet Accipiter gularis | Monticola gularis | Mixornis gularis,FALSE
+Pterorhinus lanceolatus,Passeriformes,1,2017,Henan,Pterorhinus lanceolatus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pterorhinus pectoralis,Passeriformes,1,2009,Jiangsu,Pterorhinus pectoralis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pterorhinus sannio,Passeriformes,1,2017,Henan,Pterorhinus sannio,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pteruthius rufiventer,Passeriformes,1,2019,Tibet,Pteruthius rufiventer,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pteruthius xanthochlorus,Passeriformes,3,2014,Anhui | Guizhou | Hunan,Pteruthius xanthochlorus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Ptyonoprogne rupestris,Passeriformes,2,2024,Hubei | Jiangsu,Ptyonoprogne rupestris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pycnonotus aurigaster,Passeriformes,1,2006,Hainan,Pycnonotus aurigaster,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pycnonotus blanfordi,NA,1,2023,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Pycnonotus sinensis | Pycnonotus jocosus | Pycnonotus aurigaster | Pycnonotus xanthorrhous,same genus Pycnonotus sinensis | Pycnonotus jocosus | Pycnonotus aurigaster | Pycnonotus xanthorrhous,FALSE
+Pycnonotus goiavier,Passeriformes,1,2020,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Pycnonotus sinensis | Pycnonotus jocosus | Pycnonotus aurigaster | Pycnonotus xanthorrhous,same genus Pycnonotus sinensis | Pycnonotus jocosus | Pycnonotus aurigaster | Pycnonotus xanthorrhous,FALSE
+Pycnonotus jocosus,Passeriformes,3,2011,Hainan | Henan | Sichuan,Pycnonotus jocosus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pycnonotus sinensis,Passeriformes,6,2003,Beijing | Inner Mongolia | Jilin | Liaoning | Ningxia | Qinghai,Pycnonotus sinensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pycnonotus xanthorrhous,Passeriformes,2,2018,Ningxia | Shanghai,Pycnonotus xanthorrhous,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pyrrhula erythaca,Passeriformes,1,2011,Hunan,Pyrrhula erythaca,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pyrrhula nipalensis,Passeriformes,3,2010,Henan | Hunan | Shaanxi,Pyrrhula nipalensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Pyrrhula pyrrhula,Passeriformes,1,2025,Qinghai,Pyrrhula pyrrhula,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Rallina eurizonoides,Gruiformes,3,2009,Jiangxi | Shandong,Rallina eurizonoides,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Rallina fasciata,Gruiformes,2,2001,Guangdong | Yunnan,Rallina fasciata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Rallus aquaticus,Gruiformes,3,2022,Anhui | Inner Mongolia | Ningxia,Rallus aquaticus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Recurvirostra avosetta,Charadriiformes,2,2010,Ningxia | Yunnan,Recurvirostra avosetta,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Regulus regulus,Passeriformes,2,2011,Anhui | Hunan,Regulus regulus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Remiz consobrinus,Passeriformes,4,2015,Guangxi | Guizhou | Shaanxi | Sichuan,Remiz consobrinus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Remiz coronatus,Passeriformes,3,2022,Gansu | Inner Mongolia,Remiz coronatus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Remiz pendulinus,NA,1,2024,Xinjiang,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Remiz consobrinus | Remiz coronatus,same genus Remiz consobrinus | Remiz coronatus,FALSE
+Rhodospiza obsoleta,Passeriformes,1,2010,Shaanxi,Rhodospiza obsoleta,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Riparia riparia,Passeriformes,1,2006,Hainan,Riparia riparia,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Rissa tridactyla,Charadriiformes,7,2008,Anhui | Gansu | Guizhou | Hunan | Jilin | Qinghai | Yunnan,Rissa tridactyla,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Rubigula flaviventris,Passeriformes,1,2013,Guangxi,Rubigula flaviventris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Sasia ochracea,Piciformes,2,2014,Guangdong | Hunan,Sasia ochracea,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Saxicola ferreus,Passeriformes,1,2019,Tianjin,Saxicola ferreus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Saxicola rubetra,NA,1,2023,Xinjiang,Saxicola rubetra,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Sibirionetta formosa,Anseriformes,1,2025,Tibet,Sibirionetta formosa,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Sitta cinnamoventris,Passeriformes,1,2017,Tibet,Sitta cinnamoventris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Sitta formosa,Passeriformes,1,2019,Tibet,Sitta formosa,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Sitta villosa,Passeriformes,2,2006,Heilongjiang | Shandong,Sitta villosa,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Sittiparus varius,Passeriformes,1,2013,Shanghai,Sittiparus varius,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Spilopelia chinensis,Columbiformes,2,2006,Inner Mongolia | Jilin,Spilopelia chinensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Spilopelia senegalensis,Columbiformes,1,2023,Gansu,Spilopelia senegalensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Spilornis cheela,Accipitriformes,2,2011,Heilongjiang | Shanghai,Spilornis cheela,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Spinus spinus,Passeriformes,1,2010,Xinjiang,Spinus spinus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Spizixos semitorques,Passeriformes,3,2017,Beijing | Hebei | Shandong,Spizixos semitorques,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Spodiopsar cineraceus,Passeriformes,1,2018,Tibet,Spodiopsar cineraceus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Spodiopsar sericeus,Passeriformes,5,2001,Gansu | Jilin | Liaoning | Ningxia | Tianjin,Spodiopsar sericeus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Stachyris humei,Passeriformes,1,2015,Tibet,Stachyris humei,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Stachyris nonggangensis,Passeriformes,1,2008,Guangxi,Stachyris nonggangensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Staphida castaniceps,Passeriformes,1,2025,Henan,Staphida castaniceps,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Staphida torqueola,Passeriformes,1,2022,Gansu,Staphida torqueola,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Stercorarius longicaudus,Charadriiformes,1,2019,Jiangsu,Stercorarius longicaudus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Stercorarius parasiticus,Charadriiformes,5,2017,Hunan | Inner Mongolia | Sichuan | Tibet | Yunnan,Stercorarius parasiticus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Stercorarius pomarinus,Charadriiformes,1,2007,Inner Mongolia,Stercorarius pomarinus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Streptopelia decaocto,Columbiformes,1,2006,Heilongjiang,Streptopelia decaocto,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Sturnia pagodarum,Passeriformes,1,2023,Xinjiang,Sturnia pagodarum,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Sturnia sinensis,Passeriformes,1,2019,Jiangsu,Sturnia sinensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Sturnus vulgaris,Passeriformes,4,2002,Heilongjiang | Inner Mongolia | Shaanxi | Tianjin,Sturnus vulgaris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Sula dactylatra,Suliformes,2,2021,Guangdong | Zhejiang,Sula dactylatra,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Sula granti,NA,1,2025,Taiwan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Sula sula | Sula dactylatra,same genus Sula sula | Sula dactylatra,FALSE
+Sula sula,Suliformes,4,2001,Fujian | Hebei | Jiangsu | Zhejiang,Sula sula,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Suthora alphonsiana,NA,1,2006,Guangxi,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Suthora fulvifrons,same genus Suthora fulvifrons,FALSE
+Suthora conspicillata,NA,1,2011,Hunan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Suthora fulvifrons,same genus Suthora fulvifrons,FALSE
+Suthora fulvifrons,Passeriformes,1,2017,Hubei,Suthora fulvifrons,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Suthora przewalskii,NA,1,2007,Sichuan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Suthora fulvifrons,same genus Suthora fulvifrons,FALSE
+Suthora webbiana,NA,1,2024,Qinghai,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Suthora fulvifrons,same genus Suthora fulvifrons,FALSE
+Sylvia atricapilla,Passeriformes,1,2013,Xinjiang,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Sylviparus modestus,Passeriformes,1,2025,Gansu,Sylviparus modestus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Synthliboramphus antiquus,Charadriiformes,1,2006,Hainan,Synthliboramphus antiquus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Syrmaticus humiae,Galliformes,1,2022,Yunnan,Syrmaticus humiae,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Syrmaticus reevesii,Galliformes,1,2021,Guangxi,Syrmaticus reevesii,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Syrrhaptes paradoxus,Pterocliformes,1,2006,Guangxi,Syrrhaptes paradoxus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Tarsiger chrysaeus,Passeriformes,3,2020,Guizhou | Henan | Hunan,Tarsiger chrysaeus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Tarsiger indicus,Passeriformes,1,2018,Shaanxi,Tarsiger indicus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Temnurus temnurus,Passeriformes,1,2022,Guangdong,Temnurus temnurus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Tephrodornis virgatus,Passeriformes,1,2020,Zhejiang,Tephrodornis virgatus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Tetrax tetrax,Otidiformes,1,2025,Shaanxi,Tetrax tetrax,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Thalasseus bengalensis,Charadriiformes,2,2018,Guangxi | Hebei,Thalasseus bengalensis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Thalasseus bergii,Charadriiformes,1,2013,Shanghai,Thalasseus bergii,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Timalia pileata,Passeriformes,1,2011,Jiangxi,Timalia pileata,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Todiramphus chloris,Coraciiformes,1,2006,Fujian,Todiramphus chloris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Tragopan caboti,Galliformes,1,2022,Anhui,Tragopan caboti,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Tragopan temminckii,Galliformes,1,2021,Henan,Tragopan temminckii,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Treron curvirostra,Columbiformes,1,2023,Guangdong,Treron curvirostra,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Treron seimundi,Columbiformes,1,2022,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Treron sieboldii | Treron sphenurus | Treron curvirostra,same genus Treron sieboldii | Treron sphenurus | Treron curvirostra,FALSE
+Treron sieboldii,Columbiformes,3,2011,Henan | Jiangxi | Zhejiang,Treron sieboldii,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Treron sphenurus,Columbiformes,1,2023,Guangdong,Treron sphenurus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Tringa brevipes,Charadriiformes,1,2014,Sichuan,Tringa brevipes,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Tringa guttifer,Charadriiformes,1,2006,Liaoning,Tringa guttifer,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Tringa stagnatilis,Charadriiformes,1,2025,Guizhou,Tringa stagnatilis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Turdus boulboul,Passeriformes,10,2007,Anhui | Fujian | Henan | Hunan | Jiangxi | Ningxia | Qinghai | Shaanxi | Tibet | Zhejiang,Turdus boulboul,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Turdus cardis,Passeriformes,2,2014,Beijing | Shaanxi,Turdus cardis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Turdus feae,Passeriformes,3,2012,Anhui | Guizhou | Sichuan,Turdus feae,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Turdus mandarinus,Passeriformes,2,2011,Beijing | Ningxia,Turdus mandarinus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Turdus migratorius,NA,1,2024,Heilongjiang,Turdus migratorius,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Turdus naumanni,Passeriformes,1,2025,Heilongjiang,Turdus naumanni,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Turdus pilaris,Passeriformes,2,2012,Heilongjiang | Shaanxi,Turdus pilaris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Turdus rubrocanus,Passeriformes,4,2018,Henan | Inner Mongolia | Jiangxi | Shanxi,Turdus rubrocanus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Turdus ruficollis,Passeriformes,1,2021,Jiangsu,Turdus ruficollis,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Turdus viscivorus,Passeriformes,2,2019,Gansu | Inner Mongolia,Turdus viscivorus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Turnix suscitator,Charadriiformes,3,2023,Anhui | Zhejiang,Turnix suscitator,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Tyto alba,NA,3,2004,Guangxi | Hainan | Tibet,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,Calidris alba | Gygis alba,same epithet Calidris alba | Gygis alba,FALSE
+Tyto longimembris,Strigiformes,1,2005,Hebei,Tyto longimembris,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Urile pelagicus,NA,1,2024,Jiangsu,Haliaeetus pelagicus,matched,auto_epithet_same_order,High-confidence auto candidate; review basis Avibase/IOC + BirdLife,auto_high_confidence,candidate,candidate,,NA,TRUE
+Urosphena squameiceps,Passeriformes,1,2017,Anhui,Urosphena squameiceps,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Vanellus cinereus,Charadriiformes,1,2006,Hainan,Vanellus cinereus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Vanellus indicus,Charadriiformes,1,2019,Chongqing,Vanellus indicus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Vanellus leucurus,Charadriiformes,1,2012,Xinjiang,Vanellus leucurus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Vanellus vanellus,Charadriiformes,1,2006,Hainan,Vanellus vanellus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Yuhina nigrimenta,Passeriformes,2,2007,Gansu | Shaanxi,Yuhina nigrimenta,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Zapornia bicolor,Gruiformes,1,2025,Hunan,Zapornia bicolor,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Zoothera dixoni,Passeriformes,2,2016,Hubei | Hunan,Zoothera dixoni,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Zoothera mollissima,Passeriformes,2,2007,Hunan | Shaanxi,Zoothera mollissima,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Zoothera monticola,Passeriformes,2,2007,Tibet | Yunnan,Zoothera monticola,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Zosterops erythropleurus,Passeriformes,1,2019,Qinghai,Zosterops erythropleurus,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE
+Zosterops meyeni,Passeriformes,1,2024,Hubei,Zosterops meyeni,matched,direct_exact,Direct match in SHP,not_required,not_required,not_required,,NA,TRUE

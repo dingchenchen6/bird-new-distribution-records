@@ -1,0 +1,14 @@
+scenario,period,ssp,gcm,res_minutes,enabled,raster_path,ensemble_group
+current,current,current,WorldClim2.1,2.5,TRUE,/Users/dingchenchen/Documents/New records/bird-new-distribution-records/tasks/bird_sdm_distribution_modeling/data/climate/current,current
+2050s_SSP245_BCC-CSM2-MR,2050s,245,BCC-CSM2-MR,2.5,TRUE,/Users/dingchenchen/Documents/New records/bird-new-distribution-records/tasks/bird_sdm_distribution_modeling/data/climate/2050s_SSP245_BCC-CSM2-MR,2050s_SSP245
+2050s_SSP245_CNRM-CM6-1,2050s,245,CNRM-CM6-1,2.5,TRUE,/Users/dingchenchen/Documents/New records/bird-new-distribution-records/tasks/bird_sdm_distribution_modeling/data/climate/2050s_SSP245_CNRM-CM6-1,2050s_SSP245
+2050s_SSP245_MIROC6,2050s,245,MIROC6,2.5,TRUE,/Users/dingchenchen/Documents/New records/bird-new-distribution-records/tasks/bird_sdm_distribution_modeling/data/climate/2050s_SSP245_MIROC6,2050s_SSP245
+2050s_SSP585_BCC-CSM2-MR,2050s,585,BCC-CSM2-MR,2.5,TRUE,/Users/dingchenchen/Documents/New records/bird-new-distribution-records/tasks/bird_sdm_distribution_modeling/data/climate/2050s_SSP585_BCC-CSM2-MR,2050s_SSP585
+2050s_SSP585_CNRM-CM6-1,2050s,585,CNRM-CM6-1,2.5,TRUE,/Users/dingchenchen/Documents/New records/bird-new-distribution-records/tasks/bird_sdm_distribution_modeling/data/climate/2050s_SSP585_CNRM-CM6-1,2050s_SSP585
+2050s_SSP585_MIROC6,2050s,585,MIROC6,2.5,TRUE,/Users/dingchenchen/Documents/New records/bird-new-distribution-records/tasks/bird_sdm_distribution_modeling/data/climate/2050s_SSP585_MIROC6,2050s_SSP585
+2070s_SSP245_BCC-CSM2-MR,2070s,245,BCC-CSM2-MR,2.5,TRUE,/Users/dingchenchen/Documents/New records/bird-new-distribution-records/tasks/bird_sdm_distribution_modeling/data/climate/2070s_SSP245_BCC-CSM2-MR,2070s_SSP245
+2070s_SSP245_CNRM-CM6-1,2070s,245,CNRM-CM6-1,2.5,TRUE,/Users/dingchenchen/Documents/New records/bird-new-distribution-records/tasks/bird_sdm_distribution_modeling/data/climate/2070s_SSP245_CNRM-CM6-1,2070s_SSP245
+2070s_SSP245_MIROC6,2070s,245,MIROC6,2.5,TRUE,/Users/dingchenchen/Documents/New records/bird-new-distribution-records/tasks/bird_sdm_distribution_modeling/data/climate/2070s_SSP245_MIROC6,2070s_SSP245
+2070s_SSP585_BCC-CSM2-MR,2070s,585,BCC-CSM2-MR,2.5,TRUE,/Users/dingchenchen/Documents/New records/bird-new-distribution-records/tasks/bird_sdm_distribution_modeling/data/climate/2070s_SSP585_BCC-CSM2-MR,2070s_SSP585
+2070s_SSP585_CNRM-CM6-1,2070s,585,CNRM-CM6-1,2.5,TRUE,/Users/dingchenchen/Documents/New records/bird-new-distribution-records/tasks/bird_sdm_distribution_modeling/data/climate/2070s_SSP585_CNRM-CM6-1,2070s_SSP585
+2070s_SSP585_MIROC6,2070s,585,MIROC6,2.5,TRUE,/Users/dingchenchen/Documents/New records/bird-new-distribution-records/tasks/bird_sdm_distribution_modeling/data/climate/2070s_SSP585_MIROC6,2070s_SSP585
