@@ -1,0 +1,102 @@
+new_record_species,new_record_order,record_count_new_record,first_year,provinces_recorded,matched_species,match_status,match_type,taxonomy_source,review_flag,avibase_ioc_review,birdlife_review,candidate_species,note,model_ready
+Acrocephalus dumetorum,Passeriformes,1,2017,Sichuan,Acrocephalus dumetorum,matched,direct_exact,Direct match in occurrence records,not_required,not_required,not_required,,NA,TRUE
+Anas carolinensis,NA,1,2023,Shandong,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Anhinga melanogaster,Suliformes,1,2024,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Anous stolidus,Charadriiformes,2,2020,Anhui | Jiangsu,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Anthreptes malacensis,Passeriformes,1,2010,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Ardenna pacifica,Procellariiformes,2,2013,Shanghai | Zhejiang,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Ardenna tenuirostris,Procellariiformes,2,2014,Fujian | Hebei,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Ardeola grayii,Pelecaniformes,2,2016,Guangdong | Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Ardeola speciosa,Pelecaniformes,1,2025,Guangxi,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Asarcornis scutulata,Anseriformes,1,2019,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Aythya collaris,Anseriformes,1,2023,Shandong,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Brachyramphus perdix,Charadriiformes,1,2016,Jiangsu,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Branta canadensis,Anseriformes,4,2017,Heilongjiang | Liaoning | Tianjin | Zhejiang,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Bubulcus ibis,NA,3,2002,Heilongjiang | Shanxi | Tianjin,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Calidris bairdii,Charadriiformes,1,2023,Zhejiang,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Callacanthis burtoni,Passeriformes,1,2015,Tibet,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Charadrius asiaticus,Charadriiformes,1,2001,Hubei,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Ciconia episcopus,Ciconiiformes,1,2011,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Clamator jacobinus,Cuculiformes,1,2021,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Coturnicops exquisitus,Gruiformes,1,2004,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Cyanoderma rufifrons,NA,1,2006,Guangxi,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Cyornis poliogenys,Passeriformes,1,2014,Guangxi,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Cyornis rubeculoides,Passeriformes,1,2010,Hunan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Egretta picata,Pelecaniformes,1,2025,Jiangsu,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Emberiza stewarti,Passeriformes,1,2013,Xinjiang,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Ficedula hypoleuca,Passeriformes,1,2008,Xinjiang,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Ficedula owstoni,Passeriformes,1,2024,Jiangsu,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Ficedula ruficauda,Passeriformes,1,2017,Sichuan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Fregata andrewsi,Suliformes,2,2006,Fujian | Liaoning,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Gavia adamsii,Gaviiformes,3,2006,Jiangsu | Jilin | Sichuan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Gavia pacifica,Gaviiformes,1,2025,Zhejiang,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Geokichla wardii,NA,1,2024,Tibet,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Geopelia striata,Columbiformes,1,2021,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Glareola lactea,Charadriiformes,2,2019,Guangxi | Hainan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Grus canadensis,NA,4,2011,Anhui | Jilin | Liaoning | Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Grus vipio,NA,3,2019,Gansu | Shanxi | Sichuan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Gygis alba,Charadriiformes,1,2006,Fujian,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Gyps tenuirostris,Accipitriformes,1,2021,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Halcyon coromanda,Coraciiformes,1,2008,Shandong,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Harpactes wardi,Trogoniformes,1,2020,Tibet,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Helopsaltes pleskei,Passeriformes,2,2005,Guangxi | Shanghai,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Hemiprocne coronata,Caprimulgiformes,1,2018,Inner Mongolia,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Hirundo smithii,Passeriformes,1,2025,Guangdong,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Larus argentatus,NA,1,2025,Tibet,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Larus brunnicephalus,NA,1,2024,Fujian,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Larus genei,NA,2,2022,Fujian | Jiangxi,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Larus glaucescens,Charadriiformes,2,2018,Inner Mongolia | Shanghai,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Larus ichthyaetus,NA,2,2014,Anhui | Liaoning,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Larus relictus,NA,1,2019,Ningxia,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Leptoptilos javanicus,Ciconiiformes,1,2014,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Lophotriorchis kienerii,Accipitriformes,1,2019,Tibet,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Machlolophus xanthogenys,Passeriformes,1,2010,Tibet,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Melanitta fusca,Anseriformes,3,2021,Guangdong | Henan | Shanghai,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Mycteria leucocephala,Ciconiiformes,1,2009,Guizhou,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Neophron percnopterus,Accipitriformes,1,2012,Xinjiang,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Oceanites oceanicus,Procellariiformes,1,2022,Zhejiang,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Oroanassa magnifica,NA,7,2000,Guangdong | Guizhou | Hunan | Shaanxi | Sichuan | Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Otocichla mupinensis,NA,6,2006,Anhui | Guangxi | Jiangsu | Jiangxi | Liaoning | Shanghai,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Paradoxornis gularis,NA,1,2011,Shaanxi,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Parus major linnaeus,NA,1,2025,Liaoning,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Passerculus sandwichensis,Passeriformes,1,2021,Qinghai,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Pavo cristatus,NA,1,2025,Tibet,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Phalaropus fulicarius,Charadriiformes,4,2011,Beijing | Hainan | Henan | Sichuan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Phoebastria immutabilis,Procellariiformes,1,2005,Fujian,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Pitta brachyura,NA,1,2025,Sichuan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Pitta moluccensis,Passeriformes,1,2017,Hainan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Pitta sordida,Passeriformes,1,2007,Sichuan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Pluvialis apricaria,Charadriiformes,1,2021,Shandong,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Pnoepyga immaculata,Passeriformes,1,2010,Tibet,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Porphyrio porphyrio,NA,1,2013,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Psilopogon faiostrictus,Piciformes,2,2008,Guangxi | Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Pterorhinus gularis,Passeriformes,1,2007,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Pycnonotus blanfordi,NA,1,2023,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Pycnonotus goiavier,Passeriformes,1,2020,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Rallina fasciata,Gruiformes,2,2001,Guangdong | Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Remiz pendulinus,NA,1,2024,Xinjiang,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Saxicola rubetra,NA,1,2023,Xinjiang,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Stercorarius longicaudus,Charadriiformes,1,2019,Jiangsu,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Stercorarius parasiticus,Charadriiformes,5,2017,Hunan | Inner Mongolia | Sichuan | Tibet | Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Stercorarius pomarinus,Charadriiformes,1,2007,Inner Mongolia,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Sturnia pagodarum,Passeriformes,1,2023,Xinjiang,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Sula dactylatra,Suliformes,2,2021,Guangdong | Zhejiang,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Sula granti,NA,1,2025,Taiwan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Sula sula,Suliformes,4,2001,Fujian | Hebei | Jiangsu | Zhejiang,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Suthora alphonsiana,NA,1,2006,Guangxi,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Suthora conspicillata,NA,1,2011,Hunan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Suthora przewalskii,NA,1,2007,Sichuan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Suthora webbiana,NA,1,2024,Qinghai,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Sylvia atricapilla,Passeriformes,1,2013,Xinjiang,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Sylviparus modestus,Passeriformes,1,2025,Gansu,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Synthliboramphus antiquus,Charadriiformes,1,2006,Hainan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Syrmaticus humiae,Galliformes,1,2022,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Temnurus temnurus,Passeriformes,1,2022,Guangdong,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Thalasseus bengalensis,Charadriiformes,2,2018,Guangxi | Hebei,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Todiramphus chloris,Coraciiformes,1,2006,Fujian,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Treron seimundi,Columbiformes,1,2022,Yunnan,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Turdus migratorius,NA,1,2024,Heilongjiang,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Tyto alba,NA,3,2004,Guangxi | Hainan | Tibet,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Vanellus indicus,Charadriiformes,1,2019,Chongqing,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Vanellus leucurus,Charadriiformes,1,2012,Xinjiang,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
+Zosterops meyeni,Passeriformes,1,2024,Hubei,NA,unmatched,unmatched,Pending Avibase/IOC + BirdLife review,review_needed,pending,pending,,NA,FALSE
