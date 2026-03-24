@@ -1,0 +1,102 @@
+species,record_count_new_record,first_year,provinces_recorded,new_record_order,previous_match_status,previous_model_status,previous_skip_reason
+Acrocephalus dumetorum,1,2017,Sichuan,Passeriformes,matched,failed,runtime_error
+Anas carolinensis,1,2023,Shandong,NA,unmatched,unmatched,taxonomy_unmatched
+Anhinga melanogaster,1,2024,Yunnan,Suliformes,unmatched,unmatched,taxonomy_unmatched
+Anous stolidus,2,2020,Anhui | Jiangsu,Charadriiformes,matched,skipped,insufficient_occurrence_points
+Anthreptes malacensis,1,2010,Yunnan,Passeriformes,matched,skipped,insufficient_occurrence_points
+Ardenna pacifica,2,2013,Shanghai | Zhejiang,Procellariiformes,matched,skipped,insufficient_occurrence_points
+Ardenna tenuirostris,2,2014,Fujian | Hebei,Procellariiformes,matched,skipped,insufficient_occurrence_points
+Ardeola grayii,2,2016,Guangdong | Yunnan,Pelecaniformes,matched,skipped,insufficient_occurrence_points
+Ardeola speciosa,1,2025,Guangxi,Pelecaniformes,matched,skipped,insufficient_occurrence_points
+Asarcornis scutulata,1,2019,Yunnan,Anseriformes,matched,skipped,insufficient_occurrence_points
+Aythya collaris,1,2023,Shandong,Anseriformes,matched,skipped,insufficient_occurrence_points
+Brachyramphus perdix,1,2016,Jiangsu,Charadriiformes,matched,skipped,insufficient_occurrence_points
+Branta canadensis,4,2017,Heilongjiang | Liaoning | Tianjin | Zhejiang,Anseriformes,matched,skipped,insufficient_occurrence_points
+Bubulcus ibis,3,2002,Heilongjiang | Shanxi | Tianjin,NA,unmatched,unmatched,taxonomy_unmatched
+Calidris bairdii,1,2023,Zhejiang,Charadriiformes,matched,skipped,insufficient_occurrence_points
+Callacanthis burtoni,1,2015,Tibet,Passeriformes,unmatched,unmatched,taxonomy_unmatched
+Charadrius asiaticus,1,2001,Hubei,Charadriiformes,unmatched,unmatched,taxonomy_unmatched
+Ciconia episcopus,1,2011,Yunnan,Ciconiiformes,matched,skipped,insufficient_occurrence_points
+Clamator jacobinus,1,2021,Yunnan,Cuculiformes,unmatched,unmatched,taxonomy_unmatched
+Coturnicops exquisitus,1,2004,Yunnan,Gruiformes,matched,skipped,insufficient_occurrence_points
+Cyanoderma rufifrons,1,2006,Guangxi,NA,unmatched,unmatched,taxonomy_unmatched
+Cyornis poliogenys,1,2014,Guangxi,Passeriformes,unmatched,unmatched,taxonomy_unmatched
+Cyornis rubeculoides,1,2010,Hunan,Passeriformes,matched,skipped,insufficient_occurrence_points
+Egretta picata,1,2025,Jiangsu,Pelecaniformes,not_evaluated,not_evaluated,NA
+Emberiza stewarti,1,2013,Xinjiang,Passeriformes,matched,skipped,insufficient_occurrence_points
+Ficedula hypoleuca,1,2008,Xinjiang,Passeriformes,matched,skipped,insufficient_occurrence_points
+Ficedula owstoni,1,2024,Jiangsu,Passeriformes,matched,skipped,insufficient_occurrence_points
+Ficedula ruficauda,1,2017,Sichuan,Passeriformes,matched,skipped,insufficient_occurrence_points
+Fregata andrewsi,2,2006,Fujian | Liaoning,Suliformes,not_evaluated,not_evaluated,NA
+Gavia adamsii,3,2006,Jiangsu | Jilin | Sichuan,Gaviiformes,matched,skipped,insufficient_occurrence_points
+Gavia pacifica,1,2025,Zhejiang,Gaviiformes,matched,skipped,insufficient_occurrence_points
+Geokichla wardii,1,2024,Tibet,NA,matched,skipped,insufficient_occurrence_points
+Geopelia striata,1,2021,Yunnan,Columbiformes,matched,skipped,insufficient_occurrence_points
+Glareola lactea,2,2019,Guangxi | Hainan,Charadriiformes,unmatched,unmatched,taxonomy_unmatched
+Grus canadensis,4,2011,Anhui | Jilin | Liaoning | Yunnan,NA,matched,skipped,insufficient_occurrence_points
+Grus vipio,3,2019,Gansu | Shanxi | Sichuan,NA,unmatched,unmatched,taxonomy_unmatched
+Gygis alba,1,2006,Fujian,Charadriiformes,matched,skipped,insufficient_occurrence_points
+Gyps tenuirostris,1,2021,Yunnan,Accipitriformes,unmatched,unmatched,taxonomy_unmatched
+Halcyon coromanda,1,2008,Shandong,Coraciiformes,matched,skipped,insufficient_occurrence_points
+Harpactes wardi,1,2020,Tibet,Trogoniformes,matched,skipped,insufficient_occurrence_points
+Helopsaltes pleskei,2,2005,Guangxi | Shanghai,Passeriformes,matched,skipped,insufficient_occurrence_points
+Hemiprocne coronata,1,2018,Inner Mongolia,Caprimulgiformes,matched,skipped,insufficient_occurrence_points
+Hirundo smithii,1,2025,Guangdong,Passeriformes,matched,skipped,insufficient_occurrence_points
+Larus argentatus,1,2025,Tibet,NA,unmatched,unmatched,taxonomy_unmatched
+Larus brunnicephalus,1,2024,Fujian,NA,unmatched,unmatched,taxonomy_unmatched
+Larus genei,2,2022,Fujian | Jiangxi,NA,unmatched,unmatched,taxonomy_unmatched
+Larus glaucescens,2,2018,Inner Mongolia | Shanghai,Charadriiformes,matched,skipped,insufficient_occurrence_points
+Larus ichthyaetus,2,2014,Anhui | Liaoning,NA,unmatched,unmatched,taxonomy_unmatched
+Larus relictus,1,2019,Ningxia,NA,unmatched,unmatched,taxonomy_unmatched
+Leptoptilos javanicus,1,2014,Yunnan,Ciconiiformes,matched,skipped,insufficient_occurrence_points
+Lophotriorchis kienerii,1,2019,Tibet,Accipitriformes,matched,skipped,insufficient_occurrence_points
+Machlolophus xanthogenys,1,2010,Tibet,Passeriformes,matched,skipped,insufficient_occurrence_points
+Melanitta fusca,3,2021,Guangdong | Henan | Shanghai,Anseriformes,matched,skipped,insufficient_occurrence_points
+Mycteria leucocephala,1,2009,Guizhou,Ciconiiformes,matched,skipped,insufficient_occurrence_points
+Neophron percnopterus,1,2012,Xinjiang,Accipitriformes,matched,skipped,insufficient_occurrence_points
+Oceanites oceanicus,1,2022,Zhejiang,Procellariiformes,matched,skipped,insufficient_occurrence_points
+Oroanassa magnifica,7,2000,Guangdong | Guizhou | Hunan | Shaanxi | Sichuan | Yunnan,NA,unmatched,unmatched,taxonomy_unmatched
+Otocichla mupinensis,6,2006,Anhui | Guangxi | Jiangsu | Jiangxi | Liaoning | Shanghai,NA,unmatched,unmatched,taxonomy_unmatched
+Paradoxornis gularis,1,2011,Shaanxi,NA,unmatched,unmatched,taxonomy_unmatched
+Parus major linnaeus,1,2025,Liaoning,NA,unmatched,unmatched,taxonomy_unmatched
+Passerculus sandwichensis,1,2021,Qinghai,Passeriformes,unmatched,unmatched,taxonomy_unmatched
+Pavo cristatus,1,2025,Tibet,NA,unmatched,unmatched,taxonomy_unmatched
+Phalaropus fulicarius,4,2011,Beijing | Hainan | Henan | Sichuan,Charadriiformes,matched,skipped,insufficient_occurrence_points
+Phoebastria immutabilis,1,2005,Fujian,Procellariiformes,unmatched,unmatched,taxonomy_unmatched
+Pitta brachyura,1,2025,Sichuan,NA,unmatched,unmatched,taxonomy_unmatched
+Pitta moluccensis,1,2017,Hainan,Passeriformes,matched,skipped,insufficient_occurrence_points
+Pitta sordida,1,2007,Sichuan,Passeriformes,unmatched,unmatched,taxonomy_unmatched
+Pluvialis apricaria,1,2021,Shandong,Charadriiformes,matched,skipped,insufficient_occurrence_points
+Pnoepyga immaculata,1,2010,Tibet,Passeriformes,matched,skipped,insufficient_occurrence_points
+Porphyrio porphyrio,1,2013,Yunnan,NA,unmatched,unmatched,taxonomy_unmatched
+Psilopogon faiostrictus,2,2008,Guangxi | Yunnan,Piciformes,matched,skipped,insufficient_occurrence_points
+Pterorhinus gularis,1,2007,Yunnan,Passeriformes,unmatched,unmatched,taxonomy_unmatched
+Pycnonotus blanfordi,1,2023,Yunnan,NA,unmatched,unmatched,taxonomy_unmatched
+Pycnonotus goiavier,1,2020,Yunnan,Passeriformes,unmatched,unmatched,taxonomy_unmatched
+Rallina fasciata,2,2001,Guangdong | Yunnan,Gruiformes,matched,skipped,insufficient_occurrence_points
+Remiz pendulinus,1,2024,Xinjiang,NA,unmatched,unmatched,taxonomy_unmatched
+Saxicola rubetra,1,2023,Xinjiang,NA,matched,skipped,insufficient_occurrence_points
+Stercorarius longicaudus,1,2019,Jiangsu,Charadriiformes,matched,skipped,insufficient_occurrence_points
+Stercorarius parasiticus,5,2017,Hunan | Inner Mongolia | Sichuan | Tibet | Yunnan,Charadriiformes,matched,skipped,insufficient_occurrence_points
+Stercorarius pomarinus,1,2007,Inner Mongolia,Charadriiformes,matched,skipped,insufficient_occurrence_points
+Sturnia pagodarum,1,2023,Xinjiang,Passeriformes,matched,skipped,insufficient_occurrence_points
+Sula dactylatra,2,2021,Guangdong | Zhejiang,Suliformes,matched,skipped,insufficient_occurrence_points
+Sula granti,1,2025,Taiwan,NA,unmatched,unmatched,taxonomy_unmatched
+Sula sula,4,2001,Fujian | Hebei | Jiangsu | Zhejiang,Suliformes,matched,skipped,insufficient_occurrence_points
+Suthora alphonsiana,1,2006,Guangxi,NA,unmatched,unmatched,taxonomy_unmatched
+Suthora conspicillata,1,2011,Hunan,NA,unmatched,unmatched,taxonomy_unmatched
+Suthora przewalskii,1,2007,Sichuan,NA,unmatched,unmatched,taxonomy_unmatched
+Suthora webbiana,1,2024,Qinghai,NA,unmatched,unmatched,taxonomy_unmatched
+Sylvia atricapilla,1,2013,Xinjiang,Passeriformes,unmatched,unmatched,taxonomy_unmatched
+Sylviparus modestus,1,2025,Gansu,Passeriformes,matched,failed,runtime_error
+Synthliboramphus antiquus,1,2006,Hainan,Charadriiformes,matched,skipped,insufficient_occurrence_points
+Syrmaticus humiae,1,2022,Yunnan,Galliformes,matched,skipped,insufficient_occurrence_points
+Temnurus temnurus,1,2022,Guangdong,Passeriformes,matched,skipped,insufficient_occurrence_points
+Thalasseus bengalensis,2,2018,Guangxi | Hebei,Charadriiformes,matched,skipped,insufficient_occurrence_points
+Todiramphus chloris,1,2006,Fujian,Coraciiformes,matched,skipped,insufficient_occurrence_points
+Treron seimundi,1,2022,Yunnan,Columbiformes,unmatched,unmatched,taxonomy_unmatched
+Turdus migratorius,1,2024,Heilongjiang,NA,matched,skipped,insufficient_occurrence_points
+Tyto alba,3,2004,Guangxi | Hainan | Tibet,NA,unmatched,unmatched,taxonomy_unmatched
+Vanellus indicus,1,2019,Chongqing,Charadriiformes,matched,skipped,insufficient_occurrence_points
+Vanellus leucurus,1,2012,Xinjiang,Charadriiformes,matched,skipped,insufficient_occurrence_points
+Zosterops meyeni,1,2024,Hubei,Passeriformes,matched,skipped,insufficient_occurrence_points

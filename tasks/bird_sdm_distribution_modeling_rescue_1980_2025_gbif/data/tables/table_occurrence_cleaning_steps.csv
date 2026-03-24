@@ -1,0 +1,7 @@
+step_name,n_rows,detail
+raw_input,4,Rows supplied to the occurrence cleaning function.
+after_species_cleaning,4,Rows with non-empty standardized species names.
+after_coordinate_nonmissing,4,Rows with non-missing longitude and latitude.
+after_bbox_and_dedup,4,Rows within the China bounding box after species-coordinate de-duplication.
+after_spatial_fallback,4,Rows retained by polygon-based China filtering.
+final_retained,4,Final cleaned occurrence rows retained for taxonomy matching and SDM fitting.
