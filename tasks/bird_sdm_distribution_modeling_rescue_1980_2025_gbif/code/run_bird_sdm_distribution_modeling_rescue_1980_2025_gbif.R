@@ -264,6 +264,9 @@ OCCURRENCE_SHP_PATH <- Sys.getenv("BIRD_SDM_OCCURRENCE_SHP_PATH", unset = DEFAUL
 PROVINCE_SHP_PATH <- Sys.getenv("BIRD_SDM_PROVINCE_SHP_PATH", unset = DEFAULT_PROVINCE_SHP_PATH)
 DASHLINE_SHP_PATH <- Sys.getenv("BIRD_SDM_DASHLINE_SHP_PATH", unset = DEFAULT_DASHLINE_SHP_PATH)
 RGBIF_COUNTRY_FILTER <- Sys.getenv("BIRD_SDM_RGBIF_COUNTRY", unset = "CN")
+RGBIF_YEAR_START <- suppressWarnings(as.integer(Sys.getenv("BIRD_SDM_RGBIF_YEAR_START", unset = "1900")))
+RGBIF_YEAR_END <- suppressWarnings(as.integer(Sys.getenv("BIRD_SDM_RGBIF_YEAR_END", unset = format(Sys.Date(), "%Y"))))
+RESCUE_SCOPE <- Sys.getenv("BIRD_SDM_RESCUE_SCOPE", unset = "insufficient_points_only")
 ALLOW_REMOTE_CLIMATE_DOWNLOAD <- tolower(Sys.getenv("BIRD_SDM_ALLOW_REMOTE_CLIMATE_DOWNLOAD", unset = "false")) %in% c("1", "true", "yes")
 
 MANUAL_OVERRIDE_PATH <- file.path(DATA_DIR, "taxonomy_manual_overrides.csv")
@@ -688,11 +691,22 @@ build_rescue_species_master <- function(new_records, species_pool, previous_stat
   if (nrow(previous_status) == 0) {
     return(full_master %>% mutate(previous_match_status = "not_available", previous_model_status = "not_available", previous_skip_reason = NA_character_))
   }
-  modeled_species <- previous_status %>%
-    filter(.data$model_status == "modeled") %>%
-    distinct(.data$species)
   residual_status <- previous_status %>%
-    filter(.data$model_status != "modeled") %>%
+    mutate(
+      rescue_scope = case_when(
+        .data$model_status == "skipped" & .data$skip_reason == "insufficient_occurrence_points" ~ "insufficient_points_only",
+        .data$model_status == "failed" ~ "failed_only",
+        .data$model_status == "unmatched" ~ "taxonomy_unmatched_only",
+        .data$model_status != "modeled" ~ "all_unmodeled",
+        TRUE ~ "modeled"
+      )
+    ) %>%
+    filter(
+      (.data$rescue_scope == "insufficient_points_only" & RESCUE_SCOPE == "insufficient_points_only") |
+        (.data$model_status == "failed" & RESCUE_SCOPE == "failed_only") |
+        (.data$model_status == "unmatched" & RESCUE_SCOPE == "taxonomy_unmatched_only") |
+        (.data$model_status != "modeled" & RESCUE_SCOPE == "all_unmodeled")
+    ) %>%
     distinct(.data$species, .keep_all = TRUE) %>%
     transmute(
       species,
@@ -701,8 +715,8 @@ build_rescue_species_master <- function(new_records, species_pool, previous_stat
       previous_skip_reason = .data$skip_reason
     )
   full_master %>%
-    anti_join(modeled_species, by = "species") %>%
-    left_join(residual_status, by = "species") %>%
+    semi_join(residual_status, by = "species") %>%
+    left_join(residual_status, by = "species", relationship = "one-to-one") %>%
     mutate(
       previous_match_status = coalesce(.data$previous_match_status, "not_evaluated"),
       previous_model_status = coalesce(.data$previous_model_status, "not_evaluated")
@@ -902,13 +916,21 @@ fetch_rgbif_occurrences_for_species <- function(query_name, limit_per_call = 100
   }
   all_rows <- list()
   start_at <- 0
+  year_start <- ifelse(is.na(RGBIF_YEAR_START), 1900L, RGBIF_YEAR_START)
+  year_end <- ifelse(is.na(RGBIF_YEAR_END), as.integer(format(Sys.Date(), "%Y")), RGBIF_YEAR_END)
+  if (year_end < year_start) {
+    tmp <- year_start
+    year_start <- year_end
+    year_end <- tmp
+  }
   while (start_at < max_records) {
     query_args <- list(
       scientificName = query_name,
       hasCoordinate = TRUE,
       limit = limit_per_call,
       start = start_at,
-      fields = "minimal"
+      fields = "minimal",
+      year = paste0(year_start, ",", year_end)
     )
     if (!is.na(RGBIF_COUNTRY_FILTER) && nzchar(RGBIF_COUNTRY_FILTER)) {
       query_args$country <- RGBIF_COUNTRY_FILTER
@@ -946,18 +968,36 @@ load_occurrence_points_from_rgbif <- function(china_boundary, species_master, ov
     safe_message("Fetching RGBIF occurrences for ", row$query_species[[1]], " ...")
     dat <- tryCatch(fetch_rgbif_occurrences_for_species(row$query_species[[1]]), error = function(e) tibble())
     if (!nrow(dat)) {
+      safe_message("RGBIF returned 0 usable raw rows for ", row$query_species[[1]], ".")
       return(tibble())
     }
-    dat %>%
+    standardized <- dat %>%
+      as_tibble() %>%
+      mutate(
+        order_occurrence = pick_first_existing_column(., c("order", "order_name"), default = NA_character_),
+        family_occurrence = pick_first_existing_column(., c("family", "family_name"), default = NA_character_),
+        longitude = suppressWarnings(as.numeric(pick_first_existing_column(., c("decimalLongitude", "longitude"), default = NA_real_))),
+        latitude = suppressWarnings(as.numeric(pick_first_existing_column(., c("decimalLatitude", "latitude"), default = NA_real_))),
+        gbif_key = as.character(pick_first_existing_column(., c("key", "gbifID", "occurrenceID"), default = NA_character_)),
+        event_year = suppressWarnings(as.integer(pick_first_existing_column(., c("year"), default = NA_integer_)))
+      ) %>%
       transmute(
         shp_species = row$query_species[[1]],
-        order_occurrence = coalesce(.data$order, NA_character_),
-        family_occurrence = coalesce(.data$family, NA_character_),
+        order_occurrence = .data$order_occurrence,
+        family_occurrence = .data$family_occurrence,
         longitude = coalesce(.data$decimalLongitude, .data$longitude),
         latitude = coalesce(.data$decimalLatitude, .data$latitude),
-        gbif_key = as.character(.data$key),
+        gbif_key = .data$gbif_key,
+        year = .data$event_year,
         occurrence_source = "rgbif"
       )
+    safe_message(
+      "RGBIF standardized rows for ", row$query_species[[1]], ": raw=", nrow(dat),
+      ", standardized=", nrow(standardized),
+      ", year_window=", ifelse(is.na(RGBIF_YEAR_START), 1900L, RGBIF_YEAR_START), "-", ifelse(is.na(RGBIF_YEAR_END), as.integer(format(Sys.Date(), "%Y")), RGBIF_YEAR_END),
+      if (!is.na(RGBIF_COUNTRY_FILTER) && nzchar(RGBIF_COUNTRY_FILTER)) paste0(", country=", RGBIF_COUNTRY_FILTER) else ", country=all"
+    )
+    standardized
   })
   occ_tbl <- bind_rows(rgbif_rows)
   if (!nrow(occ_tbl)) {
