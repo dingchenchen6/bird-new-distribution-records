@@ -1,10 +1,10 @@
 # Bird SDM distribution modeling task summary
 
-- Generated at: 2026-03-24 09:40:19
-- New-record species pool: 101
-- Exact/manual/auto matched species ready for modeling: 1
-- Successfully modeled species: 0
-- Unmatched species requiring Avibase/IOC + BirdLife review: 100
+- Generated at: 2026-03-24 18:23:45
+- New-record species pool: 59
+- Exact/manual/auto matched species ready for modeling: 59
+- Successfully modeled species: 24
+- Unmatched species requiring Avibase/IOC + BirdLife review: 0
 - Province sensitivity thresholds: 3, 10, 20, 50, 100, 200 cells
 
 ## Algorithm availability
@@ -17,6 +17,13 @@
 
 ## Notes
 
-- Prepare-only mode completed for the rescue SDM task: residual species from the earlier birdwatch workflow were re-screened.
-- Occurrence preparation used the configured rescue source route (combined Birdwatch 1980-2025 plus GBIF by default).
-- Fill taxonomy_manual_overrides.csv after Avibase/IOC + BirdLife review to recover more unmatched rescue species.
+- Taxonomy review includes explicit Avibase/IOC and BirdLife review fields.
+- Province sensitivity analysis is written for 3-cell, 10-cell, 20-cell, 50-cell, 100-cell, 200-cell thresholds.
+- MaxEnt uses maxent.jar when Java and the jar are available; otherwise it falls back to maxnet if installed.
+- Occurrence points, climate rasters, background sampling, and predictions are all restricted to the China boundary.
+- Species maps are rendered in a China-focused equal-area projection and overlay the provincial boundary together with the nine-dash line base layer.
+- Potential distribution GeoTIFF rasters are indexed in table_raster_output_manifest.csv for every successfully modeled species.
+- Current-climate preparation first checks the task climate cache for readable WorldClim bioclim and elevation files, and writes the validation result to table_climate_data_manifest.csv.
+- Run progress is written to data/progress/progress_summary.csv and data/progress/progress_events.log during batch execution.
+- The final potential-province table only keeps successfully modeled species and lists each province, suitable-cell count, and suitable area for every active threshold.
+- WorldClim elevation is appended as an environmental predictor and enters the variable-screening workflow together with the bioclim variables.
