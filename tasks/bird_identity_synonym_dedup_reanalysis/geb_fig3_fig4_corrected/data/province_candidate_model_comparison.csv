@@ -1,0 +1,5 @@
+"model","family","aic","bic","r_squared","adj_r_squared","max_vif"
+"Primary report-effort model","Gaussian LM",65.5906151861148,75.3989968577499,0.715172383373217,0.65583329657597,2.94645733262019
+"Alternative user-effort model","Gaussian LM",64.5220814039617,74.3304630755968,0.725138770420809,0.667876014258478,2.99262463333118
+"Influence-filtered report-effort model","Gaussian LM",50.1473110346195,59.472742605846,0.768284689078312,0.715622118414292,3.14229393360913
+"Count-based sensitivity model","Negative binomial",291.626254436389,300.033438726362,NA,NA,NA

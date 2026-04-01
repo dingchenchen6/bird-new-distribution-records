@@ -1,0 +1,13 @@
+metric,value
+n_records_raw,1022
+n_missing_province,0
+n_missing_order,0
+n_missing_year,1
+n_missing_longitude,0
+n_missing_latitude,0
+n_duplicate_species_province_year,0
+n_coordinates_outside_china_extent,2
+year_min,2000
+year_max,2025
+n_orders,23
+n_provinces,33

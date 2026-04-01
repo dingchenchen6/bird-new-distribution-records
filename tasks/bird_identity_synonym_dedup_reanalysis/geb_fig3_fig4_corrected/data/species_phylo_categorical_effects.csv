@@ -1,0 +1,9 @@
+"term","term_label","panel_group","median","mean","conf.low","conf.high","prob_positive"
+"diet_group_avFruit_nectar","Diet: fruit/nectar","Categorical traits",-0.231549715,-0.231789172188997,-1.1058906025,0.59967757675,0.3015
+"diet_group_avOmnivore","Diet: omnivore","Categorical traits",0.264750555,0.264044743845858,-0.1906339425,0.7302926675,0.871
+"diet_group_avPlant_seed","Diet: plant/seed","Categorical traits",0.14078333,0.141920757570618,-0.464109334,0.75670857675,0.674
+"diet_group_avVertebrate_aquatic","Diet: vertebrate/aquatic","Categorical traits",0.48471597,0.480758236567225,-0.06267485865,1.0148067525,0.96125
+"endemic_statusEndemic","Endemic species","Categorical traits",-0.396269155,-0.409115249174637,-1.21005577,0.3558579625,0.15675
+"forest_associationForest_primary","Forest-associated primary habitat","Categorical traits",0.47109474,0.47459567799915,0.097410139525,0.876470569,0.9905
+"migration_class_avLong_distance_migrant","Long-distance migrant","Categorical traits",0.60323239,0.59829293053483,0.20183732375,0.9720566015,0.99825
+"migration_class_avPartial_migrant","Partial migrant","Categorical traits",0.37171246,0.368660611961499,-0.0698090676,0.80334473175,0.95025

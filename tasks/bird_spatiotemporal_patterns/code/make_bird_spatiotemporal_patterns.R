@@ -72,19 +72,25 @@ suppressPackageStartupMessages({
 # Step 0. Define task paths
 # 第 0 步：定义任务路径
 # -------------------------------
-master_output_root <- "/Users/dingchenchen/Documents/New records/bird_new_records_R_output"
-task_dir <- file.path(master_output_root, "tasks", "bird_spatiotemporal_patterns")
+master_output_root <- Sys.getenv("BIRD_MASTER_OUTPUT_ROOT", unset = "/Users/dingchenchen/Documents/New records/bird_new_records_R_output")
+task_dir <- Sys.getenv(
+  "BIRD_TASK_DIR",
+  unset = file.path(master_output_root, "tasks", "bird_spatiotemporal_patterns")
+)
 figures_dir <- file.path(task_dir, "figures")
 code_dir <- file.path(task_dir, "code")
 data_dir <- file.path(task_dir, "data")
-shape_dir <- file.path(data_dir, "shapefile_base")
+shape_dir <- Sys.getenv("BIRD_SHAPE_DIR", unset = file.path(data_dir, "shapefile_base"))
 results_dir <- file.path(task_dir, "results")
 
 for (dir_path in c(figures_dir, code_dir, data_dir, results_dir, shape_dir)) {
   dir.create(dir_path, recursive = TRUE, showWarnings = FALSE)
 }
 
-clean_path <- file.path(master_output_root, "data_clean", "bird_new_records_clean.csv")
+clean_path <- Sys.getenv(
+  "BIRD_CLEAN_PATH",
+  unset = file.path(master_output_root, "data_clean", "bird_new_records_clean.csv")
+)
 province_shp_path <- file.path(shape_dir, "省.shp")
 province_line_path <- file.path(shape_dir, "省_境界线.shp")
 ten_dash_path <- file.path(shape_dir, "十段线.shp")

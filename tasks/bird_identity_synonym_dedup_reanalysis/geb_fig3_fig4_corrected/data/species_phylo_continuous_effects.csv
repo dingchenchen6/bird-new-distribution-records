@@ -1,0 +1,6 @@
+"term","term_label","panel_group","median","mean","conf.low","conf.high","prob_positive"
+"z_log_clutch_size","Clutch size","Continuous traits",-0.19604701,-0.19926128954764,-0.458501693,0.0475045952500001,0.05225
+"z_log_hwi","Hand-wing index (HWI)","Continuous traits",-0.00122703685,-0.0050703813240185,-0.3145943645,0.304839334,0.49625
+"z_log_mass","Body mass","Continuous traits",0.0090161313,0.0042844956679925,-0.31271002925,0.3037046995,0.522
+"z_log_n_congeners","Number of congeners","Continuous traits",0.071011626,0.0691857575163354,-0.13215382075,0.269840346,0.76425
+"z_log_range_provinces","Range size","Continuous traits",0.515065175,0.51623907907,0.32478655225,0.715110186,1

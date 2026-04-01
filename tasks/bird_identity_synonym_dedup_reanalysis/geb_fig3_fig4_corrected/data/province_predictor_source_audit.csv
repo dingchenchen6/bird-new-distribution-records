@@ -1,0 +1,6 @@
+"variable","source_file","used_in_primary_bird_model","rationale"
+"gdp_per_capita","Province_variables.csv",TRUE,"Generic socioeconomic covariate transferable across taxa."
+"area_km2","Province_variables.csv",TRUE,"Generic geographic covariate transferable across taxa."
+"habitat_heterogeneity","Province_variables.csv",TRUE,"Generic environmental heterogeneity covariate transferable across taxa."
+"human_density","Province_variables.csv",FALSE,"Screened only; not retained because user effort is directly available from the effort table."
+"reference_mammal_richness","Province_variables.csv",FALSE,"Not used because this richness field originates from the mammal GEB workflow and is taxonomically mismatched for birds."

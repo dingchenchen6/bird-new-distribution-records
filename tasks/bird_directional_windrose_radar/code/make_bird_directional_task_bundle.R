@@ -48,8 +48,11 @@ suppressPackageStartupMessages({
 # Step 0. Define task directories
 # 第 0 步：定义任务目录
 # -------------------------------
-master_output_root <- "/Users/dingchenchen/Documents/New records/bird_new_records_R_output"
-task_dir <- file.path(master_output_root, "tasks", "bird_directional_windrose_radar")
+master_output_root <- Sys.getenv("BIRD_MASTER_OUTPUT_ROOT", unset = "/Users/dingchenchen/Documents/New records/bird_new_records_R_output")
+task_dir <- Sys.getenv(
+  "BIRD_TASK_DIR",
+  unset = file.path(master_output_root, "tasks", "bird_directional_windrose_radar")
+)
 
 figures_dir <- file.path(task_dir, "figures")
 figures_overall_dir <- file.path(figures_dir, "overall")
@@ -60,8 +63,18 @@ code_dir <- file.path(task_dir, "code")
 data_dir <- file.path(task_dir, "data")
 results_dir <- file.path(task_dir, "results")
 
-clean_path <- file.path(master_output_root, "data_clean", "bird_new_records_clean.csv")
-traits_path <- file.path(master_output_root, "data_clean", "bird_species_pool_with_traits.csv")
+for (dir_path in c(figures_dir, figures_overall_dir, figures_combined_dir, figures_radar_order_dir, figures_windrose_order_dir, code_dir, data_dir, results_dir)) {
+  dir.create(dir_path, recursive = TRUE, showWarnings = FALSE)
+}
+
+clean_path <- Sys.getenv(
+  "BIRD_CLEAN_PATH",
+  unset = file.path(master_output_root, "data_clean", "bird_new_records_clean.csv")
+)
+traits_path <- Sys.getenv(
+  "BIRD_TRAITS_PATH",
+  unset = file.path(master_output_root, "data_clean", "bird_species_pool_with_traits.csv")
+)
 
 if (!file.exists(clean_path)) stop("Missing clean bird dataset: ", clean_path)
 if (!file.exists(traits_path)) stop("Missing bird trait dataset: ", traits_path)
@@ -188,7 +201,8 @@ traits <- read_csv(traits_path, show_col_types = FALSE) %>%
     species = species,
     centroid_latitude = as.numeric(centroid_latitude),
     centroid_longitude = as.numeric(centroid_longitude)
-  )
+  ) %>%
+  distinct(species, .keep_all = TRUE)
 
 # -------------------------------
 # Step 3. Compute direction for each species-level new record

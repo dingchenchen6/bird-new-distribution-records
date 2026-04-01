@@ -1,0 +1,7 @@
+"term","predictor","Primary report-effort","Alternative user-effort","Influence-filtered","delta_user_minus_primary","delta_influence_minus_primary"
+"z_hist_report_density","Historical survey effort",0.0622680974095921,0.0725752821783775,0.154051512829128,0.0103071847687854,0.0917834154195361
+"z_curr_report_density","Current survey effort",0.447993419836136,NA,0.597345927591676,NA,0.149352507755541
+"z_gdp_per_capita","Per capita GDP",0.148626124639252,0.115707547798538,-0.0481591808694229,-0.0329185768407144,-0.196785305508675
+"z_area_km2","Area",-0.578269251480314,-0.568041704438263,-0.705211901024324,0.0102275470420506,-0.12694264954401
+"z_habitat_heterogeneity","Habitat heterogeneity",-0.0304417553690589,-0.0202060277458256,0.0742888176546657,0.0102357276232333,0.104730573023725
+"z_curr_user_density","Current user effort",NA,0.490035754671475,NA,NA,NA

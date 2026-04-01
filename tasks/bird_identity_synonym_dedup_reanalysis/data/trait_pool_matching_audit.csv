@@ -1,0 +1,5 @@
+metric,value
+Corrected unique species,520
+Species matched to existing trait pool,500
+Species unmatched in trait pool,28
+Trait-pool rows after update,1541

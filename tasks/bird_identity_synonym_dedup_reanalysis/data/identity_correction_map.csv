@@ -1,0 +1,158 @@
+record_id,correction_sources,correction_source_primary,canonical_species,canonical_species_cn,canonical_english_name
+26,true_mismatch,true_mismatch,Circaetus gallicus,短趾雕,Short-toed Snake-eagle
+27,true_mismatch,true_mismatch,Circaetus gallicus,短趾雕,Short-toed Snake-eagle
+28,true_mismatch,true_mismatch,Circaetus gallicus,短趾雕,short-toed snake eagle
+38,duplicate_audit,duplicate_audit,Elanus caeruleus,黑翅鸢,Black-winged Kite
+39,duplicate_audit,duplicate_audit,Elanus caeruleus,黑翅鸢,Black-winged Kite
+62,duplicate_audit,duplicate_audit,Nisaetus nipalensis,鹰雕,Mountain Hawk-eagle
+63,duplicate_audit,duplicate_audit,Nisaetus nipalensis,鹰雕,Mountain Hawk-eagle
+65,duplicate_audit,duplicate_audit,Pernis ptilorhynchus,凤头蜂鹰,Oriental Honey-buzzard
+66,duplicate_audit,duplicate_audit,Pernis ptilorhynchus,凤头蜂鹰,Oriental Honey-buzzard
+93,true_mismatch,true_mismatch,Branta hutchinsii,小美洲黑雁,Branta hutchinsii
+94,true_mismatch,true_mismatch,Branta hutchinsii,小美洲黑雁,Cackling Goose
+109,duplicate_audit,duplicate_audit,Cygnus olor,疣鼻天鹅,Mute Swan
+110,duplicate_audit,duplicate_audit,Cygnus olor,疣鼻天鹅,Mute Swan
+117,true_mismatch,true_mismatch,Mareca falcata,罗纹鸭,Falcated Duck
+118,true_mismatch,true_mismatch,Mareca falcata,罗纹鸭,Falcated Duck
+122,true_mismatch,true_mismatch,Melanitta stejnegeri,斑脸海番鸭,Stejneger's Scoter
+123,true_mismatch,true_mismatch,Melanitta stejnegeri,斑脸海番鸭,Siberian Scoter
+134,true_mismatch,true_mismatch,Sibirionetta formosa,花脸鸭,Falcated Duck
+143,true_mismatch,true_mismatch,Charadrius asiaticus,红胸鸻,Caspian Plover
+144,true_mismatch,true_mismatch,Charadrius atrifrons,青藏沙鸻,Tibetan Sandplover
+145,true_mismatch,true_mismatch,Charadrius atrifrons,青藏沙鸻,Caspian Plover
+151,true_mismatch | duplicate_audit,true_mismatch,Charadrius atrifrons,蒙古沙鸻,Siberian Sandplover
+152,true_mismatch | duplicate_audit,true_mismatch,Charadrius atrifrons,蒙古沙鸻,Siberian Sandplover
+153,true_mismatch,true_mismatch,Charadrius atrifrons,蒙古沙鸻,Siberian Sandplover
+164,true_mismatch,true_mismatch,Glareola lactea,灰燕鸻,Small Pratincole
+165,true_mismatch,true_mismatch,Glareola lactea,灰燕鸻,Little Pratincole
+167,true_mismatch,true_mismatch,Hydrophasianus chirurgus,水雉,Pheasant-tailed Jacana
+168,true_mismatch,true_mismatch,Hydrophasianus chirurgus,水雉,Pheasant-tailed Jacana
+169,true_mismatch,true_mismatch,Hydrophasianus chirurgus,水雉,Pheasant-tailed Jacana
+170,true_mismatch,true_mismatch,Hydrophasianus chirurgus,黑胸鹌鹑,Pheasant-tailed Jacana
+235,format_mismatch,format_mismatch,Calidris melanotos,斑胸滨鹬,Pectoral Sandpiper
+236,format_mismatch,format_mismatch,Calidris melanotos,斑胸滨鹬,pectoral sandpiper
+237,format_mismatch,format_mismatch,Calidris melanotos,斑胸滨鹬,Pectoral Sandpiper
+238,format_mismatch,format_mismatch,Calidris melanotos,斑胸滨鹬,Pectoral Sandpiper
+239,format_mismatch,format_mismatch,Calidris melanotos,斑胸滨鹬,Pectoral Sandpiper
+240,format_mismatch,format_mismatch,Calidris melanotos,斑胸滨鹬,Pectoral Sandpiper
+241,format_mismatch,format_mismatch,Calidris minuta,小滨鹬,Little Stint
+242,format_mismatch,format_mismatch,Calidris minuta,小滨鹬,Little Stint
+243,format_mismatch,format_mismatch,Calidris minuta,小滨鹬,little stint
+244,format_mismatch,format_mismatch,Calidris minuta,小滨鹬,Little Stint
+245,format_mismatch,format_mismatch,Calidris minuta,小滨鹬,Little Stint
+246,format_mismatch,format_mismatch,Calidris minuta,小滨鹬,Little Stint
+247,format_mismatch,format_mismatch,Calidris minuta,小滨鹬,Little Stint
+248,format_mismatch,format_mismatch,Calidris minuta,小滨鹬,Little Stint
+249,format_mismatch,format_mismatch,Calidris minuta,小滨鹬,Little Stint
+287,true_mismatch,true_mismatch,Stercorarius parasiticus,短尾贼鸥,Arctic Jaeger
+288,true_mismatch,true_mismatch,Stercorarius parasiticus,短尾贼鸥,Arctic Jaeger
+289,true_mismatch,true_mismatch,Stercorarius parasiticus,短尾贼鸥,Arctic Jaeger
+290,true_mismatch,true_mismatch,Stercorarius parasiticus,短尾贼鸥,Parasitic Jaeger
+291,true_mismatch,true_mismatch,Stercorarius parasiticus,短尾贼鸥,Arctic Jaeger
+295,format_mismatch,format_mismatch,Anastomus oscitans,钳嘴鹳,Asian Openbill
+296,format_mismatch,format_mismatch,Anastomus oscitans,钳嘴鹳,Asian openbill
+297,format_mismatch,format_mismatch,Anastomus oscitans,钳嘴鹳,Asian Openbill
+298,format_mismatch,format_mismatch,Anastomus oscitans,钳嘴鹳,Asian Openbill
+299,format_mismatch,format_mismatch,Anastomus oscitans,钳嘴鹳,Asian Openbill
+310,true_mismatch,true_mismatch,Columba oenas,欧鸽,Stock Dove
+311,true_mismatch,true_mismatch,Columba oenas,鸥鸽,Stock Dove
+332,duplicate_audit,duplicate_audit,Halcyon smyrnensis,白胸翡翠,White-throated Kingfisher
+336,duplicate_audit,duplicate_audit,Halcyon smyrnensis,白胸翡翠,White-throated Kingfisher
+348,format_mismatch,format_mismatch,Clamator coromandus,红翅凤头鹃,Chestnut-winged Cuckoo
+349,format_mismatch | duplicate_audit,format_mismatch,Clamator coromandus,红翅凤头鹃,Chestnut-winged Cuckoo
+350,format_mismatch | duplicate_audit,format_mismatch,Clamator coromandus,红翅凤头鹃,Chestnut-winged cuckoo
+351,format_mismatch,format_mismatch,Clamator coromandus,红翅凤头鹃,Chestnut-winged Cuckoo
+352,duplicate_audit,duplicate_audit,Clamator jacobinus,斑翅凤头鹃,Jacobin Cuckoo
+353,duplicate_audit,duplicate_audit,Clamator jacobinus,斑翅凤头鹃,Jacobin Cuckoo
+365,format_mismatch,format_mismatch,Lophura nycthemera,白鹇,Silver pheasant
+366,format_mismatch,format_mismatch,Lophura nycthemera,白鹇,Silver Pheasant
+374,true_mismatch,true_mismatch,Gavia adamsii,黄嘴潜鸟,Yellow-billed Loon
+375,true_mismatch,true_mismatch,Gavia adamsii,黄嘴潜鸟,Yellow-billed Loon
+376,true_mismatch,true_mismatch,Gavia adamsii,白嘴潜鸟,Yellow-billed Loon
+400,duplicate_audit,duplicate_audit,Amaurornis phoenicurus,白胸苦恶鸟,White-breasted Waterhen
+401,duplicate_audit,duplicate_audit,Amaurornis phoenicurus,白胸苦恶鸟,White-breasted Waterhen
+409,duplicate_audit,duplicate_audit,Rallina eurizonoides,白喉斑秧鸡,Slaty-legged Crake
+410,duplicate_audit,duplicate_audit,Rallina eurizonoides,白喉斑秧鸡,Slaty-legged Crake
+412,true_mismatch,true_mismatch,Rallina fasciata,红脚斑秧鸡,Red-legged Crake
+413,true_mismatch,true_mismatch,Rallina fasciata,红脚斑秧鸡,Rallina fasciata
+431,true_mismatch,true_mismatch,Aegithalos concinnus,红头长尾山雀,Black-throated Tit
+432,true_mismatch,true_mismatch,Aegithalos concinnus,红头长尾山雀,Black-Throated Bushtit
+443,format_mismatch,format_mismatch,Artamus fuscus,灰燕鵙,Ashy Woodswallow
+444,format_mismatch,format_mismatch,Artamus fuscus,灰燕鵙,ashy woodswallow
+445,format_mismatch,format_mismatch,Artamus fuscus,灰燕鵙,Ashy Woodswallow
+466,duplicate_audit,duplicate_audit,Prinia atrogularis,黑喉山鹪莺,Black-throated Prinia
+467,duplicate_audit,duplicate_audit,Prinia atrogularis,黑喉山鹪莺,Black-throated Prinia
+468,format_mismatch,format_mismatch,Prinia flaviventris,黄腹山鹪莺,Yellow-bellied Prinia
+469,format_mismatch,format_mismatch,Prinia flaviventris,黄腹山鹪莺,Yellow-Bellied Prinia
+470,true_mismatch,true_mismatch,Prinia inornata,褐头鹪莺,Plain Prinia
+471,true_mismatch,true_mismatch,Prinia inornata,纯色山鹪莺,Plain Prinia
+488,duplicate_audit,duplicate_audit,Emberiza chrysophrys,黄眉鹀,Yellow-browed Bunting
+489,duplicate_audit,duplicate_audit,Emberiza chrysophrys,黄眉鹀,Yellow-browed Bunting
+497,true_mismatch,true_mismatch,Emberiza leucocephalos,白头鹀,Pine Bunting
+506,true_mismatch,true_mismatch,Emberiza leucocephalos,白顶鹀,White-capped Bunting
+511,duplicate_audit,duplicate_audit,Lonchura striata,白腰文鸟,White-rumped Munia
+512,duplicate_audit,duplicate_audit,Lonchura striata,白腰文鸟,White-rumped Munia
+515,true_mismatch,true_mismatch,Acanthis flammea,白腰朱顶雀,Redpoll
+516,true_mismatch,true_mismatch,Acanthis flammea,极北朱顶雀,Redpoll
+558,true_mismatch,true_mismatch,Lanius schach,棕背伯劳,Long-tailed Shrike
+559,true_mismatch,true_mismatch,Lanius schach,黑伯劳,Long-tailed Shrike
+560,true_mismatch,true_mismatch,Lanius schach,棕背伯劳,Long-tailed Shrike
+572,duplicate_audit,duplicate_audit,Ianthocincla lunulata,斑背噪鹛,Barred Laughingthrush
+573,duplicate_audit,duplicate_audit,Ianthocincla lunulata,斑背噪鹛,Barred Laughingthrush
+584,true_mismatch,true_mismatch,Locustella davidi,北短翅蝗莺,Baikal Grasshopper-warbler
+585,true_mismatch,true_mismatch,Locustella davidi,北短翅莺,Baikal Grasshopper-warbler
+592,duplicate_audit,duplicate_audit,Anthus gustavi,北鹨,Pechora Pipit
+593,duplicate_audit,duplicate_audit,Anthus gustavi,北鹨,Pechora Pipit
+611,true_mismatch,true_mismatch,Erithacus rubecula,欧亚鸲,European Robin
+612,true_mismatch,true_mismatch,Erithacus rubecula,欧亚鸲,Eurasian Robin
+613,true_mismatch,true_mismatch,Erithacus rubecula,欧亚鸲,European Robin
+614,true_mismatch,true_mismatch,Erithacus rubecula,欧亚鸲,European Robin
+636,format_mismatch,format_mismatch,Ficedula parva,红胸姬鹟,Red-breasted Flycatcher
+637,format_mismatch,format_mismatch,Ficedula parva,红胸姬鹟,red-breasted flycatcher
+638,format_mismatch,format_mismatch,Ficedula parva,红胸姬鹟,Red-breasted Flycatcher
+639,format_mismatch,format_mismatch,Ficedula parva,红胸姬鹟,Red-breasted Flycatcher
+669,true_mismatch,true_mismatch,Oenanthe deserti,漠鵖,Desert Wheatear
+670,true_mismatch,true_mismatch,Oenanthe deserti,漠䳭,Desert Wheatear
+671,true_mismatch,true_mismatch,Oenanthe deserti,漠䳭,Desert Wheatear
+685,format_mismatch,format_mismatch,Tarsiger chrysaeus,金色林鸲,Golden Bush-robin
+686,format_mismatch,format_mismatch,Tarsiger chrysaeus,金色林鸲,Golden Bush-robin
+687,format_mismatch,format_mismatch,Tarsiger chrysaeus,金色林鸲,Golden Bush-Robin
+739,duplicate_audit,duplicate_audit,Phylloscopus affinis,黄腹柳莺,Tickell's Leaf-warbler
+740,true_mismatch,true_mismatch,Phylloscopus borealoides,库页岛柳莺,Sakhalin Leaf-warbler
+741,true_mismatch,true_mismatch,Phylloscopus borealoides,库页岛柳莺,Sakhalin Leaf-warbler
+742,true_mismatch,true_mismatch,Phylloscopus borealoides,日本淡脚柳莺,Sakhalin Leaf-Warbler
+747,duplicate_audit,duplicate_audit,Phylloscopus castaniceps,栗头鹟莺,Chestnut-crowned Warbler
+748,duplicate_audit,duplicate_audit,Phylloscopus castaniceps,栗头鹟莺,Chestnut-crowned Warbler
+771,duplicate_audit,duplicate_audit,Phylloscopus affinis,黄腹柳莺,Tickell's Leaf-warbler
+833,duplicate_audit,duplicate_audit,Remiz coronatus,白冠攀雀,White-crowned Penduline-tit
+834,duplicate_audit,duplicate_audit,Remiz coronatus,白冠攀雀,White-crowned Penduline-tit
+862,format_mismatch,format_mismatch,Spodiopsar sericeus,丝光椋鸟,Red-billed Starling
+863,format_mismatch,format_mismatch,Spodiopsar sericeus,丝光椋鸟,Red-Billed Starling
+864,format_mismatch,format_mismatch,Spodiopsar sericeus,丝光椋鸟,Red-billed Starling
+865,format_mismatch,format_mismatch,Spodiopsar sericeus,丝光椋鸟,Red-billed Starling
+866,format_mismatch,format_mismatch,Spodiopsar sericeus,丝光椋鸟,Red-billed Starling
+926,true_mismatch,true_mismatch,Zoothera mollissima,淡背地鸫,Alpine Thrush
+927,true_mismatch,true_mismatch,Zoothera mollissima,光背地鸫,Alpine Thrush
+928,true_mismatch,true_mismatch,Zoothera mollissima,光背地鸫,Alpine Thrush
+963,duplicate_audit,duplicate_audit,Oroanassa magnifica,海南鳽,White-eared Night Heron
+964,duplicate_audit,duplicate_audit,Oroanassa magnifica,海南鳽,White-eared Night Heron
+975,duplicate_audit,duplicate_audit,Pelecanus onocrotalus,白鹈鹕,Great White Pelican
+976,duplicate_audit,duplicate_audit,Pelecanus onocrotalus,白鹈鹕,Great White Pelican
+991,format_mismatch,format_mismatch,Phoenicopterus roseus,大红鹳,Greater Flamingo
+992,format_mismatch,format_mismatch,Phoenicopterus roseus,大红鹳,Greater Flamingo
+993,format_mismatch,format_mismatch,Phoenicopterus roseus,大红鹳,Greater Flamingo
+994,format_mismatch,format_mismatch,Phoenicopterus roseus,大红鹳,Greater Flamingo
+995,format_mismatch,format_mismatch,Phoenicopterus roseus,大红鹳,Greater Flamingo
+996,format_mismatch,format_mismatch,Phoenicopterus roseus,大红鹳,Greater Flamingo
+997,format_mismatch,format_mismatch,Phoenicopterus roseus,大红鹳,Greater Flamingo
+998,format_mismatch,format_mismatch,Phoenicopterus roseus,大红鹳,Greater Flamingo
+999,format_mismatch,format_mismatch,Phoenicopterus roseus,大红鹳,Greater flamingo
+1000,format_mismatch,format_mismatch,Phoenicopterus roseus,大红鹳,Greater Flamingo
+1001,format_mismatch,format_mismatch,Phoenicopterus roseus,大红鹳,Greater Flamingo
+1002,format_mismatch,format_mismatch,Phoenicopterus roseus,大红鹳,Greater Flamingo
+1003,format_mismatch,format_mismatch,Phoenicopterus roseus,大红鹳,Greater Flamingo
+1039,true_mismatch,true_mismatch,Otus semitorques,日本领角鸮,Japanese Scops Owl
+1040,true_mismatch,true_mismatch,Otus semitorques,北领角鸮,Japanese Scops Owl
+1041,true_mismatch,true_mismatch,Otus semitorques,日本领角鸮,Japanese Scops Owl
+1056,true_mismatch,true_mismatch,Sula dactylatra,蓝脸鲣鸟,Blue-faced Booby
+1057,true_mismatch,true_mismatch,Sula dactylatra,蓝脸鲣鸟,Masked Booby

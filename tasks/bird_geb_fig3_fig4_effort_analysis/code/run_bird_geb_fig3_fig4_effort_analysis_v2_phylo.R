@@ -185,16 +185,18 @@ code_dir <- if (dir.exists(script_path)) script_path else dirname(script_path)
 if (basename(code_dir) != "code" && basename(getwd()) == "code") {
   code_dir <- normalizePath(getwd())
 }
-task_root <- normalizePath(file.path(code_dir, ".."), mustWork = FALSE)
+task_root_default <- normalizePath(file.path(code_dir, ".."), mustWork = FALSE)
+task_root <- Sys.getenv("BIRD_TASK_DIR", unset = task_root_default)
 data_dir <- file.path(task_root, "data")
 fig_dir <- file.path(task_root, "figures")
 results_dir <- file.path(task_root, "results")
 invisible(lapply(c(data_dir, fig_dir, results_dir), dir.create, recursive = TRUE, showWarnings = FALSE))
 
-bird_xlsx <- "/Users/dingchenchen/Desktop/鸟类新纪录20260311.xlsx"
-effort_xlsx <- "/Users/dingchenchen/Desktop/effort补全.xlsx"
-province_covariate_csv <- "/Users/dingchenchen/Desktop/?>/Data and codes/Province_variables.csv"
-phylo_nexus <- "/Users/dingchenchen/lucc/AVONET bird traits/ELEData/PhylogeneticData/HackettStage1_0001_1000_MCCTreeTargetHeights.nex"
+bird_xlsx <- Sys.getenv("BIRD_MASTER_XLSX", unset = "/Users/dingchenchen/Desktop/鸟类新纪录20260311.xlsx")
+effort_xlsx <- Sys.getenv("BIRD_EFFORT_XLSX", unset = "/Users/dingchenchen/Desktop/effort补全.xlsx")
+province_covariate_csv <- Sys.getenv("BIRD_PROVINCE_COVARIATE_CSV", unset = "/Users/dingchenchen/Desktop/?>/Data and codes/Province_variables.csv")
+phylo_nexus <- Sys.getenv("BIRD_PHYLO_NEXUS", unset = "/Users/dingchenchen/lucc/AVONET bird traits/ELEData/PhylogeneticData/HackettStage1_0001_1000_MCCTreeTargetHeights.nex")
+corrected_events_csv <- Sys.getenv("BIRD_CORRECTED_EVENTS_CSV", unset = "")
 
 sheet_records <- "2000-2025鸟类新记录"
 sheet_catalog <- "2025中国生物物种名录"
@@ -491,39 +493,72 @@ make_summary_table_plot <- function(df, title_text) {
 # Step 1. Read and standardize bird new-record data
 # 第 1 步：读取并标准化鸟类新纪录事件数据
 # -------------------------------
-raw_records <- read_xlsx(bird_xlsx, sheet = sheet_records, guess_max = 20000) %>% clean_names()
+if (nzchar(corrected_events_csv) && file.exists(corrected_events_csv)) {
+  raw_records <- read.csv(corrected_events_csv, stringsAsFactors = FALSE, fileEncoding = "UTF-8") %>%
+    tibble::as_tibble()
 
-bird_events <- raw_records %>%
-  transmute(
-    record_id = row_number(),
-    species = str_squish(scientificname),
-    order_raw = str_squish(order_cn),
-    order_cn = str_squish(order_la),
-    province_cn = str_squish(province_23),
-    province_en_raw = str_squish(province_24),
-    year = suppressWarnings(as.integer(publicationyear)),
-    discover_cause_raw = str_squish(discovercause),
-    discovery_method_raw = str_squish(discoverymethod),
-    longitude = suppressWarnings(as.numeric(longitude)),
-    latitude = suppressWarnings(as.numeric(latitude))
-  ) %>%
-  mutate(
-    order = title_case_order(order_raw),
-    province = case_when(
-      !is.na(province_en_raw) & province_en_raw != "" ~ province_en_raw,
-      province_cn %in% names(province_cn_to_en) ~ unname(province_cn_to_en[province_cn]),
-      TRUE ~ NA_character_
-    ),
-    province = dplyr::recode(
-      province,
-      "Juangsu" = "Jiangsu",
-      "Qinghai Province" = "Qinghai",
-      "Taiwan Province" = "Taiwan",
-      "Tibet Autonomous Region" = "Tibet"
-    ),
-    discover_reason = classify_discovery_reason(discover_cause_raw),
-    year = if_else(!is.na(year) & year >= 1900 & year <= 2100, year, NA_integer_)
-  )
+  bird_events <- raw_records %>%
+    mutate(
+      record_id = if ("record_id" %in% names(.)) suppressWarnings(as.integer(record_id)) else row_number(),
+      species = str_squish(species),
+      order_raw = if ("order_raw" %in% names(.)) str_squish(order_raw) else str_squish(order),
+      order_cn = if ("order_cn" %in% names(.)) str_squish(order_cn) else NA_character_,
+      province_cn = if ("province_cn" %in% names(.)) str_squish(province_cn) else NA_character_,
+      province_en_raw = if ("province_en_raw" %in% names(.)) str_squish(province_en_raw) else str_squish(province),
+      year = suppressWarnings(as.integer(year)),
+      discover_cause_raw = if ("discover_cause_raw" %in% names(.)) str_squish(discover_cause_raw) else NA_character_,
+      discovery_method_raw = if ("discovery_method_raw" %in% names(.)) str_squish(discovery_method_raw) else NA_character_,
+      longitude = suppressWarnings(as.numeric(longitude)),
+      latitude = suppressWarnings(as.numeric(latitude)),
+      order = if ("order" %in% names(.)) str_squish(order) else title_case_order(order_raw),
+      province = if ("province" %in% names(.)) str_squish(province) else province_en_raw,
+      discover_reason = if ("discover_reason" %in% names(.)) str_squish(discover_reason) else classify_discovery_reason(discover_cause_raw)
+    ) %>%
+    mutate(
+      province = dplyr::recode(
+        province,
+        "Juangsu" = "Jiangsu",
+        "Qinghai Province" = "Qinghai",
+        "Taiwan Province" = "Taiwan",
+        "Tibet Autonomous Region" = "Tibet"
+      ),
+      year = if_else(!is.na(year) & year >= 1900 & year <= 2100, year, NA_integer_)
+    )
+} else {
+  raw_records <- read_xlsx(bird_xlsx, sheet = sheet_records, guess_max = 20000) %>% clean_names()
+
+  bird_events <- raw_records %>%
+    transmute(
+      record_id = row_number(),
+      species = str_squish(scientificname),
+      order_raw = str_squish(order_cn),
+      order_cn = str_squish(order_la),
+      province_cn = str_squish(province_23),
+      province_en_raw = str_squish(province_24),
+      year = suppressWarnings(as.integer(publicationyear)),
+      discover_cause_raw = str_squish(discovercause),
+      discovery_method_raw = str_squish(discoverymethod),
+      longitude = suppressWarnings(as.numeric(longitude)),
+      latitude = suppressWarnings(as.numeric(latitude))
+    ) %>%
+    mutate(
+      order = title_case_order(order_raw),
+      province = case_when(
+        !is.na(province_en_raw) & province_en_raw != "" ~ province_en_raw,
+        province_cn %in% names(province_cn_to_en) ~ unname(province_cn_to_en[province_cn]),
+        TRUE ~ NA_character_
+      ),
+      province = dplyr::recode(
+        province,
+        "Juangsu" = "Jiangsu",
+        "Qinghai Province" = "Qinghai",
+        "Taiwan Province" = "Taiwan",
+        "Tibet Autonomous Region" = "Tibet"
+      ),
+      discover_reason = classify_discovery_reason(discover_cause_raw),
+      year = if_else(!is.na(year) & year >= 1900 & year <= 2100, year, NA_integer_)
+    )
+}
 
 duplicate_screen <- bird_events %>% count(species, province, year, name = "n_dups") %>% filter(n_dups > 1)
 
