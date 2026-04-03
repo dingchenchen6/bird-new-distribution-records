@@ -1,0 +1,4 @@
+threshold,cell_threshold,new_records_window,new_records_supported,species_window,species_supported,sdm_species_combined,risk_rows_full,risk_rows_complete_case,events_complete_case
+50,50,962,556,534,347,347,194154,14198,547
+100,100,962,526,534,333,333,177724,13058,517
+200,200,962,492,534,322,322,165645,12285,485

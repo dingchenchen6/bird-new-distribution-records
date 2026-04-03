@@ -1,0 +1,6 @@
+key,value
+new_record_csv,/Users/dingchenchen/Documents/New records/bird-new-distribution-records/source_data/bird_new_records_clean.csv
+output_root,/Users/dingchenchen/Documents/New project/bird_range_climate_shift_metrics/worldclim_10m
+resolution,10m
+year_min,1900
+year_max,2100

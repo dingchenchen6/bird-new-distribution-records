@@ -1,0 +1,10 @@
+metric,value
+cell_threshold,200
+new_records_window,962
+new_records_supported,492
+species_window,534
+species_supported,322
+sdm_species_combined,322
+risk_rows_full,165645
+risk_rows_complete_case,12285
+events_complete_case,485

@@ -1,0 +1,11 @@
+key,value
+new_record_csv,/absolute/path/to/ndr_raw.csv
+sdm_province_csv,/absolute/path/to/sdm_province.csv
+province_year_climate_csv,/absolute/path/to/province_year_climate.csv
+species_year_native_climate_csv,/absolute/path/to/species_year_native_climate.csv
+effort_csv,/absolute/path/to/effort_py.csv
+species_trait_csv,/absolute/path/to/species_trait.csv
+output_dir,/absolute/path/to/hazard_model_output
+year_min,1950
+year_max,2024
+model_engine,auto

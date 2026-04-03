@@ -18,3 +18,4 @@ This directory stores analysis tasks as independent modules. Each task follows t
 - bird_reference_style_figures
 - bird_full_pipeline_main_text
 - bird_sdm_distribution_modeling
+- bird_new_record_hazard_model

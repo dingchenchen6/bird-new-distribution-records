@@ -1,0 +1,6 @@
+model,engine,status,singular_fit,convergence_ok,pd_hessian,error
+M0,glmmTMB,ok,NA,TRUE,TRUE,NA
+M1,glmmTMB,ok,NA,TRUE,TRUE,NA
+M2,glmmTMB,ok,NA,TRUE,TRUE,NA
+M3,glmmTMB,ok,NA,TRUE,TRUE,NA
+M4,glmmTMB,ok,NA,TRUE,TRUE,NA
