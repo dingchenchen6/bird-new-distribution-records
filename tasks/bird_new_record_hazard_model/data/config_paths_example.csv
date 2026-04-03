@@ -1,0 +1,22 @@
+key,value
+new_record_csv,/Users/dingchenchen/Documents/New records/bird-new-distribution-records/source_data/bird_new_records_clean.csv
+range_map_path,/absolute/path/to/world_bird_ranges.gpkg
+china_boundary_path,
+baseline_temp_path,/absolute/path/to/climate/baseline/temp_1970_2000.tif
+baseline_prec_path,/absolute/path/to/climate/baseline/prec_1970_2000.tif
+annual_temp_dir,/absolute/path/to/climate/annual/temp
+annual_prec_dir,/absolute/path/to/climate/annual/prec
+output_dir,/Users/dingchenchen/Documents/New project/bird_range_climate_shift_metrics/results
+range_species_col,
+range_seasonal_col,
+range_presence_col,
+range_origin_col,
+range_presence_keep,1|2|3|6
+range_origin_keep,1|2|5|6
+baseline_temp_scale,1
+baseline_prec_scale,1
+annual_temp_scale,1
+annual_prec_scale,1
+resolution_label,10arcmin_or_0.25deg
+year_min,1900
+year_max,2100

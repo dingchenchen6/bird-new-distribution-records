@@ -1,0 +1,6 @@
+model,engine,status,formula,nobs,aic,bic,logLik,delta_aic,error
+M0,glmmTMB,ok,event ~ year_f + (1 | species) + (1 | province),13058,4308.300412289928,4495.229318583592,-2129.150206144964,18.407359219673708,NA
+M1,glmmTMB,ok,event ~ year_f + temp_grad_z + (1 | species) + (1 | province),13058,4308.102037622595,4502.508100168006,-2128.0510188112976,18.208984552340553,NA
+M2,glmmTMB,ok,event ~ year_f + log_effort_record_z + (1 | species) + (1 | province),13058,4309.500123994314,4503.906186539725,-2128.750061997157,19.60707092405937,NA
+M3,glmmTMB,ok,event ~ year_f + temp_grad_z + log_effort_record_z + (1 | species) +      (1 | province),13058,4309.181761447731,4511.064980244889,-2127.5908807238657,19.288708377476723,NA
+M4,glmmTMB,ok,event ~ year_f + temp_grad_z + log_effort_record_z + temp_grad_z:log_effort_record_z +      (1 | species) + (1 | province),13058,4289.893053070255,4499.253428119158,-2116.9465265351273,0,NA
