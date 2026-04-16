@@ -1,0 +1,906 @@
+#!/usr/bin/env Rscript
+
+# ============================================================
+# Bird new-distribution records in China:
+# McTavish-phylogeny circular tree workflow
+# 中国鸟类新纪录：基于 McTavish 鸟类系统发育树的环形系统树工作流
+# ============================================================
+#
+# Scientific question / 科学问题
+# 1. Within the full species pool of birds recorded in the 2025 Catalogue of
+#    Life China checklist, which species have generated corrected provincial
+#    new-distribution records after accounting for synonymy and duplicate
+#    publication issues?
+# 2. How are these newly recorded bird species distributed across orders on a
+#    published avian phylogenetic backbone, and what proportion of each order's
+#    Chinese species pool do they represent?
+# 1. 在《中国生物物种名录（2025）》定义的中国鸟类完整物种库中，经过同物
+#    异名归并和同物种同省重复记录剔除后，哪些物种构成了校正后的省级鸟类新纪录？
+# 2. 这些新纪录鸟类在已发表的全球鸟类系统发育骨架上如何分布，并且分别占其所属目
+#    在中国物种库中的多大比例？
+#
+# Scientific background / 研究背景
+# New provincial bird records are shaped jointly by taxonomy, biogeography,
+# detectability, survey effort, and historical under-documentation. A simple
+# taxonomic tree can summarize order composition, but it cannot show how the
+# corrected Chinese bird species pool is arranged on a published phylogenetic
+# backbone. The complete and dynamic tree of birds by McTavish et al. provides
+# an updated, openly distributed, taxonomy-linked global avian phylogeny that
+# is appropriate for visualizing where newly recorded Chinese bird species fall
+# across the broader bird tree.
+# 鸟类省级新纪录的形成同时受分类修订、生物地理过程、可探测性、调查努力与历史
+# 调查不足共同影响。仅依赖分类层级树可以概括目组成，但不能在已发表的系统发育
+# 骨架上展示“校正后的中国鸟类物种库”中哪些分支产生了新纪录。McTavish 等构建
+# 的 complete and dynamic tree of birds 提供了一个公开、可追溯、与现代鸟类
+# 分类体系相连的全球系统发育树，非常适合用来展示中国鸟类新纪录在鸟类演化树上的
+# 空间位置与目内占比。
+#
+# Objectives / 研究目标
+# 1. Rebuild the Chinese bird species pool directly from the 2025 Chinese
+#    checklist, keeping only species-rank binomials.
+# 2. Carry forward the previously corrected synonym and duplicate decisions so
+#    that newly recorded species identities are canonical and publication-safe.
+# 3. Match both the checklist pool and the corrected new-record species to the
+#    official McTavish bird tree, using an explicit taxonomy bridge table for
+#    name changes between the Chinese checklist and the tree taxonomy.
+# 4. Produce a polished circular phylogeny figure that highlights newly recorded
+#    species, summarizes their order-level proportions, and exports code, data,
+#    diagnostics, figures, captions, and summary text in a standardized task
+#    folder.
+# 1. 直接从 2025 中国物种名录重建中国鸟类物种库，并严格保留种级双名记录。
+# 2. 继承前面已经完成的同物异名与重复记录校正结果，确保新纪录物种身份规范且可
+#    直接用于论文和数据文章。
+# 3. 将中国鸟类物种库和校正后新纪录物种同时匹配到官方 McTavish 鸟类系统树，并
+#    对中国名录与系统树之间的名称差异建立透明的 taxonomy bridge 表。
+# 4. 生成一张高质量、专业美观的环形系统发育树图，突出显示新纪录物种及其目内比例，
+#    并在标准任务目录中输出数据、代码、诊断、图表、图题和结果摘要。
+#
+# Analytical strategy / 分析思路
+# 1. Read the Chinese checklist sheet and retain only bird species-level
+#    binomials (remove subspecies and non-standard infraspecific entries).
+# 2. Read the corrected canonical new-record event table that already accounts
+#    for synonymy and first-publication precedence for duplicate species-province
+#    events.
+# 3. Read the official McTavish bird tree (`summary_dated_clements.nex`).
+# 4. Match species names directly to tree tip labels, then apply a transparent
+#    bridge table for updated generic placements and a small number of checklist–
+#    tree taxonomy mismatches.
+# 5. Quantify exact matches, bridged matches, unresolved names, and any many-to-
+#    one mappings created by taxonomic lump/split differences.
+# 6. Prune the published tree to the matched Chinese bird species pool and
+#    aggregate tip-level metadata, including whether each tip corresponds to at
+#    least one corrected new-record species.
+# 7. Build a circular publication-style phylogeny with:
+#    - grey background branches for the Chinese bird pool,
+#    - coloured terminal branches and outer ring markers for newly recorded
+#      species,
+#    - an additional IUCN ring for newly recorded species,
+#    - internal percentage bubbles for the major orders,
+#    - a side lollipop summary showing the proportion of new-record species in
+#      each order.
+# 8. Export diagnostics, matching tables, bridge tables, the figure, captions,
+#    and a bundled Excel workbook.
+# 1. 读取中国名录工作表，仅保留鸟纲的种级双名记录，去除亚种和非标准种下单元。
+# 2. 读取已经完成同物异名归并和“同物种同省保留最早发表记录”的校正底表。
+# 3. 读取官方 McTavish 鸟类系统树（`summary_dated_clements.nex`）。
+# 4. 先做直接匹配，再通过透明的名称桥接表处理名录分类与系统树分类之间的属级变更
+#    和少量树–名录不一致问题。
+# 5. 量化直接匹配、桥接匹配、未解决名称以及由于 split/lump 导致的一对多/多对一
+#    概念映射。
+# 6. 将官方树裁剪为“中国鸟类物种库匹配子树”，并聚合 tip 层信息，判断每个 tip
+#    是否对应至少一个校正后的新纪录物种。
+# 7. 绘制投稿级环形系统发育图，包括：
+#    - 中国鸟类物种库的灰色背景树；
+#    - 新纪录物种的彩色终端分支和外环标记；
+#    - 新纪录物种的 IUCN 外环；
+#    - 主要目的内部比例气泡；
+#    - 右侧按目的新纪录占比棒棒糖汇总。
+# 8. 导出诊断、匹配表、桥接表、图件、双语图题以及汇总 Excel 工作簿。
+#
+# Diagnostics and validation / 诊断与验证
+# - Species-pool filtering audit: how many bird checklist rows are removed
+#   because they are subspecies or non-standard entries.
+# - Direct-match versus bridged-match audit for both the Chinese species pool
+#   and the corrected new-record species set.
+# - Explicit bridge table documenting every manual taxonomy translation applied.
+# - Unresolved-name table retained for transparent review.
+# - Many-to-one mapping check, because recent taxonomy updates can map more than
+#   one checklist concept onto a single tree tip.
+# - Order-level denominator and numerator checks: total Chinese species per
+#   order versus corrected newly recorded species per order.
+# - Figure-specific QA plot summarizing match status and order-level proportion
+#   distributions before final figure export.
+# - 物种库过滤审计：统计多少鸟类名录记录因亚种或非标准种下单元而被移除。
+# - 中国鸟类物种库和校正后新纪录物种的“直接匹配–桥接匹配–未匹配”审计。
+# - 显式桥接表：记录每一条手工 taxonomy translation。
+# - 保留未解决名称表，方便后续人工复核。
+# - 检查 many-to-one 映射，因为最新分类体系变化可能把多个名录概念映射到同一个
+#   系统树 tip。
+# - 检查按目的分母和分子：每个目中国物种总数 versus 每个目校正后新纪录物种数。
+# - 生成匹配与比例分布 QA 图，在最终出图前完成透明诊断。
+# ============================================================
+
+suppressPackageStartupMessages({
+  library(readxl)
+  library(dplyr)
+  library(tidyr)
+  library(stringr)
+  library(forcats)
+  library(ggplot2)
+  library(patchwork)
+  library(scales)
+  library(ape)
+  library(writexl)
+  library(officer)
+  library(rvg)
+  library(export)
+})
+
+set.seed(20260416)
+
+# -------------------------------
+# Step 0. Task paths and global parameters
+# 第 0 步：任务路径与全局参数
+# -------------------------------
+get_script_path <- function() {
+  cmd_args <- commandArgs(trailingOnly = FALSE)
+  file_arg <- grep("^--file=", cmd_args, value = TRUE)
+  if (length(file_arg) > 0) return(normalizePath(sub("^--file=", "", file_arg[1])))
+  r_candidates <- cmd_args[grepl("\\.[Rr]$", cmd_args)]
+  r_candidates <- r_candidates[file.exists(r_candidates)]
+  if (length(r_candidates) > 0) return(normalizePath(r_candidates[1]))
+  normalizePath(getwd())
+}
+
+script_path <- get_script_path()
+code_dir <- if (dir.exists(script_path)) script_path else dirname(script_path)
+if (basename(code_dir) != "code" && basename(getwd()) == "code") code_dir <- normalizePath(getwd())
+task_root <- Sys.getenv("BIRD_TASK_DIR", unset = file.path(code_dir, ".."))
+data_dir <- file.path(task_root, "data")
+fig_dir <- file.path(task_root, "figures")
+results_dir <- file.path(task_root, "results")
+dir.create(data_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(fig_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(results_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(file.path(data_dir, "external"), recursive = TRUE, showWarnings = FALSE)
+
+master_xlsx <- Sys.getenv("BIRD_MASTER_XLSX", unset = "/Users/dingchenchen/Desktop/鸟类新纪录20260311.xlsx")
+corrected_events_csv <- Sys.getenv(
+  "BIRD_CORRECTED_EVENTS_CSV",
+  unset = "/Users/dingchenchen/Documents/New records/bird-new-distribution-records/tasks/bird_identity_synonym_dedup_reanalysis/data/bird_new_records_clean_corrected.csv"
+)
+tree_path <- Sys.getenv(
+  "BIRD_MCTAVISH_TREE",
+  unset = file.path(data_dir, "external", "summary_dated_clements_Aves_1.4_Clements2023.nex")
+)
+
+tree_url_candidates <- c(
+  "https://raw.githubusercontent.com/McTavishLab/AvesData/main/Tree_versions/Aves_1.4/Clements2023/summary_dated_clements.nex",
+  "https://raw.githubusercontent.com/McTavishLab/AvesData/main/Tree_versions/Aves_1.4/Clements_2023/summary_dated_clements.nex"
+)
+
+sheet_catalog <- "2025中国生物物种名录"
+dpi_out <- 420
+figure_stub <- "fig_phy01_mctavish_bird_new_records_phylogeny"
+
+theme_clean <- function(base_size = 11.2, base_family = "Arial") {
+  theme_classic(base_size = base_size, base_family = base_family) +
+    theme(
+      axis.title = element_text(face = "bold", colour = "#111111"),
+      axis.text = element_text(colour = "#1A1A1A"),
+      plot.title = element_text(face = "bold", colour = "#111111"),
+      plot.subtitle = element_text(colour = "#303030"),
+      legend.position = "none",
+      panel.grid = element_blank(),
+      strip.background = element_rect(fill = "#D9D9D9", colour = "#4D4D4D", linewidth = 0.6),
+      strip.text = element_text(face = "bold")
+    )
+}
+
+save_gg_bundle <- function(plot_obj, stub, width, height) {
+  png_path <- file.path(fig_dir, paste0(stub, ".png"))
+  pdf_path <- file.path(fig_dir, paste0(stub, ".pdf"))
+  pptx_path <- file.path(fig_dir, paste0(stub, ".pptx"))
+  tryCatch(
+    ggsave(png_path, plot_obj, width = width, height = height, dpi = dpi_out, bg = "white"),
+    error = function(e) message("PNG export failed for ", stub, ": ", e$message)
+  )
+  tryCatch({
+    pdf(pdf_path, width = width, height = height, useDingbats = FALSE, bg = "white", onefile = FALSE)
+    print(plot_obj)
+    dev.off()
+  }, error = function(e) message("PDF export failed for ", stub, ": ", e$message))
+  tryCatch(
+    export::graph2ppt(x = plot_obj, file = pptx_path, width = width, height = height, vector.graphic = TRUE, append = FALSE),
+    error = function(e) message("PPTX export failed for ", stub, ": ", e$message)
+  )
+}
+
+save_base_bundle <- function(draw_fun, stub, width = 13.6, height = 9.2) {
+  png_path <- file.path(fig_dir, paste0(stub, ".png"))
+  pdf_path <- file.path(fig_dir, paste0(stub, ".pdf"))
+  pptx_path <- file.path(fig_dir, paste0(stub, ".pptx"))
+
+  tryCatch({
+    png(png_path, width = width, height = height, units = "in", res = dpi_out, bg = "white")
+    draw_fun()
+    dev.off()
+  }, error = function(e) message("PNG export failed for ", stub, ": ", e$message))
+
+  tryCatch({
+    pdf(pdf_path, width = width, height = height, useDingbats = FALSE, bg = "white", onefile = FALSE)
+    draw_fun()
+    dev.off()
+  }, error = function(e) message("PDF export failed for ", stub, ": ", e$message))
+
+  tryCatch({
+    ppt <- read_pptx()
+    ppt <- add_slide(ppt, layout = "Blank", master = "Office Theme")
+    ppt <- ph_with(
+      x = ppt,
+      value = dml(code = draw_fun()),
+      location = ph_location(left = 0, top = 0, width = 13.333, height = 7.5)
+    )
+    print(ppt, target = pptx_path)
+  }, error = function(e) {
+    message("PPTX export failed for ", stub, ": ", e$message)
+    if (file.exists(png_path)) {
+      ppt <- read_pptx()
+      ppt <- add_slide(ppt, layout = "Blank", master = "Office Theme")
+      ppt <- ph_with(
+        x = ppt,
+        value = external_img(png_path, width = 13.333, height = 7.5),
+        location = ph_location(left = 0, top = 0, width = 13.333, height = 7.5)
+      )
+      print(ppt, target = pptx_path)
+    }
+  })
+}
+
+# -------------------------------
+# Step 1. Download or verify the McTavish bird tree
+# 第 1 步：下载或验证 McTavish 鸟类系统树
+# -------------------------------
+download_tree_if_needed <- function(target_path, url_candidates) {
+  if (file.exists(target_path) && file.info(target_path)$size > 1000000) {
+    return(target_path)
+  }
+  for (u in url_candidates) {
+    ok <- tryCatch({
+      download.file(u, destfile = target_path, mode = "wb", quiet = TRUE)
+      file.exists(target_path) && file.info(target_path)$size > 1000000
+    }, error = function(e) FALSE)
+    if (isTRUE(ok)) return(target_path)
+  }
+  stop("The McTavish tree file is unavailable locally and could not be downloaded.")
+}
+
+tree_path <- download_tree_if_needed(tree_path, tree_url_candidates)
+tree_full <- read.nexus(tree_path)
+
+# -------------------------------
+# Step 2. Rebuild the Chinese bird species pool from the 2025 checklist
+# 第 2 步：从 2025 中国名录重建中国鸟类物种库
+# -------------------------------
+strict_species_rank_filter <- function(x) {
+  x <- str_squish(x)
+  word_n <- str_count(x, " ") + 1L
+  rank_marker <- str_detect(x, regex(" subsp\\.| spp\\.| sp\\.| cf\\.| aff\\.| x ", ignore_case = TRUE))
+  word_n == 2L & !rank_marker
+}
+
+catalog_raw <- read_excel(master_xlsx, sheet = sheet_catalog, .name_repair = "minimal")
+catalog_block <- catalog_raw[, 1:14]
+names(catalog_block) <- c(
+  "species", "species_cn", "kingdom_latin", "kingdom_cn", "phylum_latin", "phylum_cn",
+  "class_latin", "class_cn", "order_raw", "order_cn", "family_raw", "family_cn",
+  "genus_raw", "genus_cn"
+)
+
+checklist_all_birds <- catalog_block %>%
+  mutate(across(everything(), ~ if (is.character(.x)) str_squish(.x) else .x)) %>%
+  filter(class_latin == "Aves", !is.na(species), species != "")
+
+checklist_species_pool <- checklist_all_birds %>%
+  mutate(
+    is_strict_species_rank = strict_species_rank_filter(species),
+    order = str_to_title(str_to_lower(order_raw)),
+    family = family_raw,
+    genus = genus_raw
+  ) %>%
+  filter(is_strict_species_rank) %>%
+  distinct(species, .keep_all = TRUE) %>%
+  select(species, species_cn, order, order_cn, family, family_cn, genus, genus_cn)
+
+# -------------------------------
+# Step 3. Read the corrected new-record table with synonym and duplicate fixes
+# 第 3 步：读取已完成同物异名与重复校正的新纪录底表
+# -------------------------------
+corrected_events <- read.csv(corrected_events_csv, stringsAsFactors = FALSE, check.names = FALSE) %>%
+  mutate(
+    species = str_squish(species),
+    species_cn = str_squish(species_cn),
+    english_name = str_squish(english_name),
+    order = str_squish(order),
+    iucn = if_else(is.na(iucn) | iucn == "", "DD", iucn)
+  )
+
+pick_mode_or_first <- function(x) {
+  x <- x[!is.na(x) & x != ""]
+  if (length(x) == 0) return(NA_character_)
+  tb <- sort(table(x), decreasing = TRUE)
+  names(tb)[1]
+}
+
+new_record_species <- corrected_events %>%
+  arrange(species, year, province) %>%
+  group_by(species) %>%
+  summarise(
+    species_cn = pick_mode_or_first(species_cn),
+    english_name = pick_mode_or_first(english_name),
+    order = pick_mode_or_first(order),
+    iucn = pick_mode_or_first(iucn),
+    n_event_records = n(),
+    .groups = "drop"
+  ) %>%
+  arrange(order, species)
+
+# -------------------------------
+# Step 4. Build an explicit taxonomy bridge table
+# 第 4 步：建立透明的 taxonomy bridge 表
+# -------------------------------
+taxonomy_bridge <- tibble::tribble(
+  ~source_species,              ~target_tree_label,                 ~bridge_type,                     ~bridge_note,
+  "Haliaeetus humilis",         "Icthyophaga_humilis",              "Genus update",                   "Checklist genus differs from McTavish/Clements tree taxonomy.",
+  "Haliaeetus leucogaster",     "Icthyophaga_leucogaster",          "Genus update",                   "Checklist genus differs from McTavish/Clements tree taxonomy.",
+  "Charadrius alexandrinus",    "Anarhynchus_alexandrinus",         "Genus update",                   "Recent plover generic revision.",
+  "Charadrius asiaticus",       "Anarhynchus_asiaticus",            "Genus update",                   "Recent plover generic revision.",
+  "Charadrius atrifrons",       "Anarhynchus_atrifrons",            "Genus update",                   "Recent plover generic revision.",
+  "Charadrius dealbatus",       "Anarhynchus_dealbatus",            "Genus update",                   "Recent plover generic revision.",
+  "Charadrius leschenaultii",   "Anarhynchus_leschenaultii",        "Genus update",                   "Recent plover generic revision.",
+  "Charadrius mongolus",        "Anarhynchus_mongolus",             "Genus update",                   "Recent plover generic revision.",
+  "Charadrius veredus",         "Anarhynchus_veredus",              "Genus update",                   "Recent plover generic revision.",
+  "Larus brunnicephalus",       "Chroicocephalus_brunnicephalus",   "Genus update",                   "Checklist gull genus differs from tree taxonomy.",
+  "Larus genei",                "Chroicocephalus_genei",            "Genus update",                   "Checklist gull genus differs from tree taxonomy.",
+  "Larus ichthyaetus",          "Ichthyaetus_ichthyaetus",          "Genus update",                   "Checklist gull genus differs from tree taxonomy.",
+  "Larus relictus",             "Ichthyaetus_relictus",             "Genus update",                   "Checklist gull genus differs from tree taxonomy.",
+  "Grus canadensis",            "Antigone_canadensis",              "Genus update",                   "Crane genus placement updated in the tree taxonomy.",
+  "Grus vipio",                 "Antigone_vipio",                   "Genus update",                   "Crane genus placement updated in the tree taxonomy.",
+  "Grus virgo",                 "Anthropoides_virgo",               "Genus update",                   "Crane genus placement updated in the tree taxonomy.",
+  "Amaurornis cinerea",         "Poliolimnas_cinereus",             "Genus and epithet update",       "Checklist rail concept linked to current tree taxonomy.",
+  "Gorsachius magnificus",      "Oroanassa_magnifica",              "Genus and epithet update",       "White-eared Night Heron updated in tree taxonomy.",
+  "Otocichla mupinensis",       "Turdus_mupinensis",                "Genus update",                   "Chinese Thrush placed in Turdus in the tree taxonomy.",
+  "Paradoxornis gularis",       "Psittiparus_gularis",              "Genus update",                   "Parrotbill generic revision.",
+  "Paradoxornis heudei",        "Calamornis_heudei",                "Genus update",                   "Parrotbill generic revision.",
+  "Pardaliparus venustulus",    "Periparus_venustulus",             "Genus update",                   "Tit generic revision.",
+  "Bubo nipalensis",            "Ketupa_nipalensis",                "Genus update",                   "Eagle-owl generic revision in the tree taxonomy.",
+  "Leiopicus auriceps",         "Dendrocoptes_auriceps",            "Genus update",                   "Woodpecker generic revision.",
+  "Anas carolinensis",          "Anas_crecca",                      "Checklist-tree concept bridge",  "Tree follows a less split taxonomic concept than the checklist for this teal.",
+  "Phoenicopterus roseus",      "Phoenicopterus_roseus",            "Direct-format safeguard",        "Explicit bridge retained to make the audit table complete."
+)
+
+tree_tip_labels <- tree_full$tip.label
+
+apply_tree_matching <- function(df) {
+  df %>%
+    mutate(tree_label_direct = str_replace_all(species, " ", "_")) %>%
+    left_join(taxonomy_bridge, by = c("species" = "source_species")) %>%
+    mutate(
+      tree_label_final = coalesce(target_tree_label, tree_label_direct),
+      exact_match = tree_label_direct %in% tree_tip_labels,
+      bridged_match = !exact_match & !is.na(target_tree_label) & tree_label_final %in% tree_tip_labels,
+      unresolved = !exact_match & !bridged_match,
+      match_status = case_when(
+        exact_match ~ "Exact match",
+        bridged_match ~ "Bridged match",
+        TRUE ~ "Unresolved"
+      )
+    )
+}
+
+checklist_matched <- apply_tree_matching(checklist_species_pool)
+new_record_matched <- apply_tree_matching(new_record_species)
+
+# -------------------------------
+# Step 5. Aggregate auditing tables and order-level summaries
+# 第 5 步：整理审计表与按目汇总表
+# -------------------------------
+checklist_match_audit <- checklist_matched %>%
+  count(match_status, name = "n_species") %>%
+  mutate(dataset = "Chinese bird species pool")
+
+new_record_match_audit <- new_record_matched %>%
+  count(match_status, name = "n_species") %>%
+  mutate(dataset = "Corrected new-record species")
+
+matching_audit <- bind_rows(checklist_match_audit, new_record_match_audit) %>%
+  select(dataset, match_status, n_species)
+
+many_to_one_audit <- checklist_matched %>%
+  filter(match_status != "Unresolved") %>%
+  count(tree_label_final, name = "n_species_concepts") %>%
+  filter(n_species_concepts > 1) %>%
+  arrange(desc(n_species_concepts), tree_label_final)
+
+order_pool_summary <- checklist_species_pool %>%
+  count(order, name = "n_china_species")
+
+order_new_summary <- new_record_species %>%
+  count(order, name = "n_new_species")
+
+order_summary <- order_pool_summary %>%
+  left_join(order_new_summary, by = "order") %>%
+  mutate(
+    n_new_species = replace_na(n_new_species, 0L),
+    prop_new_species = n_new_species / n_china_species,
+    prop_pct = prop_new_species * 100
+  ) %>%
+  arrange(desc(n_new_species), desc(prop_new_species))
+
+iucn_levels <- c("CR", "EN", "VU", "NT", "LC", "DD")
+iucn_palette <- c(
+  CR = "#9B0000",
+  EN = "#E60000",
+  VU = "#FF6B6B",
+  NT = "#253CFF",
+  LC = "#9F3BFF",
+  DD = "#BDBDBD",
+  NotNew = "#F2F2F2"
+)
+
+order_levels <- order_summary %>% filter(n_new_species > 0) %>% pull(order)
+order_palette_values <- grDevices::hcl(
+  h = seq(15, 375, length.out = length(order_levels) + 1)[-1],
+  c = 95,
+  l = 65
+)
+order_palette <- stats::setNames(order_palette_values, order_levels)
+
+# -------------------------------
+# Step 6. Aggregate metadata at tree-tip level
+# 第 6 步：在系统树 tip 层聚合元数据
+# -------------------------------
+checklist_tip_map <- checklist_matched %>%
+  filter(match_status != "Unresolved") %>%
+  group_by(tree_label_final) %>%
+  summarise(
+    order = first(order),
+    family = first(family),
+    genus = first(genus),
+    species_examples = paste(head(species, 4), collapse = "; "),
+    pool_species_concepts = n(),
+    bridge_in_pool = any(match_status == "Bridged match"),
+    .groups = "drop"
+  )
+
+iucn_rank_lookup <- setNames(seq_along(iucn_levels), iucn_levels)
+resolve_worst_iucn <- function(x) {
+  x <- x[!is.na(x)]
+  if (length(x) == 0) return("DD")
+  x <- ifelse(x %in% names(iucn_rank_lookup), x, "DD")
+  x[which.min(iucn_rank_lookup[x])]
+}
+
+new_record_tip_map <- new_record_matched %>%
+  filter(match_status != "Unresolved") %>%
+  group_by(tree_label_final) %>%
+  summarise(
+    new_record_species_concepts = n(),
+    new_record_species_list = paste(species, collapse = "; "),
+    new_record_species_cn = paste(species_cn, collapse = "; "),
+    new_record_iucn = resolve_worst_iucn(iucn),
+    order_new = first(order),
+    bridge_in_new_records = any(match_status == "Bridged match"),
+    .groups = "drop"
+  )
+
+tip_metadata <- checklist_tip_map %>%
+  left_join(new_record_tip_map, by = "tree_label_final") %>%
+  mutate(
+    order = coalesce(order_new, order),
+    is_new_record = !is.na(new_record_species_concepts),
+    new_record_species_concepts = replace_na(new_record_species_concepts, 0L),
+    new_record_iucn = if_else(is_new_record, new_record_iucn, "NotNew")
+  )
+
+tree_china <- keep.tip(tree_full, tip_metadata$tree_label_final)
+tree_china <- ladderize(tree_china, right = TRUE)
+
+tip_metadata <- tip_metadata %>%
+  mutate(tree_label_final = factor(tree_label_final, levels = tree_china$tip.label)) %>%
+  arrange(tree_label_final) %>%
+  mutate(
+    tree_label_final = as.character(tree_label_final),
+    tip_index = row_number()
+  )
+
+# -------------------------------
+# Step 7. Derive geometry for the circular tree and summary side panel
+# 第 7 步：计算环形系统树几何与右侧汇总面板
+# -------------------------------
+compute_sector_mid <- function(theta_values) {
+  theta <- theta_values %% (2 * pi)
+  if ((max(theta) - min(theta)) > pi) {
+    theta[theta < pi] <- theta[theta < pi] + 2 * pi
+  }
+  mid <- mean(range(theta))
+  if (mid > 2 * pi) mid <- mid - 2 * pi
+  mid
+}
+
+order_label_table <- order_summary %>%
+  filter(n_new_species > 0) %>%
+  mutate(
+    label_order = order,
+    label_text = sprintf("%s\n%d/%d (%.1f%%)", order, n_new_species, n_china_species, prop_pct)
+  )
+
+draw_phylo_composite <- function() {
+  par(mar = c(0.2, 0.3, 0.2, 0.2), xpd = NA, bg = "white")
+
+  base_layout <- plot.phylo(
+    tree_china,
+    type = "fan",
+    use.edge.length = FALSE,
+    show.tip.label = FALSE,
+    no.margin = TRUE,
+    edge.color = alpha("#BFBFBF", 0.95),
+    edge.width = 0.38,
+    cex = 0.08,
+    plot = FALSE
+  )
+
+  plot.phylo(
+    tree_china,
+    type = "fan",
+    use.edge.length = FALSE,
+    show.tip.label = FALSE,
+    no.margin = TRUE,
+    edge.color = alpha("#BFBFBF", 0.95),
+    edge.width = 0.38,
+    cex = 0.08,
+    x.lim = c(base_layout$x.lim[1] * 1.32, base_layout$x.lim[2] * 2.05),
+    y.lim = c(base_layout$y.lim[1] * 1.26, base_layout$y.lim[2] * 1.26)
+  )
+
+  lp <- get("last_plot.phylo", envir = .PlotPhyloEnv)
+  n_tip <- lp$Ntip
+  xx <- lp$xx[seq_len(n_tip)]
+  yy <- lp$yy[seq_len(n_tip)]
+  rr <- sqrt(xx^2 + yy^2)
+  theta <- atan2(yy, xx)
+  max_r <- max(rr)
+
+  tip_plot_df <- tip_metadata %>%
+    mutate(
+      x = xx[match(tree_label_final, tree_china$tip.label)],
+      y = yy[match(tree_label_final, tree_china$tip.label)],
+      theta = theta[match(tree_label_final, tree_china$tip.label)]
+    )
+
+  # Re-colour the terminal branches of newly recorded species.
+  # 重绘新纪录物种的终端分支，使其按目着色。
+  edge_df <- as.data.frame(tree_china$edge)
+  names(edge_df) <- c("parent", "child")
+  tip_edge_df <- edge_df %>%
+    filter(child <= n_tip) %>%
+    mutate(tree_label_final = tree_china$tip.label[child]) %>%
+    left_join(tip_plot_df, by = "tree_label_final")
+
+  for (i in seq_len(nrow(tip_edge_df))) {
+    parent_idx <- tip_edge_df$parent[i]
+    child_idx <- tip_edge_df$child[i]
+    if (isTRUE(tip_edge_df$is_new_record[i])) {
+      segments(
+        x0 = lp$xx[parent_idx], y0 = lp$yy[parent_idx],
+        x1 = lp$xx[child_idx], y1 = lp$yy[child_idx],
+        col = order_palette[tip_edge_df$order[i]],
+        lwd = 1.35
+      )
+    }
+  }
+
+  # Order sector arcs around the matched Chinese bird pool.
+  # 沿中国鸟类匹配子树外缘绘制按目的扇区色弧。
+  sector_df <- tip_plot_df %>%
+    group_by(order) %>%
+    summarise(
+      n_tip = n(),
+      mid_angle = compute_sector_mid(theta),
+      theta_start = {
+        th <- theta %% (2 * pi)
+        if ((max(th) - min(th)) > pi) th[th < pi] <- th[th < pi] + 2 * pi
+        min(th)
+      },
+      theta_end = {
+        th <- theta %% (2 * pi)
+        if ((max(th) - min(th)) > pi) th[th < pi] <- th[th < pi] + 2 * pi
+        max(th)
+      },
+      .groups = "drop"
+    ) %>%
+    mutate(
+      theta_mid = if_else(theta_start + theta_end > 4 * pi, (theta_start + theta_end) / 2 - 2 * pi, (theta_start + theta_end) / 2),
+      theta_mid = if_else(theta_mid > 2 * pi, theta_mid - 2 * pi, theta_mid)
+    ) %>%
+    left_join(order_summary, by = "order")
+
+  for (i in seq_len(nrow(sector_df))) {
+    th <- seq(sector_df$theta_start[i], sector_df$theta_end[i], length.out = 250)
+    th <- ifelse(th > 2 * pi, th - 2 * pi, th)
+    lines(
+      x = (max_r + 0.055) * cos(th),
+      y = (max_r + 0.055) * sin(th),
+      col = alpha(order_palette[sector_df$order[i]], 0.95),
+      lwd = 3.2
+    )
+  }
+
+  # Outer ring 1: highlight newly recorded tips by order.
+  # 外环 1：按目高亮新纪录物种。
+  points(
+    x = (max_r + 0.11) * cos(tip_plot_df$theta),
+    y = (max_r + 0.11) * sin(tip_plot_df$theta),
+    pch = 15,
+    cex = 0.46,
+    col = ifelse(tip_plot_df$is_new_record, order_palette[tip_plot_df$order], "#E8E8E8")
+  )
+
+  # Outer ring 2: IUCN of newly recorded species.
+  # 外环 2：新纪录物种的 IUCN 环。
+  points(
+    x = (max_r + 0.17) * cos(tip_plot_df$theta),
+    y = (max_r + 0.17) * sin(tip_plot_df$theta),
+    pch = 15,
+    cex = 0.46,
+    col = unname(iucn_palette[tip_plot_df$new_record_iucn])
+  )
+
+  # Internal percentage bubbles for the major orders.
+  # 对主要目的比例气泡进行内部标注，避免 23 个目全部环外标注造成拥挤。
+  label_orders <- sector_df %>%
+    filter(n_new_species > 0) %>%
+    arrange(desc(n_new_species), desc(prop_new_species)) %>%
+    slice_head(n = 12) %>%
+    arrange(theta_mid) %>%
+    mutate(
+      bubble_radius = max_r * rep(c(0.30, 0.38, 0.46), length.out = n()),
+      label_radius = max_r + rep(c(0.22, 0.29, 0.36), length.out = n())
+    )
+
+  for (i in seq_len(nrow(label_orders))) {
+    ang <- label_orders$theta_mid[i]
+    xb <- label_orders$bubble_radius[i] * cos(ang)
+    yb <- label_orders$bubble_radius[i] * sin(ang)
+    xl <- label_orders$label_radius[i] * cos(ang)
+    yl <- label_orders$label_radius[i] * sin(ang)
+    x0 <- (max_r + 0.06) * cos(ang)
+    y0 <- (max_r + 0.06) * sin(ang)
+    adj_lr <- ifelse(cos(ang) >= 0, 0, 1)
+
+    symbols(
+      xb, yb,
+      circles = 0.058,
+      inches = FALSE,
+      add = TRUE,
+      bg = alpha(order_palette[label_orders$order[i]], 0.92),
+      fg = NA
+    )
+    text(xb, yb, labels = sprintf("%.1f%%", label_orders$prop_pct[i]), cex = 0.56, col = "black")
+    segments(x0, y0, xl, yl, col = "#555555", lwd = 0.78)
+    text(xl, yl, labels = label_orders$order[i], cex = 0.56, adj = c(adj_lr, 0.5), col = "#111111")
+    text(
+      xl,
+      yl - 0.06,
+      labels = sprintf("%d/%d", label_orders$n_new_species[i], label_orders$n_china_species[i]),
+      cex = 0.46,
+      adj = c(adj_lr, 0.5),
+      col = "#303030"
+    )
+  }
+
+  # IUCN legend on the open right side of the tree panel.
+  # 在树图右侧空白处放置 IUCN 图例。
+  iucn_counts <- new_record_species %>%
+    mutate(iucn = if_else(is.na(iucn) | iucn == "", "DD", iucn)) %>%
+    count(iucn, name = "n") %>%
+    filter(iucn %in% iucn_levels) %>%
+    complete(iucn = iucn_levels, fill = list(n = 0L)) %>%
+    arrange(match(iucn, iucn_levels))
+
+  legend_x <- max_r * 1.06
+  legend_y_top <- max_r * 0.98
+  text(legend_x, legend_y_top, "IUCN Red List status", adj = c(0, 0.5), cex = 0.70, font = 2)
+  for (i in seq_len(nrow(iucn_counts))) {
+    y_i <- legend_y_top - 0.11 - (i - 1) * 0.085
+    rect(
+      legend_x, y_i - 0.025,
+      legend_x + 0.10, y_i + 0.025,
+      col = iucn_palette[iucn_counts$iucn[i]],
+      border = NA
+    )
+    text(
+      legend_x + 0.12, y_i,
+      labels = sprintf("%s  %d", iucn_counts$iucn[i], iucn_counts$n[i]),
+      adj = c(0, 0.5),
+      cex = 0.60
+    )
+  }
+
+  order_plot_df <- order_summary %>%
+    filter(n_new_species > 0) %>%
+    arrange(desc(prop_new_species), desc(n_new_species)) %>%
+    mutate(y = row_number())
+
+  # Side summary bars drawn directly in the same plotting region.
+  # 在同一画布右侧直接绘制按目比例汇总，避免多面板兼容性问题。
+  summary_title_x <- max_r * 1.06
+  summary_title_y <- max_r * 0.22
+  x_bar_start <- max_r * 1.32
+  x_bar_max <- max_r * 1.67
+  x_text_left <- max_r * 1.28
+  x_text_right <- max_r * 1.70
+  y_start <- max_r * 0.10
+  y_step <- (max_r * 1.62) / max(1, nrow(order_plot_df) - 1)
+  max_prop <- max(order_plot_df$prop_new_species)
+
+  text(summary_title_x, summary_title_y, "Order-level new-record proportion", adj = c(0, 0.5), cex = 0.70, font = 2)
+
+  for (i in seq_len(nrow(order_plot_df))) {
+    y_i <- y_start - (i - 1) * y_step
+    prop_i <- order_plot_df$prop_new_species[i]
+    ord_i <- order_plot_df$order[i]
+    col_i <- order_palette[ord_i]
+    x_end <- x_bar_start + (x_bar_max - x_bar_start) * (prop_i / max_prop)
+
+    segments(x_bar_start, y_i, x_end, y_i, lwd = 3.4, col = alpha(col_i, 0.32))
+    points(x_end, y_i, pch = 21, bg = col_i, col = "white", cex = 0.88)
+    text(x_text_left, y_i, labels = ord_i, adj = c(1, 0.5), cex = 0.54, col = "#111111")
+    text(
+      x_text_right, y_i,
+      labels = sprintf("%d/%d (%.1f%%)", order_plot_df$n_new_species[i], order_plot_df$n_china_species[i], order_plot_df$prop_pct[i]),
+      adj = c(0, 0.5),
+      cex = 0.52,
+      col = "#303030"
+    )
+  }
+}
+
+# -------------------------------
+# Step 8. Quality control plots before final export
+# 第 8 步：正式出图前的质量控制与诊断图
+# -------------------------------
+audit_plot_df <- matching_audit %>%
+  mutate(match_status = factor(match_status, levels = c("Exact match", "Bridged match", "Unresolved")))
+
+qa_match_plot <- ggplot(audit_plot_df, aes(x = dataset, y = n_species, fill = match_status)) +
+  geom_col(width = 0.68, colour = "white", linewidth = 0.4) +
+  geom_text(aes(label = n_species), position = position_stack(vjust = 0.5), size = 3.2, colour = "white", fontface = "bold") +
+  scale_fill_manual(values = c("Exact match" = "#4C78A8", "Bridged match" = "#F58518", "Unresolved" = "#BDBDBD")) +
+  labs(x = NULL, y = "Number of species", fill = NULL) +
+  theme_clean(11.2) +
+  theme(legend.position = "top")
+
+qa_order_plot <- order_summary %>%
+  filter(n_new_species > 0) %>%
+  ggplot(aes(x = reorder(order, prop_new_species), y = prop_new_species, fill = order)) +
+  geom_col(width = 0.72, colour = "white", linewidth = 0.35) +
+  geom_text(aes(label = sprintf("%.1f%%", prop_pct)), hjust = -0.05, size = 3.0) +
+  coord_flip(clip = "off") +
+  scale_y_continuous(labels = percent_format(accuracy = 1), expand = expansion(mult = c(0, 0.1))) +
+  scale_fill_manual(values = order_palette) +
+  labs(x = NULL, y = "Order-level proportion of new-record species") +
+  theme_clean(10.8)
+
+qa_figure <- qa_match_plot + qa_order_plot + plot_layout(widths = c(1.02, 1.35))
+save_gg_bundle(qa_figure, "fig_s1_phylogeny_matching_diagnostics", width = 12.8, height = 6.2)
+
+# -------------------------------
+# Step 9. Export the main circular phylogeny figure
+# 第 9 步：导出主系统发育图
+# -------------------------------
+save_base_bundle(draw_phylo_composite, figure_stub, width = 13.6, height = 9.2)
+
+# -------------------------------
+# Step 10. Export data products and narrative outputs
+# 第 10 步：导出整理数据与说明文稿
+# -------------------------------
+before_after_summary <- tibble::tribble(
+  ~metric, ~value,
+  "Checklist bird rows before species-rank filtering", nrow(checklist_all_birds),
+  "Checklist bird species after strict species-rank filtering", nrow(checklist_species_pool),
+  "Orders in strict Chinese bird pool", n_distinct(checklist_species_pool$order),
+  "Corrected new-record events", nrow(corrected_events),
+  "Corrected new-record species", nrow(new_record_species),
+  "Exact-matched Chinese checklist species", sum(checklist_matched$match_status == "Exact match"),
+  "Bridged Chinese checklist species", sum(checklist_matched$match_status == "Bridged match"),
+  "Unresolved Chinese checklist species", sum(checklist_matched$match_status == "Unresolved"),
+  "Exact-matched new-record species", sum(new_record_matched$match_status == "Exact match"),
+  "Bridged new-record species", sum(new_record_matched$match_status == "Bridged match"),
+  "Unresolved new-record species", sum(new_record_matched$match_status == "Unresolved"),
+  "Matched tree tips in pruned Chinese bird phylogeny", Ntip(tree_china),
+  "Orders containing at least one corrected new-record species", sum(order_summary$n_new_species > 0)
+)
+
+write.csv(checklist_species_pool, file.path(data_dir, "china_bird_species_pool_strict.csv"), row.names = FALSE)
+write.csv(checklist_matched, file.path(data_dir, "china_bird_species_pool_tree_matching.csv"), row.names = FALSE)
+write.csv(new_record_species, file.path(data_dir, "corrected_new_record_species_unique.csv"), row.names = FALSE)
+write.csv(new_record_matched, file.path(data_dir, "corrected_new_record_species_tree_matching.csv"), row.names = FALSE)
+write.csv(taxonomy_bridge, file.path(data_dir, "taxonomy_bridge_table.csv"), row.names = FALSE)
+write.csv(matching_audit, file.path(data_dir, "phylogeny_matching_audit.csv"), row.names = FALSE)
+write.csv(many_to_one_audit, file.path(data_dir, "phylogeny_many_to_one_mapping_audit.csv"), row.names = FALSE)
+write.csv(order_summary, file.path(data_dir, "order_level_new_record_proportions.csv"), row.names = FALSE)
+write.csv(tip_metadata, file.path(data_dir, "phylogeny_tip_metadata.csv"), row.names = FALSE)
+write.csv(before_after_summary, file.path(data_dir, "workflow_summary_metrics.csv"), row.names = FALSE)
+
+writexl::write_xlsx(
+  list(
+    workflow_summary = before_after_summary,
+    checklist_species_pool = checklist_species_pool,
+    checklist_matching = checklist_matched,
+    corrected_new_record_species = new_record_species,
+    new_record_matching = new_record_matched,
+    taxonomy_bridge = taxonomy_bridge,
+    matching_audit = matching_audit,
+    many_to_one_audit = many_to_one_audit,
+    order_summary = order_summary,
+    tip_metadata = tip_metadata
+  ),
+  path = file.path(results_dir, "bird_phylogeny_new_records_mctavish_bundle.xlsx")
+)
+
+caption_en <- paste(
+  "Figure. Circular phylogeny of China's bird species pool showing newly recorded species on the McTavish et al. complete and dynamic bird tree.",
+  "The background tree represents species-rank birds retained from the 2025 Catalogue of Life China checklist after filtering out subspecies and other infraspecific entries.",
+  "Terminal branches and the first outer ring highlight corrected newly recorded species, coloured by order.",
+  "The second outer ring indicates the IUCN Red List status of newly recorded species.",
+  "Internal percentage bubbles label the major orders with newly recorded species and report the proportion of corrected newly recorded species within each order's Chinese species pool.",
+  "The right-hand lollipop panel summarises the order-level numerator, denominator, and proportion for all orders containing at least one newly recorded species.",
+  "Species identities follow the corrected canonical dataset that already accounts for synonymy and removes later duplicate species-province publications."
+)
+
+caption_zh <- paste(
+  "图. 基于 McTavish 等构建的 complete and dynamic bird tree 绘制的中国鸟类物种库环形系统发育图，突出显示校正后的新纪录物种。",
+  "灰色背景树表示从《中国生物物种名录（2025）》中筛选得到的中国鸟类种级物种库，并已去除亚种及其他种下单元。",
+  "彩色终端分支和第一层外环表示校正后的新纪录物种，颜色区分不同目。",
+  "第二层外环表示新纪录物种的 IUCN 红色名录等级。",
+  "内部比例气泡标注主要含新纪录物种的目，并显示该目新纪录物种数占中国该目物种总数的比例。",
+  "右侧棒棒糖面板汇总了所有包含新纪录物种的目之分子、分母及比例。",
+  "物种身份采用已经过同物异名归并与重复发表剔除的校正底表。"
+)
+
+summary_lines_en <- c(
+  paste0("The strict Chinese bird species pool contained ", nrow(checklist_species_pool), " species across ", n_distinct(checklist_species_pool$order), " orders."),
+  paste0("Direct matching placed ", sum(checklist_matched$match_status == "Exact match"), " checklist species and ", sum(new_record_matched$match_status == "Exact match"), " corrected newly recorded species onto the McTavish tree."),
+  paste0("The explicit taxonomy bridge recovered an additional ", sum(checklist_matched$match_status == "Bridged match"), " checklist species and ", sum(new_record_matched$match_status == "Bridged match"), " newly recorded species."),
+  paste0("After direct matching and transparent bridging, the final pruned Chinese bird phylogeny contained ", Ntip(tree_china), " tree tips."),
+  paste0("Corrected newly recorded species were documented in ", sum(order_summary$n_new_species > 0), " orders; the richest order was ", order_summary$order[1], " with ", order_summary$n_new_species[1], " newly recorded species, representing ", sprintf("%.1f%%", order_summary$prop_pct[1]), " of the Chinese species pool in that order."),
+  paste0("Unresolved species were retained in the audit tables for transparent review, rather than being silently dropped or force-matched.")
+)
+
+summary_lines_zh <- c(
+  paste0("严格筛选后的中国鸟类种级物种库共包含 ", nrow(checklist_species_pool), " 个物种、", n_distinct(checklist_species_pool$order), " 个目。"),
+  paste0("直接匹配可将 ", sum(checklist_matched$match_status == "Exact match"), " 个中国名录物种和 ", sum(new_record_matched$match_status == "Exact match"), " 个校正后新纪录物种挂接到 McTavish 系统树上。"),
+  paste0("通过透明的 taxonomy bridge，又额外恢复了 ", sum(checklist_matched$match_status == "Bridged match"), " 个中国名录物种和 ", sum(new_record_matched$match_status == "Bridged match"), " 个新纪录物种的树上位置。"),
+  paste0("经过直接匹配与名称桥接后，最终用于绘图的中国鸟类系统树子树包含 ", Ntip(tree_china), " 个 tip。"),
+  paste0("校正后的新纪录物种分布于 ", sum(order_summary$n_new_species > 0), " 个目中，其中新纪录物种数最多的目是 ", order_summary$order[1], "，共 ", order_summary$n_new_species[1], " 个物种，占中国该目物种库的 ", sprintf("%.1f%%", order_summary$prop_pct[1]), "。"),
+  "所有未解决名称均保留在审计表中供人工复核，而不是被静默删除或不透明地强制匹配。"
+)
+
+writeLines(c("# Figure caption (English)", "", caption_en, "", "# 图题（中文）", "", caption_zh), file.path(results_dir, "figure_caption_bilingual.md"))
+writeLines(
+  c(
+    "# Task Summary / 结果摘要",
+    "",
+    "## English",
+    "",
+    summary_lines_en,
+    "",
+    "## 中文",
+    "",
+    summary_lines_zh
+  ),
+  file.path(results_dir, "task_summary_bilingual.md")
+)
+
+message("Bird McTavish phylogeny workflow completed successfully.")

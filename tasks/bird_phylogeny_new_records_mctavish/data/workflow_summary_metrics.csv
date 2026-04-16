@@ -1,0 +1,14 @@
+"metric","value"
+"Checklist bird rows before species-rank filtering",3255
+"Checklist bird species after strict species-rank filtering",1505
+"Orders in strict Chinese bird pool",26
+"Corrected new-record events",1022
+"Corrected new-record species",520
+"Exact-matched Chinese checklist species",1456
+"Bridged Chinese checklist species",16
+"Unresolved Chinese checklist species",33
+"Exact-matched new-record species",500
+"Bridged new-record species",19
+"Unresolved new-record species",1
+"Matched tree tips in pruned Chinese bird phylogeny",1472
+"Orders containing at least one corrected new-record species",23
