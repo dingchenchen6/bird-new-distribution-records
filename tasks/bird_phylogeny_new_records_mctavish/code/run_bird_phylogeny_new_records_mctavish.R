@@ -90,9 +90,10 @@
 #    是否对应至少一个校正后的新纪录物种。
 # 7. 绘制投稿级环形系统发育图，包括：
 #    - 中国鸟类物种库的灰色背景树；
-#    - 按目着色的新纪录物种分支和单层外环；
-#    - 靠近根部的主要目比例气泡；
-#    - 仿照参考图的外侧目标签与剪影。
+#    - 仅对“新纪录物种对应路径”按目着色，其余分支保持灰色；
+#    - 加宽并贴近 tip 的单层外环；
+#    - 靠近根部、按目逐一放置的比例气泡；
+#    - 仿照参考图的外侧目标签与剪影，并尽量为每个有新纪录的目配置剪影。
 # 8. 导出诊断、匹配表、桥接表、图件、双语图题以及汇总 Excel 工作簿。
 #
 # Diagnostics and validation / 诊断与验证
@@ -132,6 +133,9 @@ suppressPackageStartupMessages({
   library(officer)
   library(rvg)
   library(export)
+  library(httr2)
+  library(jsonlite)
+  library(gridGraphics)
 })
 
 set.seed(20260416)
@@ -143,10 +147,15 @@ set.seed(20260416)
 get_script_path <- function() {
   cmd_args <- commandArgs(trailingOnly = FALSE)
   file_arg <- grep("^--file=", cmd_args, value = TRUE)
-  if (length(file_arg) > 0) return(normalizePath(sub("^--file=", "", file_arg[1])))
+  if (length(file_arg) > 0) {
+    candidate <- sub("^--file=", "", file_arg[1])
+    if (!file.exists(candidate) && grepl("~\\+~", candidate)) candidate <- gsub("~\\+~", " ", candidate)
+    return(normalizePath(candidate, mustWork = FALSE))
+  }
   r_candidates <- cmd_args[grepl("\\.[Rr]$", cmd_args)]
+  r_candidates <- gsub("~\\+~", " ", r_candidates)
   r_candidates <- r_candidates[file.exists(r_candidates)]
-  if (length(r_candidates) > 0) return(normalizePath(r_candidates[1]))
+  if (length(r_candidates) > 0) return(normalizePath(r_candidates[1], mustWork = FALSE))
   normalizePath(getwd())
 }
 
@@ -236,7 +245,10 @@ save_base_bundle <- function(draw_fun, stub, width = 13.6, height = 9.2) {
     ppt <- add_slide(ppt, layout = "Blank", master = "Office Theme")
     ppt <- ph_with(
       x = ppt,
-      value = dml(code = draw_fun()),
+      value = dml(code = {
+        grid::grid.newpage()
+        gridGraphics::grid.echo(draw_fun, newpage = FALSE)
+      }),
       location = ph_location(left = 0, top = 0, width = 13.333, height = 7.5)
     )
     print(ppt, target = pptx_path)
@@ -511,25 +523,193 @@ read_icon_as_raster <- function(path) {
   as.raster(img)
 }
 
-icon_manifest_candidates <- c(
-  "/Users/dingchenchen/Documents/New project/bird_new_records_R_output/assets/phylopic_icons/icon_manifest.csv",
-  "/Users/dingchenchen/Documents/New records/bird_new_records_R_output/assets/phylopic_icons/icon_manifest.csv"
-)
-icon_manifest_path <- icon_manifest_candidates[file.exists(icon_manifest_candidates)][1]
-if (!is.na(icon_manifest_path) && length(icon_manifest_path) > 0) {
-  icon_manifest <- read.csv(icon_manifest_path, stringsAsFactors = FALSE) %>%
-    transmute(
-      order = order,
-      icon_path = dplyr::case_when(
-        file.exists(icon_png) ~ icon_png,
-        file.exists(file.path("/Users/dingchenchen/Documents/New records/bird_new_records_R_output/assets/phylopic_icons", basename(icon_png))) ~
-          file.path("/Users/dingchenchen/Documents/New records/bird_new_records_R_output/assets/phylopic_icons", basename(icon_png)),
-        TRUE ~ icon_png
-      )
-    )
-} else {
-  icon_manifest <- tibble::tibble(order = character(), icon_path = character())
+normalize_api_href <- function(href) {
+  if (is.null(href) || length(href) == 0 || is.na(href) || href == "") return(NA_character_)
+  if (grepl("^https?://", href)) return(href)
+  paste0("https://api.phylopic.org", href)
 }
+
+api_get_json <- function(url) {
+  tryCatch({
+    httr2::request(url) %>%
+      httr2::req_user_agent("Codex bird-phylogeny workflow") %>%
+      httr2::req_perform() %>%
+      httr2::resp_body_string() %>%
+      jsonlite::fromJSON(simplifyVector = FALSE)
+  }, error = function(e) NULL)
+}
+
+extract_first_non_null <- function(x, candidates) {
+  for (nm in candidates) {
+    val <- x[[nm]]
+    if (!is.null(val)) return(val)
+  }
+  NULL
+}
+
+phylopic_build <- local({
+  build_info <- api_get_json("https://api.phylopic.org")
+  as.integer(build_info[["build"]] %||% 537L)
+})
+
+phylopic_icon_dir <- file.path(data_dir, "external", "phylopic_icons")
+dir.create(phylopic_icon_dir, recursive = TRUE, showWarnings = FALSE)
+
+legacy_icon_dirs <- c(
+  "/Users/dingchenchen/Documents/New records/bird_new_records_R_output/assets/phylopic_icons",
+  "/Users/dingchenchen/Documents/New project/bird_new_records_R_output/assets/phylopic_icons"
+)
+
+find_legacy_icon <- function(order_name) {
+  for (icon_dir in legacy_icon_dirs[file.exists(legacy_icon_dirs)]) {
+    candidate <- file.path(icon_dir, paste0(order_name, ".png"))
+    if (file.exists(candidate)) return(candidate)
+  }
+  NA_character_
+}
+
+download_phylopic_order_icon <- function(order_name) {
+  local_png <- file.path(phylopic_icon_dir, paste0(order_name, ".png"))
+  if (file.exists(local_png)) {
+    return(tibble::tibble(
+      order = order_name,
+      icon_path = local_png,
+      icon_status = "existing_local",
+      attribution = NA_character_,
+      license = NA_character_,
+      phylopic_node = NA_character_,
+      phylopic_image = NA_character_
+    ))
+  }
+
+  legacy_png <- find_legacy_icon(order_name)
+  if (!is.na(legacy_png) && file.exists(legacy_png)) {
+    file.copy(legacy_png, local_png, overwrite = TRUE)
+    return(tibble::tibble(
+      order = order_name,
+      icon_path = local_png,
+      icon_status = "copied_from_legacy",
+      attribution = NA_character_,
+      license = NA_character_,
+      phylopic_node = NA_character_,
+      phylopic_image = NA_character_
+    ))
+  }
+
+  order_query <- tolower(order_name)
+  node_search <- api_get_json(
+    sprintf(
+      "https://api.phylopic.org/nodes?build=%s&filter_name=%s&embed_items=true&page=0",
+      phylopic_build,
+      utils::URLencode(order_query, reserved = TRUE)
+    )
+  )
+  items <- node_search[["_embedded"]][["items"]]
+  if (is.null(items) || length(items) == 0) {
+    return(tibble::tibble(
+      order = order_name,
+      icon_path = NA_character_,
+      icon_status = "node_not_found",
+      attribution = NA_character_,
+      license = NA_character_,
+      phylopic_node = NA_character_,
+      phylopic_image = NA_character_
+    ))
+  }
+
+  node_item <- items[[1]]
+  node_uuid <- node_item[["uuid"]] %||% NA_character_
+  primary_href <- normalize_api_href(node_item[["_links"]][["primaryImage"]][["href"]])
+
+  image_meta <- NULL
+  if (!is.na(primary_href)) {
+    image_meta <- api_get_json(primary_href)
+  }
+
+  if (is.null(image_meta)) {
+    if (!is.na(node_uuid)) {
+      clade_meta <- api_get_json(
+        sprintf(
+          "https://api.phylopic.org/images?build=%s&embed_items=true&filter_clade=%s&page=0",
+          phylopic_build, node_uuid
+        )
+      )
+      clade_items <- clade_meta[["_embedded"]][["items"]]
+      if (!is.null(clade_items) && length(clade_items) > 0) {
+        first_img_href <- normalize_api_href(clade_items[[1]][["_links"]][["self"]][["href"]])
+        if (!is.na(first_img_href)) image_meta <- api_get_json(first_img_href)
+      }
+    }
+  }
+
+  if (is.null(image_meta)) {
+    return(tibble::tibble(
+      order = order_name,
+      icon_path = NA_character_,
+      icon_status = "image_not_found",
+      attribution = NA_character_,
+      license = NA_character_,
+      phylopic_node = node_uuid,
+      phylopic_image = NA_character_
+    ))
+  }
+
+  raster_files <- image_meta[["_links"]][["rasterFiles"]]
+  raster_href <- if (!is.null(raster_files) && length(raster_files) > 0) raster_files[[1]][["href"]] else NA_character_
+  if (is.na(raster_href) || raster_href == "") {
+    return(tibble::tibble(
+      order = order_name,
+      icon_path = NA_character_,
+      icon_status = "raster_not_found",
+      attribution = image_meta[["attribution"]] %||% NA_character_,
+      license = image_meta[["_links"]][["license"]][["href"]] %||% NA_character_,
+      phylopic_node = node_uuid,
+      phylopic_image = image_meta[["uuid"]] %||% NA_character_
+    ))
+  }
+
+  download_ok <- tryCatch({
+    utils::download.file(raster_href, destfile = local_png, mode = "wb", quiet = TRUE)
+    TRUE
+  }, error = function(e) FALSE)
+
+  tibble::tibble(
+    order = order_name,
+    icon_path = if (download_ok && file.exists(local_png)) local_png else NA_character_,
+    icon_status = if (download_ok && file.exists(local_png)) "downloaded" else "download_failed",
+    attribution = image_meta[["attribution"]] %||% NA_character_,
+    license = image_meta[["_links"]][["license"]][["href"]] %||% NA_character_,
+    phylopic_node = node_uuid,
+    phylopic_image = image_meta[["uuid"]] %||% NA_character_
+  )
+}
+
+`%||%` <- function(x, y) if (is.null(x) || length(x) == 0) y else x
+
+icon_manifest <- dplyr::bind_rows(lapply(order_levels, download_phylopic_order_icon)) %>%
+  mutate(
+    icon_path = ifelse(!is.na(icon_path) & file.exists(icon_path), icon_path, NA_character_)
+  )
+
+missing_icon_idx <- which(is.na(icon_manifest$icon_path) | !file.exists(icon_manifest$icon_path))
+if (length(missing_icon_idx) > 0) {
+  generic_icon <- c(
+    file.path(phylopic_icon_dir, "Galliformes.png"),
+    file.path(phylopic_icon_dir, "Passeriformes.png"),
+    file.path(phylopic_icon_dir, "Charadriiformes.png")
+  )
+  generic_icon <- generic_icon[file.exists(generic_icon)][1]
+  if (!is.na(generic_icon) && length(generic_icon) > 0) {
+    for (i in missing_icon_idx) {
+      fallback_path <- file.path(phylopic_icon_dir, paste0(icon_manifest$order[i], ".png"))
+      file.copy(generic_icon, fallback_path, overwrite = TRUE)
+      icon_manifest$icon_path[i] <- fallback_path
+      icon_manifest$icon_status[i] <- paste0(icon_manifest$icon_status[i], "_fallback")
+    }
+  }
+}
+
+write.csv(icon_manifest, file.path(data_dir, "phylopic_icon_manifest.csv"), row.names = FALSE)
 
 # -------------------------------
 # Step 6. Aggregate metadata at tree-tip level
@@ -631,36 +811,37 @@ order_label_table <- order_summary %>%
 
 draw_phylo_composite <- function() {
   par(mar = c(0.2, 0.3, 0.2, 0.2), xpd = NA, bg = "white")
+  edge_df <- tibble::tibble(
+    edge_id = seq_len(nrow(tree_china$edge)),
+    parent = tree_china$edge[, 1],
+    child = tree_china$edge[, 2]
+  )
+  child_to_parent <- setNames(edge_df$parent, edge_df$child)
+  child_to_edge <- setNames(edge_df$edge_id, edge_df$child)
 
-  descendant_tips <- local({
-    n_tip <- ape::Ntip(tree_china)
-    child_map <- split(tree_china$edge[, 2], tree_china$edge[, 1])
-    cache <- vector("list", n_tip + tree_china$Nnode)
-    get_tips <- function(node) {
-      node <- as.integer(node)
-      if (!is.null(cache[[node]])) return(cache[[node]])
-      if (node <= n_tip) {
-        cache[[node]] <<- node
-      } else {
-        children <- child_map[[as.character(node)]]
-        cache[[node]] <<- unlist(lapply(children, get_tips))
-      }
-      cache[[node]]
+  # Build the set of edges that belong to the ancestor paths of newly recorded
+  # species. These edges are then coloured by order only when a path segment is
+  # uniquely attributable to a single order; otherwise it remains grey.
+  # 构建“新纪录物种祖先路径”的边集合。只有当某条边只对应单一目时才按目着色，
+  # 若该边被多个目的新纪录路径共享，则保持灰色，以避免过度解释。
+  edge_order_membership <- vector("list", nrow(edge_df))
+  new_tip_rows <- tip_metadata %>% filter(is_new_record)
+  for (i in seq_len(nrow(new_tip_rows))) {
+    tip_id <- match(new_tip_rows$tree_label_final[i], tree_china$tip.label)
+    if (is.na(tip_id)) next
+    current_node <- tip_id
+    while (!is.na(child_to_edge[as.character(current_node)])) {
+      edge_id <- as.integer(child_to_edge[as.character(current_node)])
+      edge_order_membership[[edge_id]] <- unique(c(edge_order_membership[[edge_id]], new_tip_rows$order[i]))
+      current_node <- as.integer(child_to_parent[as.character(current_node)])
     }
-    lapply(tree_china$edge[, 2], get_tips)
-  })
+  }
 
-  edge_order_cols <- vapply(seq_len(nrow(tree_china$edge)), function(i) {
-    ords <- unique(tip_metadata$order[descendant_tips[[i]]])
-    if (length(ords) == 1 && ords %in% names(order_palette)) {
-      order_palette[[ords]]
-    } else {
-      "#CFCFCF"
-    }
+  edge_order_cols <- vapply(edge_order_membership, function(x) {
+    if (length(x) == 1 && x %in% names(order_palette)) order_palette[[x]] else "#CFCFCF"
   }, character(1))
-  edge_lwd <- vapply(seq_len(nrow(tree_china$edge)), function(i) {
-    ords <- unique(tip_metadata$order[descendant_tips[[i]]])
-    if (length(ords) == 1 && ords %in% names(order_palette)) 1.05 else 0.36
+  edge_lwd <- vapply(edge_order_membership, function(x) {
+    if (length(x) >= 1) 0.92 else 0.40
   }, numeric(1))
 
   base_layout <- plot.phylo(
@@ -669,8 +850,8 @@ draw_phylo_composite <- function() {
     use.edge.length = FALSE,
     show.tip.label = FALSE,
     no.margin = TRUE,
-    edge.color = edge_order_cols,
-    edge.width = edge_lwd,
+    edge.color = "#CFCFCF",
+    edge.width = 0.40,
     cex = 0.08,
     plot = FALSE
   )
@@ -681,11 +862,11 @@ draw_phylo_composite <- function() {
     use.edge.length = FALSE,
     show.tip.label = FALSE,
     no.margin = TRUE,
-    edge.color = edge_order_cols,
-    edge.width = edge_lwd,
+    edge.color = "#CFCFCF",
+    edge.width = 0.40,
     cex = 0.08,
-    x.lim = c(base_layout$x.lim[1] * 1.56, base_layout$x.lim[2] * 1.84),
-    y.lim = c(base_layout$y.lim[1] * 1.42, base_layout$y.lim[2] * 1.42)
+    x.lim = c(base_layout$x.lim[1] * 2.75, base_layout$x.lim[2] * 2.75),
+    y.lim = c(base_layout$y.lim[1] * 1.62, base_layout$y.lim[2] * 1.62)
   )
 
   lp <- get("last_plot.phylo", envir = .PlotPhyloEnv)
@@ -703,25 +884,45 @@ draw_phylo_composite <- function() {
       theta = theta[match(tree_label_final, tree_china$tip.label)]
     )
 
-  # Re-colour the terminal branches of newly recorded species.
-  # 重新高亮新纪录物种的末端分支，使其颜色更鲜明。
-  edge_df <- as.data.frame(tree_china$edge)
-  names(edge_df) <- c("parent", "child")
+  # Overlay coloured paths for newly recorded species.
+  # 叠加新纪录物种的彩色路径；非新纪录物种保持灰色背景树。
+  coloured_edge_df <- edge_df %>%
+    mutate(
+      edge_colour = edge_order_cols,
+      edge_width = edge_lwd
+    ) %>%
+    filter(edge_colour != "#CFCFCF")
+
+  if (nrow(coloured_edge_df) > 0) {
+    for (i in seq_len(nrow(coloured_edge_df))) {
+      segments(
+        x0 = lp$xx[coloured_edge_df$parent[i]],
+        y0 = lp$yy[coloured_edge_df$parent[i]],
+        x1 = lp$xx[coloured_edge_df$child[i]],
+        y1 = lp$yy[coloured_edge_df$child[i]],
+        col = coloured_edge_df$edge_colour[i],
+        lwd = coloured_edge_df$edge_width[i],
+        lend = "round"
+      )
+    }
+  }
+
   tip_edge_df <- edge_df %>%
     filter(child <= n_tip) %>%
     mutate(tree_label_final = tree_china$tip.label[child]) %>%
     left_join(tip_plot_df, by = "tree_label_final")
 
-  for (i in seq_len(nrow(tip_edge_df))) {
-    parent_idx <- tip_edge_df$parent[i]
-    child_idx <- tip_edge_df$child[i]
-    if (isTRUE(tip_edge_df$is_new_record[i])) {
-      segments(
-        x0 = lp$xx[parent_idx], y0 = lp$yy[parent_idx],
-        x1 = lp$xx[child_idx], y1 = lp$yy[child_idx],
-        col = order_palette[tip_edge_df$order[i]],
-        lwd = 1.65
-      )
+  if (nrow(tip_edge_df) > 0) {
+    for (i in seq_len(nrow(tip_edge_df))) {
+      if (isTRUE(tip_edge_df$is_new_record[i])) {
+        segments(
+          x0 = lp$xx[tip_edge_df$parent[i]], y0 = lp$yy[tip_edge_df$parent[i]],
+          x1 = lp$xx[tip_edge_df$child[i]], y1 = lp$yy[tip_edge_df$child[i]],
+          col = order_palette[tip_edge_df$order[i]],
+          lwd = 1.85,
+          lend = "round"
+        )
+      }
     }
   }
 
@@ -754,45 +955,45 @@ draw_phylo_composite <- function() {
     th <- seq(sector_df$theta_start[i], sector_df$theta_end[i], length.out = 250)
     th <- ifelse(th > 2 * pi, th - 2 * pi, th)
     lines(
-      x = (max_r + 0.06) * cos(th),
-      y = (max_r + 0.06) * sin(th),
+      x = (max_r + 0.038) * cos(th),
+      y = (max_r + 0.038) * sin(th),
       col = alpha(order_palette[sector_df$order[i]], 0.95),
-      lwd = 3.4
+      lwd = 5.8,
+      lend = "round"
     )
   }
 
   # Outer ring: highlight newly recorded tips by order.
-  # 外环：用彩色小方块标识不同目的新纪录物种；不再绘制 IUCN 外圈。
+  # 外环：用更宽、更靠近 tip 的彩色小方块标识不同目的新纪录物种；
+  # 非新纪录物种仍以浅灰表示。
   points(
-    x = (max_r + 0.14) * cos(tip_plot_df$theta),
-    y = (max_r + 0.14) * sin(tip_plot_df$theta),
+    x = (max_r + 0.078) * cos(tip_plot_df$theta),
+    y = (max_r + 0.078) * sin(tip_plot_df$theta),
     pch = 15,
-    cex = 0.48,
+    cex = 0.92,
     col = ifelse(tip_plot_df$is_new_record, order_palette[tip_plot_df$order], "#E8E8E8")
   )
 
   # Internal percentage bubbles.
-  # 在接近根部的位置放置按目比例圆球，尽量复刻参考图的“根部比例气泡”。
+  # 在接近根部的位置放置按目比例圆球。这里对所有“有新纪录物种的目”
+  # 都进行标识，并通过多层半径交替减轻圆球之间的重叠。
   bubble_orders <- sector_df %>%
     filter(n_new_species > 0) %>%
-    arrange(desc(n_new_species), desc(prop_new_species)) %>%
-    slice_head(n = 10) %>%
     arrange(theta_mid) %>%
     mutate(
-      bubble_radius = max_r * rep(c(0.24, 0.33, 0.42, 0.51), length.out = n()),
+      bubble_layer = rep(c(1, 2, 3, 4, 5), length.out = n()),
+      bubble_radius = max_r * c(0.24, 0.30, 0.36, 0.42, 0.48)[bubble_layer],
       bubble_size = dplyr::case_when(
-        n_new_species >= 50 ~ 0.070,
-        n_new_species >= 20 ~ 0.060,
-        n_new_species >= 10 ~ 0.053,
-        n_new_species >= 5  ~ 0.046,
-        TRUE ~ 0.039
+        prop_pct >= 60 ~ 0.060,
+        prop_pct >= 40 ~ 0.055,
+        prop_pct >= 20 ~ 0.050,
+        TRUE ~ 0.045
       ),
       bubble_cex = dplyr::case_when(
-        n_new_species >= 50 ~ 0.58,
-        n_new_species >= 20 ~ 0.54,
-        n_new_species >= 10 ~ 0.50,
-        n_new_species >= 5  ~ 0.46,
-        TRUE ~ 0.40
+        prop_pct >= 60 ~ 0.50,
+        prop_pct >= 40 ~ 0.46,
+        prop_pct >= 20 ~ 0.43,
+        TRUE ~ 0.39
       )
     )
 
@@ -811,25 +1012,58 @@ draw_phylo_composite <- function() {
     text(xb, yb, labels = sprintf("%.1f%%", bubble_orders$prop_pct[i]), cex = bubble_orders$bubble_cex[i], col = "black")
   }
 
-  # Outer labels and silhouettes for the major orders.
-  # 选取主要目，在圆外侧用“箭头 + 文本 + 剪影”进行标识，尽量复刻参考图。
+  # Outer labels and silhouettes for every order with new-record species.
+  # 对每个含新纪录物种的目都在圆外添加“引导线 + 剪影 + 目名”，尽量复刻参考图
+  # 的样式与标识方式。
   label_orders <- sector_df %>%
     filter(n_new_species > 0) %>%
-    arrange(desc(n_new_species), desc(prop_new_species)) %>%
-    {select_spaced_orders(., max_n = 7, min_sep = 0.32)} %>%
+    arrange(theta_mid) %>%
     left_join(icon_manifest, by = "order") %>%
     mutate(
-      label_radius = dplyr::case_when(
-        sin(theta_mid) > 0.72 ~ max_r + 0.42,
-        sin(theta_mid) < -0.72 ~ max_r + 0.45,
-        abs(cos(theta_mid)) < 0.20 ~ max_r + 0.40,
-        TRUE ~ max_r + 0.36
-      ),
-      icon_radius = label_radius + 0.14
+      side = ifelse(cos(theta_mid) >= 0, "right", "left"),
+      guide_radius = max_r + 0.088,
+      text_cex = dplyr::case_when(
+        nchar(order) >= 18 ~ 0.34,
+        nchar(order) >= 14 ~ 0.37,
+        TRUE ~ 0.40
+      )
     )
+
+  label_right <- label_orders %>%
+    filter(side == "right") %>%
+    arrange(desc(sin(theta_mid))) %>%
+    mutate(
+      y_label = seq(max_r * 0.92, -max_r * 0.92, length.out = n()),
+      x_anchor = max_r + 0.62,
+      x_icon = max_r + 0.78,
+      x_text = max_r + 0.92
+    )
+
+  label_left <- label_orders %>%
+    filter(side == "left") %>%
+    arrange(desc(sin(theta_mid))) %>%
+    mutate(
+      y_label = seq(max_r * 0.92, -max_r * 0.92, length.out = n()),
+      x_anchor = -(max_r + 0.62),
+      x_icon = -(max_r + 0.78),
+      x_text = -(max_r + 0.92)
+    )
+
+  label_orders <- bind_rows(label_right, label_left) %>%
+    arrange(theta_mid)
+
+  fallback_icon <- icon_manifest %>%
+    filter(!is.na(icon_path), file.exists(icon_path)) %>%
+    slice_head(n = 1) %>%
+    pull(icon_path)
+  fallback_icon <- if (length(fallback_icon) == 0) NA_character_ else fallback_icon
 
   icon_rasters <- list()
   if (nrow(label_orders) > 0) {
+    label_orders <- label_orders %>%
+      mutate(
+        icon_path = ifelse(is.na(icon_path) | !file.exists(icon_path), fallback_icon, icon_path)
+      )
     valid_icons <- unique(na.omit(label_orders$icon_path[label_orders$icon_path != "" & file.exists(label_orders$icon_path)]))
     if (length(valid_icons) > 0) {
       icon_rasters <- lapply(valid_icons, read_icon_as_raster)
@@ -839,21 +1073,23 @@ draw_phylo_composite <- function() {
 
   for (i in seq_len(nrow(label_orders))) {
     ang <- label_orders$theta_mid[i]
-    x0 <- (max_r + 0.07) * cos(ang)
-    y0 <- (max_r + 0.07) * sin(ang)
-    xl <- label_orders$label_radius[i] * cos(ang)
-    yl <- label_orders$label_radius[i] * sin(ang)
-    adj_lr <- ifelse(cos(ang) >= 0, 0, 1)
-    xi <- xl + ifelse(cos(ang) >= 0, 0.18, -0.18)
-    yi <- yl + ifelse(sin(ang) > 0.75, 0.05, ifelse(sin(ang) < -0.75, -0.03, 0))
+    x0 <- label_orders$guide_radius[i] * cos(ang)
+    y0 <- label_orders$guide_radius[i] * sin(ang)
+    xi <- label_orders$x_icon[i]
+    yi <- label_orders$y_label[i]
+    xt <- label_orders$x_text[i]
+    yt <- label_orders$y_label[i]
+    adj_lr <- ifelse(label_orders$side[i] == "right", 0, 1)
+    xh <- label_orders$x_anchor[i]
 
-    segments(x0, y0, xl, yl, col = "#111111", lwd = 0.9)
-    text(xl, yl, labels = label_orders$order[i], cex = 0.62, adj = c(adj_lr, 0.5), col = "#111111")
+    segments(x0, y0, xh, yi, col = "#111111", lwd = 0.75)
+    segments(xh, yi, xi - ifelse(label_orders$side[i] == "right", 0.05, -0.05), yi, col = "#111111", lwd = 0.75)
+    text(xt, yt, labels = label_orders$order[i], cex = label_orders$text_cex[i], adj = c(adj_lr, 0.5), col = "#111111")
 
     icon_path <- label_orders$icon_path[i]
     if (!is.na(icon_path) && icon_path %in% names(icon_rasters) && !is.null(icon_rasters[[icon_path]])) {
-      half_w <- 0.070
-      half_h <- 0.046
+      half_w <- 0.048
+      half_h <- 0.032
       rasterImage(
         icon_rasters[[icon_path]],
         xleft = xi - half_w,
@@ -898,7 +1134,7 @@ save_gg_bundle(qa_figure, "fig_s1_phylogeny_matching_diagnostics", width = 12.8,
 # Step 9. Export the main circular phylogeny figure
 # 第 9 步：导出主系统发育图
 # -------------------------------
-save_base_bundle(draw_phylo_composite, figure_stub, width = 13.6, height = 9.2)
+save_base_bundle(draw_phylo_composite, figure_stub, width = 15.2, height = 11.0)
 
 # -------------------------------
 # Step 10. Export data products and narrative outputs
@@ -931,6 +1167,7 @@ write.csv(many_to_one_audit, file.path(data_dir, "phylogeny_many_to_one_mapping_
 write.csv(order_summary, file.path(data_dir, "order_level_new_record_proportions.csv"), row.names = FALSE)
 write.csv(tip_metadata, file.path(data_dir, "phylogeny_tip_metadata.csv"), row.names = FALSE)
 write.csv(before_after_summary, file.path(data_dir, "workflow_summary_metrics.csv"), row.names = FALSE)
+write.csv(icon_manifest, file.path(data_dir, "phylopic_icon_manifest.csv"), row.names = FALSE)
 
 writexl::write_xlsx(
   list(
@@ -943,7 +1180,8 @@ writexl::write_xlsx(
     matching_audit = matching_audit,
     many_to_one_audit = many_to_one_audit,
     order_summary = order_summary,
-    tip_metadata = tip_metadata
+    tip_metadata = tip_metadata,
+    phylopic_icon_manifest = icon_manifest
   ),
   path = file.path(results_dir, "bird_phylogeny_new_records_mctavish_bundle.xlsx")
 )
@@ -951,17 +1189,18 @@ writexl::write_xlsx(
 caption_en <- paste(
   "Figure. Circular phylogeny of China's bird species pool showing newly recorded species on the McTavish et al. complete and dynamic bird tree.",
   "The background tree represents species-rank birds retained from the 2025 Catalogue of Life China checklist after filtering out subspecies and other infraspecific entries.",
-  "Order-specific clade branches and the single outer ring highlight corrected newly recorded species, coloured by order.",
-  "Percentage bubbles placed close to the rootward part of each major order report the proportion of corrected newly recorded species within that order's Chinese species pool.",
-  "External labels and silhouettes identify the principal orders in a layout designed to mimic the supplied reference figure.",
+  "Only the branches associated with corrected newly recorded species are overlaid in order-specific colours, whereas all other branches remain grey.",
+  "A widened outer ring placed close to the tips marks newly recorded species by order.",
+  "Percentage bubbles placed close to the rootward part of each labelled order report the proportion of corrected newly recorded species within that order's Chinese species pool.",
+  "External labels and silhouettes identify each order that contains at least one corrected newly recorded species in a layout designed to mimic the supplied reference figure.",
   "Species identities follow the corrected canonical dataset that already accounts for synonymy and removes later duplicate species-province publications."
 )
 
 caption_zh <- paste(
   "图. 基于 McTavish 等构建的 complete and dynamic bird tree 绘制的中国鸟类物种库环形系统发育图，突出显示校正后的新纪录物种。",
   "灰色背景树表示从《中国生物物种名录（2025）》中筛选得到的中国鸟类种级物种库，并已去除亚种及其他种下单元。",
-  "按目着色的系统树分支和单层外环表示校正后的新纪录物种，颜色区分不同目。",
-  "靠近根部的比例气泡标注主要含新纪录物种的目，并显示该目新纪录物种数占中国该目物种总数的比例。",
+  "仅对校正后新纪录物种所对应的分支路径按目着色，其余分支保持灰色；加宽且贴近 tip 的单层外环进一步标识不同目的新纪录物种。",
+  "靠近根部的比例气泡对每个含新纪录物种的目进行标注，并显示该目新纪录物种数占中国该目物种总数的比例。",
   "圆外侧的目标签与代表性剪影按照参考图的标识方式排布。",
   "物种身份采用已经过同物异名归并与重复发表剔除的校正底表。"
 )
