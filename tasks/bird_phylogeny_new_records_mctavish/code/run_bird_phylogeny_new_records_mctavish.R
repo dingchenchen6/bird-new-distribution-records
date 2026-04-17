@@ -72,12 +72,11 @@
 #    least one corrected new-record species.
 # 7. Build a circular publication-style phylogeny with:
 #    - grey background branches for the Chinese bird pool,
-#    - coloured terminal branches and outer ring markers for newly recorded
-#      species,
-#    - an additional IUCN ring for newly recorded species,
-#    - internal percentage bubbles for the major orders,
-#    - a side lollipop summary showing the proportion of new-record species in
-#      each order.
+#    - coloured order-level clade branches and a single outer ring that marks
+#      newly recorded species by order,
+#    - internal percentage bubbles placed close to the root region of each major
+#      order,
+#    - external order labels and silhouettes styled after the reference figure.
 # 8. Export diagnostics, matching tables, bridge tables, the figure, captions,
 #    and a bundled Excel workbook.
 # 1. 读取中国名录工作表，仅保留鸟纲的种级双名记录，去除亚种和非标准种下单元。
@@ -91,10 +90,9 @@
 #    是否对应至少一个校正后的新纪录物种。
 # 7. 绘制投稿级环形系统发育图，包括：
 #    - 中国鸟类物种库的灰色背景树；
-#    - 新纪录物种的彩色终端分支和外环标记；
-#    - 新纪录物种的 IUCN 外环；
-#    - 主要目的内部比例气泡；
-#    - 右侧按目的新纪录占比棒棒糖汇总。
+#    - 按目着色的新纪录物种分支和单层外环；
+#    - 靠近根部的主要目比例气泡；
+#    - 仿照参考图的外侧目标签与剪影。
 # 8. 导出诊断、匹配表、桥接表、图件、双语图题以及汇总 Excel 工作簿。
 #
 # Diagnostics and validation / 诊断与验证
@@ -449,12 +447,89 @@ iucn_palette <- c(
 )
 
 order_levels <- order_summary %>% filter(n_new_species > 0) %>% pull(order)
-order_palette_values <- grDevices::hcl(
-  h = seq(15, 375, length.out = length(order_levels) + 1)[-1],
-  c = 95,
-  l = 65
+order_palette_defaults <- c(
+  Passeriformes = "#19E51E",
+  Charadriiformes = "#FFF000",
+  Accipitriformes = "#FF1A1A",
+  Anseriformes = "#00E8F2",
+  Pelecaniformes = "#FF8ED1",
+  Gruiformes = "#13D7E0",
+  Strigiformes = "#FF8C25",
+  Columbiformes = "#9CCAE1",
+  Galliformes = "#B2E84D",
+  Coraciiformes = "#FFBF52",
+  Piciformes = "#39D6D0",
+  Suliformes = "#8E6AE8",
+  Procellariiformes = "#7CC7F2",
+  Ciconiiformes = "#A8D8F8",
+  Cuculiformes = "#71BFFF",
+  Caprimulgiformes = "#8E7CD7",
+  Gaviiformes = "#1EB2D8",
+  Podicipediformes = "#7E57FF",
+  Phoenicopteriformes = "#F4B5FF",
+  Otidiformes = "#F4A100",
+  Pterocliformes = "#FF5CB8",
+  Trogoniformes = "#F04E98",
+  Falconiformes = "#F06A6A"
 )
-order_palette <- stats::setNames(order_palette_values, order_levels)
+missing_orders <- setdiff(order_levels, names(order_palette_defaults))
+if (length(missing_orders) > 0) {
+  extra_cols <- grDevices::hcl(
+    h = seq(15, 375, length.out = length(missing_orders) + 1)[-1],
+    c = 85,
+    l = 68
+  )
+  names(extra_cols) <- missing_orders
+  order_palette_defaults <- c(order_palette_defaults, extra_cols)
+}
+order_palette <- order_palette_defaults[order_levels]
+
+read_icon_as_raster <- function(path) {
+  if (!file.exists(path)) return(NULL)
+  ext <- tolower(tools::file_ext(path))
+  if (ext != "png") return(NULL)
+  img <- png::readPNG(path)
+  if (is.matrix(img)) return(as.raster(img))
+  if (length(dim(img)) == 3) {
+    ch <- dim(img)[3]
+    if (ch == 2) {
+      g <- img[, , 1]
+      a <- img[, , 2]
+      img <- array(0, dim = c(dim(img)[1], dim(img)[2], 4))
+      img[, , 1] <- g
+      img[, , 2] <- g
+      img[, , 3] <- g
+      img[, , 4] <- a
+    } else if (ch == 1) {
+      g <- img[, , 1]
+      img <- array(0, dim = c(dim(img)[1], dim(img)[2], 3))
+      img[, , 1] <- g
+      img[, , 2] <- g
+      img[, , 3] <- g
+    }
+  }
+  as.raster(img)
+}
+
+icon_manifest_candidates <- c(
+  "/Users/dingchenchen/Documents/New project/bird_new_records_R_output/assets/phylopic_icons/icon_manifest.csv",
+  "/Users/dingchenchen/Documents/New records/bird_new_records_R_output/assets/phylopic_icons/icon_manifest.csv"
+)
+icon_manifest_path <- icon_manifest_candidates[file.exists(icon_manifest_candidates)][1]
+if (!is.na(icon_manifest_path) && length(icon_manifest_path) > 0) {
+  icon_manifest <- read.csv(icon_manifest_path, stringsAsFactors = FALSE) %>%
+    transmute(
+      order = order,
+      icon_path = dplyr::case_when(
+        file.exists(icon_png) ~ icon_png,
+        file.exists(file.path("/Users/dingchenchen/Documents/New records/bird_new_records_R_output/assets/phylopic_icons", basename(icon_png))) ~
+          file.path("/Users/dingchenchen/Documents/New records/bird_new_records_R_output/assets/phylopic_icons", basename(icon_png)),
+        TRUE ~ icon_png
+      )
+    )
+} else {
+  icon_manifest <- tibble::tibble(order = character(), icon_path = character())
+}
 
 # -------------------------------
 # Step 6. Aggregate metadata at tree-tip level
@@ -528,6 +603,25 @@ compute_sector_mid <- function(theta_values) {
   mid
 }
 
+angular_distance <- function(a, b) {
+  d <- abs((a - b) %% (2 * pi))
+  pmin(d, 2 * pi - d)
+}
+
+select_spaced_orders <- function(df, max_n = 7, min_sep = 0.42) {
+  picked <- integer()
+  for (i in seq_len(nrow(df))) {
+    if (length(picked) == 0) {
+      picked <- c(picked, i)
+    } else {
+      dd <- vapply(df$theta_mid[picked], function(x) angular_distance(df$theta_mid[i], x), numeric(1))
+      if (all(dd >= min_sep)) picked <- c(picked, i)
+    }
+    if (length(picked) >= max_n) break
+  }
+  df[picked, , drop = FALSE]
+}
+
 order_label_table <- order_summary %>%
   filter(n_new_species > 0) %>%
   mutate(
@@ -538,14 +632,45 @@ order_label_table <- order_summary %>%
 draw_phylo_composite <- function() {
   par(mar = c(0.2, 0.3, 0.2, 0.2), xpd = NA, bg = "white")
 
+  descendant_tips <- local({
+    n_tip <- ape::Ntip(tree_china)
+    child_map <- split(tree_china$edge[, 2], tree_china$edge[, 1])
+    cache <- vector("list", n_tip + tree_china$Nnode)
+    get_tips <- function(node) {
+      node <- as.integer(node)
+      if (!is.null(cache[[node]])) return(cache[[node]])
+      if (node <= n_tip) {
+        cache[[node]] <<- node
+      } else {
+        children <- child_map[[as.character(node)]]
+        cache[[node]] <<- unlist(lapply(children, get_tips))
+      }
+      cache[[node]]
+    }
+    lapply(tree_china$edge[, 2], get_tips)
+  })
+
+  edge_order_cols <- vapply(seq_len(nrow(tree_china$edge)), function(i) {
+    ords <- unique(tip_metadata$order[descendant_tips[[i]]])
+    if (length(ords) == 1 && ords %in% names(order_palette)) {
+      order_palette[[ords]]
+    } else {
+      "#CFCFCF"
+    }
+  }, character(1))
+  edge_lwd <- vapply(seq_len(nrow(tree_china$edge)), function(i) {
+    ords <- unique(tip_metadata$order[descendant_tips[[i]]])
+    if (length(ords) == 1 && ords %in% names(order_palette)) 1.05 else 0.36
+  }, numeric(1))
+
   base_layout <- plot.phylo(
     tree_china,
     type = "fan",
     use.edge.length = FALSE,
     show.tip.label = FALSE,
     no.margin = TRUE,
-    edge.color = alpha("#BFBFBF", 0.95),
-    edge.width = 0.38,
+    edge.color = edge_order_cols,
+    edge.width = edge_lwd,
     cex = 0.08,
     plot = FALSE
   )
@@ -556,11 +681,11 @@ draw_phylo_composite <- function() {
     use.edge.length = FALSE,
     show.tip.label = FALSE,
     no.margin = TRUE,
-    edge.color = alpha("#BFBFBF", 0.95),
-    edge.width = 0.38,
+    edge.color = edge_order_cols,
+    edge.width = edge_lwd,
     cex = 0.08,
-    x.lim = c(base_layout$x.lim[1] * 1.32, base_layout$x.lim[2] * 2.05),
-    y.lim = c(base_layout$y.lim[1] * 1.26, base_layout$y.lim[2] * 1.26)
+    x.lim = c(base_layout$x.lim[1] * 1.56, base_layout$x.lim[2] * 1.84),
+    y.lim = c(base_layout$y.lim[1] * 1.42, base_layout$y.lim[2] * 1.42)
   )
 
   lp <- get("last_plot.phylo", envir = .PlotPhyloEnv)
@@ -579,7 +704,7 @@ draw_phylo_composite <- function() {
     )
 
   # Re-colour the terminal branches of newly recorded species.
-  # 重绘新纪录物种的终端分支，使其按目着色。
+  # 重新高亮新纪录物种的末端分支，使其颜色更鲜明。
   edge_df <- as.data.frame(tree_china$edge)
   names(edge_df) <- c("parent", "child")
   tip_edge_df <- edge_df %>%
@@ -595,13 +720,13 @@ draw_phylo_composite <- function() {
         x0 = lp$xx[parent_idx], y0 = lp$yy[parent_idx],
         x1 = lp$xx[child_idx], y1 = lp$yy[child_idx],
         col = order_palette[tip_edge_df$order[i]],
-        lwd = 1.35
+        lwd = 1.65
       )
     }
   }
 
   # Order sector arcs around the matched Chinese bird pool.
-  # 沿中国鸟类匹配子树外缘绘制按目的扇区色弧。
+  # 在圆树外缘绘制按目划分的彩色粗弧，复刻参考图的目级外圈。
   sector_df <- tip_plot_df %>%
     group_by(order) %>%
     summarise(
@@ -629,140 +754,114 @@ draw_phylo_composite <- function() {
     th <- seq(sector_df$theta_start[i], sector_df$theta_end[i], length.out = 250)
     th <- ifelse(th > 2 * pi, th - 2 * pi, th)
     lines(
-      x = (max_r + 0.055) * cos(th),
-      y = (max_r + 0.055) * sin(th),
+      x = (max_r + 0.06) * cos(th),
+      y = (max_r + 0.06) * sin(th),
       col = alpha(order_palette[sector_df$order[i]], 0.95),
-      lwd = 3.2
+      lwd = 3.4
     )
   }
 
-  # Outer ring 1: highlight newly recorded tips by order.
-  # 外环 1：按目高亮新纪录物种。
+  # Outer ring: highlight newly recorded tips by order.
+  # 外环：用彩色小方块标识不同目的新纪录物种；不再绘制 IUCN 外圈。
   points(
-    x = (max_r + 0.11) * cos(tip_plot_df$theta),
-    y = (max_r + 0.11) * sin(tip_plot_df$theta),
+    x = (max_r + 0.14) * cos(tip_plot_df$theta),
+    y = (max_r + 0.14) * sin(tip_plot_df$theta),
     pch = 15,
-    cex = 0.46,
+    cex = 0.48,
     col = ifelse(tip_plot_df$is_new_record, order_palette[tip_plot_df$order], "#E8E8E8")
   )
 
-  # Outer ring 2: IUCN of newly recorded species.
-  # 外环 2：新纪录物种的 IUCN 环。
-  points(
-    x = (max_r + 0.17) * cos(tip_plot_df$theta),
-    y = (max_r + 0.17) * sin(tip_plot_df$theta),
-    pch = 15,
-    cex = 0.46,
-    col = unname(iucn_palette[tip_plot_df$new_record_iucn])
-  )
+  # Internal percentage bubbles.
+  # 在接近根部的位置放置按目比例圆球，尽量复刻参考图的“根部比例气泡”。
+  bubble_orders <- sector_df %>%
+    filter(n_new_species > 0) %>%
+    arrange(desc(n_new_species), desc(prop_new_species)) %>%
+    slice_head(n = 10) %>%
+    arrange(theta_mid) %>%
+    mutate(
+      bubble_radius = max_r * rep(c(0.24, 0.33, 0.42, 0.51), length.out = n()),
+      bubble_size = dplyr::case_when(
+        n_new_species >= 50 ~ 0.070,
+        n_new_species >= 20 ~ 0.060,
+        n_new_species >= 10 ~ 0.053,
+        n_new_species >= 5  ~ 0.046,
+        TRUE ~ 0.039
+      ),
+      bubble_cex = dplyr::case_when(
+        n_new_species >= 50 ~ 0.58,
+        n_new_species >= 20 ~ 0.54,
+        n_new_species >= 10 ~ 0.50,
+        n_new_species >= 5  ~ 0.46,
+        TRUE ~ 0.40
+      )
+    )
 
-  # Internal percentage bubbles for the major orders.
-  # 对主要目的比例气泡进行内部标注，避免 23 个目全部环外标注造成拥挤。
+  for (i in seq_len(nrow(bubble_orders))) {
+    ang <- bubble_orders$theta_mid[i]
+    xb <- bubble_orders$bubble_radius[i] * cos(ang)
+    yb <- bubble_orders$bubble_radius[i] * sin(ang)
+    symbols(
+      xb, yb,
+      circles = bubble_orders$bubble_size[i],
+      inches = FALSE,
+      add = TRUE,
+      bg = alpha(order_palette[bubble_orders$order[i]], 0.94),
+      fg = NA
+    )
+    text(xb, yb, labels = sprintf("%.1f%%", bubble_orders$prop_pct[i]), cex = bubble_orders$bubble_cex[i], col = "black")
+  }
+
+  # Outer labels and silhouettes for the major orders.
+  # 选取主要目，在圆外侧用“箭头 + 文本 + 剪影”进行标识，尽量复刻参考图。
   label_orders <- sector_df %>%
     filter(n_new_species > 0) %>%
     arrange(desc(n_new_species), desc(prop_new_species)) %>%
-    slice_head(n = 12) %>%
-    arrange(theta_mid) %>%
+    {select_spaced_orders(., max_n = 7, min_sep = 0.32)} %>%
+    left_join(icon_manifest, by = "order") %>%
     mutate(
-      bubble_radius = max_r * rep(c(0.30, 0.38, 0.46), length.out = n()),
-      label_radius = max_r + rep(c(0.22, 0.29, 0.36), length.out = n())
+      label_radius = dplyr::case_when(
+        sin(theta_mid) > 0.72 ~ max_r + 0.42,
+        sin(theta_mid) < -0.72 ~ max_r + 0.45,
+        abs(cos(theta_mid)) < 0.20 ~ max_r + 0.40,
+        TRUE ~ max_r + 0.36
+      ),
+      icon_radius = label_radius + 0.14
     )
+
+  icon_rasters <- list()
+  if (nrow(label_orders) > 0) {
+    valid_icons <- unique(na.omit(label_orders$icon_path[label_orders$icon_path != "" & file.exists(label_orders$icon_path)]))
+    if (length(valid_icons) > 0) {
+      icon_rasters <- lapply(valid_icons, read_icon_as_raster)
+      names(icon_rasters) <- valid_icons
+    }
+  }
 
   for (i in seq_len(nrow(label_orders))) {
     ang <- label_orders$theta_mid[i]
-    xb <- label_orders$bubble_radius[i] * cos(ang)
-    yb <- label_orders$bubble_radius[i] * sin(ang)
+    x0 <- (max_r + 0.07) * cos(ang)
+    y0 <- (max_r + 0.07) * sin(ang)
     xl <- label_orders$label_radius[i] * cos(ang)
     yl <- label_orders$label_radius[i] * sin(ang)
-    x0 <- (max_r + 0.06) * cos(ang)
-    y0 <- (max_r + 0.06) * sin(ang)
     adj_lr <- ifelse(cos(ang) >= 0, 0, 1)
+    xi <- xl + ifelse(cos(ang) >= 0, 0.18, -0.18)
+    yi <- yl + ifelse(sin(ang) > 0.75, 0.05, ifelse(sin(ang) < -0.75, -0.03, 0))
 
-    symbols(
-      xb, yb,
-      circles = 0.058,
-      inches = FALSE,
-      add = TRUE,
-      bg = alpha(order_palette[label_orders$order[i]], 0.92),
-      fg = NA
-    )
-    text(xb, yb, labels = sprintf("%.1f%%", label_orders$prop_pct[i]), cex = 0.56, col = "black")
-    segments(x0, y0, xl, yl, col = "#555555", lwd = 0.78)
-    text(xl, yl, labels = label_orders$order[i], cex = 0.56, adj = c(adj_lr, 0.5), col = "#111111")
-    text(
-      xl,
-      yl - 0.06,
-      labels = sprintf("%d/%d", label_orders$n_new_species[i], label_orders$n_china_species[i]),
-      cex = 0.46,
-      adj = c(adj_lr, 0.5),
-      col = "#303030"
-    )
-  }
+    segments(x0, y0, xl, yl, col = "#111111", lwd = 0.9)
+    text(xl, yl, labels = label_orders$order[i], cex = 0.62, adj = c(adj_lr, 0.5), col = "#111111")
 
-  # IUCN legend on the open right side of the tree panel.
-  # 在树图右侧空白处放置 IUCN 图例。
-  iucn_counts <- new_record_species %>%
-    mutate(iucn = if_else(is.na(iucn) | iucn == "", "DD", iucn)) %>%
-    count(iucn, name = "n") %>%
-    filter(iucn %in% iucn_levels) %>%
-    complete(iucn = iucn_levels, fill = list(n = 0L)) %>%
-    arrange(match(iucn, iucn_levels))
-
-  legend_x <- max_r * 1.06
-  legend_y_top <- max_r * 0.98
-  text(legend_x, legend_y_top, "IUCN Red List status", adj = c(0, 0.5), cex = 0.70, font = 2)
-  for (i in seq_len(nrow(iucn_counts))) {
-    y_i <- legend_y_top - 0.11 - (i - 1) * 0.085
-    rect(
-      legend_x, y_i - 0.025,
-      legend_x + 0.10, y_i + 0.025,
-      col = iucn_palette[iucn_counts$iucn[i]],
-      border = NA
-    )
-    text(
-      legend_x + 0.12, y_i,
-      labels = sprintf("%s  %d", iucn_counts$iucn[i], iucn_counts$n[i]),
-      adj = c(0, 0.5),
-      cex = 0.60
-    )
-  }
-
-  order_plot_df <- order_summary %>%
-    filter(n_new_species > 0) %>%
-    arrange(desc(prop_new_species), desc(n_new_species)) %>%
-    mutate(y = row_number())
-
-  # Side summary bars drawn directly in the same plotting region.
-  # 在同一画布右侧直接绘制按目比例汇总，避免多面板兼容性问题。
-  summary_title_x <- max_r * 1.06
-  summary_title_y <- max_r * 0.22
-  x_bar_start <- max_r * 1.32
-  x_bar_max <- max_r * 1.67
-  x_text_left <- max_r * 1.28
-  x_text_right <- max_r * 1.70
-  y_start <- max_r * 0.10
-  y_step <- (max_r * 1.62) / max(1, nrow(order_plot_df) - 1)
-  max_prop <- max(order_plot_df$prop_new_species)
-
-  text(summary_title_x, summary_title_y, "Order-level new-record proportion", adj = c(0, 0.5), cex = 0.70, font = 2)
-
-  for (i in seq_len(nrow(order_plot_df))) {
-    y_i <- y_start - (i - 1) * y_step
-    prop_i <- order_plot_df$prop_new_species[i]
-    ord_i <- order_plot_df$order[i]
-    col_i <- order_palette[ord_i]
-    x_end <- x_bar_start + (x_bar_max - x_bar_start) * (prop_i / max_prop)
-
-    segments(x_bar_start, y_i, x_end, y_i, lwd = 3.4, col = alpha(col_i, 0.32))
-    points(x_end, y_i, pch = 21, bg = col_i, col = "white", cex = 0.88)
-    text(x_text_left, y_i, labels = ord_i, adj = c(1, 0.5), cex = 0.54, col = "#111111")
-    text(
-      x_text_right, y_i,
-      labels = sprintf("%d/%d (%.1f%%)", order_plot_df$n_new_species[i], order_plot_df$n_china_species[i], order_plot_df$prop_pct[i]),
-      adj = c(0, 0.5),
-      cex = 0.52,
-      col = "#303030"
-    )
+    icon_path <- label_orders$icon_path[i]
+    if (!is.na(icon_path) && icon_path %in% names(icon_rasters) && !is.null(icon_rasters[[icon_path]])) {
+      half_w <- 0.070
+      half_h <- 0.046
+      rasterImage(
+        icon_rasters[[icon_path]],
+        xleft = xi - half_w,
+        ybottom = yi - half_h,
+        xright = xi + half_w,
+        ytop = yi + half_h
+      )
+    }
   }
 }
 
@@ -852,20 +951,18 @@ writexl::write_xlsx(
 caption_en <- paste(
   "Figure. Circular phylogeny of China's bird species pool showing newly recorded species on the McTavish et al. complete and dynamic bird tree.",
   "The background tree represents species-rank birds retained from the 2025 Catalogue of Life China checklist after filtering out subspecies and other infraspecific entries.",
-  "Terminal branches and the first outer ring highlight corrected newly recorded species, coloured by order.",
-  "The second outer ring indicates the IUCN Red List status of newly recorded species.",
-  "Internal percentage bubbles label the major orders with newly recorded species and report the proportion of corrected newly recorded species within each order's Chinese species pool.",
-  "The right-hand lollipop panel summarises the order-level numerator, denominator, and proportion for all orders containing at least one newly recorded species.",
+  "Order-specific clade branches and the single outer ring highlight corrected newly recorded species, coloured by order.",
+  "Percentage bubbles placed close to the rootward part of each major order report the proportion of corrected newly recorded species within that order's Chinese species pool.",
+  "External labels and silhouettes identify the principal orders in a layout designed to mimic the supplied reference figure.",
   "Species identities follow the corrected canonical dataset that already accounts for synonymy and removes later duplicate species-province publications."
 )
 
 caption_zh <- paste(
   "图. 基于 McTavish 等构建的 complete and dynamic bird tree 绘制的中国鸟类物种库环形系统发育图，突出显示校正后的新纪录物种。",
   "灰色背景树表示从《中国生物物种名录（2025）》中筛选得到的中国鸟类种级物种库，并已去除亚种及其他种下单元。",
-  "彩色终端分支和第一层外环表示校正后的新纪录物种，颜色区分不同目。",
-  "第二层外环表示新纪录物种的 IUCN 红色名录等级。",
-  "内部比例气泡标注主要含新纪录物种的目，并显示该目新纪录物种数占中国该目物种总数的比例。",
-  "右侧棒棒糖面板汇总了所有包含新纪录物种的目之分子、分母及比例。",
+  "按目着色的系统树分支和单层外环表示校正后的新纪录物种，颜色区分不同目。",
+  "靠近根部的比例气泡标注主要含新纪录物种的目，并显示该目新纪录物种数占中国该目物种总数的比例。",
+  "圆外侧的目标签与代表性剪影按照参考图的标识方式排布。",
   "物种身份采用已经过同物异名归并与重复发表剔除的校正底表。"
 )
 
