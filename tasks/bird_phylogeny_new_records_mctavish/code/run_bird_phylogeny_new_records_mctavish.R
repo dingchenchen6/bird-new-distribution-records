@@ -1099,7 +1099,7 @@ draw_phylo_composite <- function(consistency_emphasis = FALSE) {
     adj_lr <- ifelse(label_orders$side[i] == "right", 0, 1)
     xh <- label_orders$x_anchor[i]
 
-    line_col <- if (consistency_emphasis) alpha(order_palette[label_orders$order[i]], 0.92) else "#111111"
+    line_col <- "#111111"
     text_col <- if (consistency_emphasis) order_palette[label_orders$order[i]] else "#111111"
     segments(x0, y0, xh, yi, col = line_col, lwd = if (consistency_emphasis) 1.15 else 0.75)
     segments(
