@@ -190,6 +190,7 @@ sheet_catalog <- "2025中国生物物种名录"
 dpi_out <- 420
 figure_stub <- "fig_phy01_mctavish_bird_new_records_phylogeny"
 figure_stub_consistency <- "fig_phy01_mctavish_bird_new_records_phylogeny_consistency_v2"
+figure_stub_strict <- "fig_phy01_mctavish_bird_new_records_phylogeny_strict_correspondence_v3"
 
 theme_clean <- function(base_size = 11.2, base_family = "Arial") {
   theme_classic(base_size = base_size, base_family = base_family) +
@@ -810,7 +811,7 @@ order_label_table <- order_summary %>%
     label_text = sprintf("%s\n%d/%d (%.1f%%)", order, n_new_species, n_china_species, prop_pct)
   )
 
-draw_phylo_composite <- function(consistency_emphasis = FALSE) {
+draw_phylo_composite <- function(consistency_emphasis = FALSE, strict_correspondence = FALSE) {
   par(mar = c(0.2, 0.3, 0.2, 0.2), xpd = NA, bg = "white")
   edge_df <- tibble::tibble(
     edge_id = seq_len(nrow(tree_china$edge)),
@@ -955,7 +956,7 @@ draw_phylo_composite <- function(consistency_emphasis = FALSE) {
   for (i in seq_len(nrow(sector_df))) {
     th <- seq(sector_df$theta_start[i], sector_df$theta_end[i], length.out = 250)
     th <- ifelse(th > 2 * pi, th - 2 * pi, th)
-    sector_lwd <- if (consistency_emphasis) 8.8 else 7.6
+    sector_lwd <- if (strict_correspondence) 9.6 else if (consistency_emphasis) 8.8 else 7.6
     lines(
       x = (max_r + 0.032) * cos(th),
       y = (max_r + 0.032) * sin(th),
@@ -981,7 +982,7 @@ draw_phylo_composite <- function(consistency_emphasis = FALSE) {
     x = (max_r + 0.066) * cos(tip_plot_df$theta),
     y = (max_r + 0.066) * sin(tip_plot_df$theta),
     pch = 15,
-    cex = if (consistency_emphasis) 1.22 else 1.18,
+    cex = if (strict_correspondence) 1.25 else if (consistency_emphasis) 1.22 else 1.18,
     col = ifelse(tip_plot_df$is_new_record, order_palette[tip_plot_df$order], "#E8E8E8")
   )
 
@@ -1116,6 +1117,10 @@ draw_phylo_composite <- function(consistency_emphasis = FALSE) {
       col = text_col,
       font = if (consistency_emphasis) 2 else 1
     )
+    if (strict_correspondence) {
+      badge_x <- if (label_orders$side[i] == "right") xt - 0.08 else xt + 0.08
+      points(badge_x, yt, pch = 15, cex = 1.05, col = order_palette[label_orders$order[i]])
+    }
 
     icon_path <- label_orders$icon_path[i]
     if (!is.na(icon_path) && icon_path %in% names(icon_rasters) && !is.null(icon_rasters[[icon_path]])) {
@@ -1177,6 +1182,12 @@ save_base_bundle(
   width = 15.2,
   height = 11.0
 )
+save_base_bundle(
+  function() draw_phylo_composite(consistency_emphasis = TRUE, strict_correspondence = TRUE),
+  figure_stub_strict,
+  width = 15.2,
+  height = 11.0
+)
 
 # -------------------------------
 # Step 10. Export data products and narrative outputs
@@ -1199,6 +1210,13 @@ before_after_summary <- tibble::tribble(
   "Orders containing at least one corrected new-record species", sum(order_summary$n_new_species > 0)
 )
 
+order_colour_audit <- order_summary %>%
+  filter(n_new_species > 0) %>%
+  mutate(
+    colour_hex = unname(order_palette[order]),
+    correspondence_note = "Order label text, labelled proportion bubble, coloured new-record branches, coloured sector arc, and coloured new-record outer-ring blocks should all use the same order colour."
+  )
+
 write.csv(checklist_species_pool, file.path(data_dir, "china_bird_species_pool_strict.csv"), row.names = FALSE)
 write.csv(checklist_matched, file.path(data_dir, "china_bird_species_pool_tree_matching.csv"), row.names = FALSE)
 write.csv(new_record_species, file.path(data_dir, "corrected_new_record_species_unique.csv"), row.names = FALSE)
@@ -1207,6 +1225,7 @@ write.csv(taxonomy_bridge, file.path(data_dir, "taxonomy_bridge_table.csv"), row
 write.csv(matching_audit, file.path(data_dir, "phylogeny_matching_audit.csv"), row.names = FALSE)
 write.csv(many_to_one_audit, file.path(data_dir, "phylogeny_many_to_one_mapping_audit.csv"), row.names = FALSE)
 write.csv(order_summary, file.path(data_dir, "order_level_new_record_proportions.csv"), row.names = FALSE)
+write.csv(order_colour_audit, file.path(data_dir, "order_colour_correspondence_audit.csv"), row.names = FALSE)
 write.csv(tip_metadata, file.path(data_dir, "phylogeny_tip_metadata.csv"), row.names = FALSE)
 write.csv(before_after_summary, file.path(data_dir, "workflow_summary_metrics.csv"), row.names = FALSE)
 write.csv(icon_manifest, file.path(data_dir, "phylopic_icon_manifest.csv"), row.names = FALSE)
@@ -1222,6 +1241,7 @@ writexl::write_xlsx(
     matching_audit = matching_audit,
     many_to_one_audit = many_to_one_audit,
     order_summary = order_summary,
+    order_colour_correspondence_audit = order_colour_audit,
     tip_metadata = tip_metadata,
     phylopic_icon_manifest = icon_manifest
   ),
