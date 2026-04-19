@@ -790,6 +790,12 @@ angular_distance <- function(a, b) {
   pmin(d, 2 * pi - d)
 }
 
+compute_theta_interval <- function(theta_values) {
+  th <- theta_values %% (2 * pi)
+  if ((max(th) - min(th)) > pi) th[th < pi] <- th[th < pi] + 2 * pi
+  c(start = min(th), end = max(th))
+}
+
 select_spaced_orders <- function(df, max_n = 7, min_sep = 0.42) {
   picked <- integer()
   for (i in seq_len(nrow(df))) {
@@ -929,38 +935,42 @@ draw_phylo_composite <- function(consistency_emphasis = FALSE, strict_correspond
   }
 
   # Order sector arcs around the matched Chinese bird pool.
-  # 在圆树外缘绘制按目划分的彩色粗弧，复刻参考图的目级外圈。
-  sector_df <- tip_plot_df %>%
-    group_by(order) %>%
+  # 在圆树外缘绘制按目划分的彩色粗弧。这里不再简单使用“某个目全部 tip 的最小角度
+  # 到最大角度”，而是先识别圆周上的连续 run，再逐段绘制圆弧，避免一个目存在多个
+  # 非连续片段时把其他目的区域错误覆盖进去。
+  ordered_tip_df <- tip_plot_df %>%
+    arrange(tip_index) %>%
+    mutate(run_id = cumsum(order != lag(order, default = first(order))) + 1L)
+
+  sector_run_df <- ordered_tip_df %>%
+    group_by(run_id, order) %>%
     summarise(
-      n_tip = n(),
-      mid_angle = compute_sector_mid(theta),
-      theta_start = {
-        th <- theta %% (2 * pi)
-        if ((max(th) - min(th)) > pi) th[th < pi] <- th[th < pi] + 2 * pi
-        min(th)
-      },
-      theta_end = {
-        th <- theta %% (2 * pi)
-        if ((max(th) - min(th)) > pi) th[th < pi] <- th[th < pi] + 2 * pi
-        max(th)
-      },
+      n_tip_run = n(),
+      interval = list(compute_theta_interval(theta)),
       .groups = "drop"
     ) %>%
     mutate(
-      theta_mid = if_else(theta_start + theta_end > 4 * pi, (theta_start + theta_end) / 2 - 2 * pi, (theta_start + theta_end) / 2),
+      theta_start = vapply(interval, function(x) x[["start"]], numeric(1)),
+      theta_end = vapply(interval, function(x) x[["end"]], numeric(1)),
+      theta_mid = (theta_start + theta_end) / 2,
       theta_mid = if_else(theta_mid > 2 * pi, theta_mid - 2 * pi, theta_mid)
     ) %>%
+    select(-interval)
+
+  sector_df <- sector_run_df %>%
+    group_by(order) %>%
+    slice_max(order_by = n_tip_run, n = 1, with_ties = FALSE) %>%
+    ungroup() %>%
     left_join(order_summary, by = "order")
 
-  for (i in seq_len(nrow(sector_df))) {
-    th <- seq(sector_df$theta_start[i], sector_df$theta_end[i], length.out = 250)
+  for (i in seq_len(nrow(sector_run_df))) {
+    th <- seq(sector_run_df$theta_start[i], sector_run_df$theta_end[i], length.out = 250)
     th <- ifelse(th > 2 * pi, th - 2 * pi, th)
     sector_lwd <- if (strict_correspondence) 9.6 else if (consistency_emphasis) 8.8 else 7.6
     lines(
       x = (max_r + 0.032) * cos(th),
       y = (max_r + 0.032) * sin(th),
-      col = alpha(order_palette[sector_df$order[i]], 0.95),
+      col = alpha(order_palette[sector_run_df$order[i]], 0.95),
       lwd = sector_lwd,
       lend = "round"
     )
@@ -968,7 +978,7 @@ draw_phylo_composite <- function(consistency_emphasis = FALSE, strict_correspond
       lines(
         x = (max_r + 0.050) * cos(th),
         y = (max_r + 0.050) * sin(th),
-        col = alpha(order_palette[sector_df$order[i]], 0.55),
+        col = alpha(order_palette[sector_run_df$order[i]], 0.55),
         lwd = 2.4,
         lend = "round"
       )
@@ -1101,7 +1111,7 @@ draw_phylo_composite <- function(consistency_emphasis = FALSE, strict_correspond
     xh <- label_orders$x_anchor[i]
 
     line_col <- "#111111"
-    text_col <- if (consistency_emphasis) order_palette[label_orders$order[i]] else "#111111"
+    text_col <- "#111111"
     segments(x0, y0, xh, yi, col = line_col, lwd = if (consistency_emphasis) 1.15 else 0.75)
     segments(
       xh, yi,
@@ -1115,7 +1125,7 @@ draw_phylo_composite <- function(consistency_emphasis = FALSE, strict_correspond
       cex = label_orders$text_cex[i],
       adj = c(adj_lr, 0.5),
       col = text_col,
-      font = if (consistency_emphasis) 2 else 1
+      font = 1
     )
     if (strict_correspondence) {
       badge_x <- if (label_orders$side[i] == "right") xt - 0.08 else xt + 0.08
