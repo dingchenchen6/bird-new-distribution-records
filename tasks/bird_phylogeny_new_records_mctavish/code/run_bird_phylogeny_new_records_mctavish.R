@@ -865,8 +865,8 @@ draw_phylo_composite <- function() {
     edge.color = "#CFCFCF",
     edge.width = 0.40,
     cex = 0.08,
-    x.lim = c(base_layout$x.lim[1] * 2.75, base_layout$x.lim[2] * 2.75),
-    y.lim = c(base_layout$y.lim[1] * 1.62, base_layout$y.lim[2] * 1.62)
+    x.lim = c(base_layout$x.lim[1] * 2.42, base_layout$x.lim[2] * 2.42),
+    y.lim = c(base_layout$y.lim[1] * 1.48, base_layout$y.lim[2] * 1.48)
   )
 
   lp <- get("last_plot.phylo", envir = .PlotPhyloEnv)
@@ -955,10 +955,10 @@ draw_phylo_composite <- function() {
     th <- seq(sector_df$theta_start[i], sector_df$theta_end[i], length.out = 250)
     th <- ifelse(th > 2 * pi, th - 2 * pi, th)
     lines(
-      x = (max_r + 0.038) * cos(th),
-      y = (max_r + 0.038) * sin(th),
+      x = (max_r + 0.032) * cos(th),
+      y = (max_r + 0.032) * sin(th),
       col = alpha(order_palette[sector_df$order[i]], 0.95),
-      lwd = 5.8,
+      lwd = 7.6,
       lend = "round"
     )
   }
@@ -967,10 +967,10 @@ draw_phylo_composite <- function() {
   # 外环：用更宽、更靠近 tip 的彩色小方块标识不同目的新纪录物种；
   # 非新纪录物种仍以浅灰表示。
   points(
-    x = (max_r + 0.078) * cos(tip_plot_df$theta),
-    y = (max_r + 0.078) * sin(tip_plot_df$theta),
+    x = (max_r + 0.066) * cos(tip_plot_df$theta),
+    y = (max_r + 0.066) * sin(tip_plot_df$theta),
     pch = 15,
-    cex = 0.92,
+    cex = 1.18,
     col = ifelse(tip_plot_df$is_new_record, order_palette[tip_plot_df$order], "#E8E8E8")
   )
 
@@ -981,24 +981,30 @@ draw_phylo_composite <- function() {
     filter(n_new_species > 0) %>%
     arrange(theta_mid) %>%
     mutate(
-      bubble_layer = rep(c(1, 2, 3, 4, 5), length.out = n()),
-      bubble_radius = max_r * c(0.24, 0.30, 0.36, 0.42, 0.48)[bubble_layer],
+      bubble_gap = c(Inf, diff(theta_mid)),
+      bubble_layer = dplyr::case_when(
+        bubble_gap < 0.12 ~ rep(c(1, 4, 2, 5, 3, 6), length.out = n()),
+        bubble_gap < 0.20 ~ rep(c(1, 3, 5, 2, 4, 6), length.out = n()),
+        TRUE ~ rep(c(1, 2, 3, 4, 5, 6), length.out = n())
+      ),
+      bubble_theta = theta_mid + rep(c(0, 0.05, -0.05, 0.09, -0.09, 0.12), length.out = n()),
+      bubble_radius = max_r * c(0.22, 0.29, 0.36, 0.43, 0.50, 0.57)[bubble_layer],
       bubble_size = dplyr::case_when(
-        prop_pct >= 60 ~ 0.060,
-        prop_pct >= 40 ~ 0.055,
-        prop_pct >= 20 ~ 0.050,
-        TRUE ~ 0.045
+        prop_pct >= 60 ~ 0.066,
+        prop_pct >= 40 ~ 0.060,
+        prop_pct >= 20 ~ 0.054,
+        TRUE ~ 0.048
       ),
       bubble_cex = dplyr::case_when(
-        prop_pct >= 60 ~ 0.50,
-        prop_pct >= 40 ~ 0.46,
-        prop_pct >= 20 ~ 0.43,
-        TRUE ~ 0.39
+        prop_pct >= 60 ~ 0.58,
+        prop_pct >= 40 ~ 0.52,
+        prop_pct >= 20 ~ 0.48,
+        TRUE ~ 0.43
       )
     )
 
   for (i in seq_len(nrow(bubble_orders))) {
-    ang <- bubble_orders$theta_mid[i]
+    ang <- bubble_orders$bubble_theta[i]
     xb <- bubble_orders$bubble_radius[i] * cos(ang)
     yb <- bubble_orders$bubble_radius[i] * sin(ang)
     symbols(
@@ -1021,11 +1027,11 @@ draw_phylo_composite <- function() {
     left_join(icon_manifest, by = "order") %>%
     mutate(
       side = ifelse(cos(theta_mid) >= 0, "right", "left"),
-      guide_radius = max_r + 0.088,
+      guide_radius = max_r + 0.076,
       text_cex = dplyr::case_when(
-        nchar(order) >= 18 ~ 0.34,
-        nchar(order) >= 14 ~ 0.37,
-        TRUE ~ 0.40
+        nchar(order) >= 18 ~ 0.96,
+        nchar(order) >= 14 ~ 1.03,
+        TRUE ~ 1.10
       )
     )
 
@@ -1033,20 +1039,20 @@ draw_phylo_composite <- function() {
     filter(side == "right") %>%
     arrange(desc(sin(theta_mid))) %>%
     mutate(
-      y_label = seq(max_r * 0.92, -max_r * 0.92, length.out = n()),
-      x_anchor = max_r + 0.62,
-      x_icon = max_r + 0.78,
-      x_text = max_r + 0.92
+      y_label = seq(max_r * 0.96, -max_r * 0.96, length.out = n()),
+      x_anchor = max_r + 0.40,
+      x_icon = max_r + 0.54,
+      x_text = max_r + 0.72
     )
 
   label_left <- label_orders %>%
     filter(side == "left") %>%
     arrange(desc(sin(theta_mid))) %>%
     mutate(
-      y_label = seq(max_r * 0.92, -max_r * 0.92, length.out = n()),
-      x_anchor = -(max_r + 0.62),
-      x_icon = -(max_r + 0.78),
-      x_text = -(max_r + 0.92)
+      y_label = seq(max_r * 0.96, -max_r * 0.96, length.out = n()),
+      x_anchor = -(max_r + 0.40),
+      x_icon = -(max_r + 0.54),
+      x_text = -(max_r + 0.72)
     )
 
   label_orders <- bind_rows(label_right, label_left) %>%
@@ -1088,8 +1094,8 @@ draw_phylo_composite <- function() {
 
     icon_path <- label_orders$icon_path[i]
     if (!is.na(icon_path) && icon_path %in% names(icon_rasters) && !is.null(icon_rasters[[icon_path]])) {
-      half_w <- 0.048
-      half_h <- 0.032
+      half_w <- 0.080
+      half_h <- 0.054
       rasterImage(
         icon_rasters[[icon_path]],
         xleft = xi - half_w,
