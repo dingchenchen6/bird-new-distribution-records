@@ -189,6 +189,7 @@ tree_url_candidates <- c(
 sheet_catalog <- "2025中国生物物种名录"
 dpi_out <- 420
 figure_stub <- "fig_phy01_mctavish_bird_new_records_phylogeny"
+figure_stub_consistency <- "fig_phy01_mctavish_bird_new_records_phylogeny_consistency_v2"
 
 theme_clean <- function(base_size = 11.2, base_family = "Arial") {
   theme_classic(base_size = base_size, base_family = base_family) +
@@ -809,7 +810,7 @@ order_label_table <- order_summary %>%
     label_text = sprintf("%s\n%d/%d (%.1f%%)", order, n_new_species, n_china_species, prop_pct)
   )
 
-draw_phylo_composite <- function() {
+draw_phylo_composite <- function(consistency_emphasis = FALSE) {
   par(mar = c(0.2, 0.3, 0.2, 0.2), xpd = NA, bg = "white")
   edge_df <- tibble::tibble(
     edge_id = seq_len(nrow(tree_china$edge)),
@@ -954,13 +955,23 @@ draw_phylo_composite <- function() {
   for (i in seq_len(nrow(sector_df))) {
     th <- seq(sector_df$theta_start[i], sector_df$theta_end[i], length.out = 250)
     th <- ifelse(th > 2 * pi, th - 2 * pi, th)
+    sector_lwd <- if (consistency_emphasis) 8.8 else 7.6
     lines(
       x = (max_r + 0.032) * cos(th),
       y = (max_r + 0.032) * sin(th),
       col = alpha(order_palette[sector_df$order[i]], 0.95),
-      lwd = 7.6,
+      lwd = sector_lwd,
       lend = "round"
     )
+    if (consistency_emphasis) {
+      lines(
+        x = (max_r + 0.050) * cos(th),
+        y = (max_r + 0.050) * sin(th),
+        col = alpha(order_palette[sector_df$order[i]], 0.55),
+        lwd = 2.4,
+        lend = "round"
+      )
+    }
   }
 
   # Outer ring: highlight newly recorded tips by order.
@@ -970,7 +981,7 @@ draw_phylo_composite <- function() {
     x = (max_r + 0.066) * cos(tip_plot_df$theta),
     y = (max_r + 0.066) * sin(tip_plot_df$theta),
     pch = 15,
-    cex = 1.18,
+    cex = if (consistency_emphasis) 1.22 else 1.18,
     col = ifelse(tip_plot_df$is_new_record, order_palette[tip_plot_df$order], "#E8E8E8")
   )
 
@@ -1088,9 +1099,23 @@ draw_phylo_composite <- function() {
     adj_lr <- ifelse(label_orders$side[i] == "right", 0, 1)
     xh <- label_orders$x_anchor[i]
 
-    segments(x0, y0, xh, yi, col = "#111111", lwd = 0.75)
-    segments(xh, yi, xi - ifelse(label_orders$side[i] == "right", 0.05, -0.05), yi, col = "#111111", lwd = 0.75)
-    text(xt, yt, labels = label_orders$order[i], cex = label_orders$text_cex[i], adj = c(adj_lr, 0.5), col = "#111111")
+    line_col <- if (consistency_emphasis) alpha(order_palette[label_orders$order[i]], 0.92) else "#111111"
+    text_col <- if (consistency_emphasis) order_palette[label_orders$order[i]] else "#111111"
+    segments(x0, y0, xh, yi, col = line_col, lwd = if (consistency_emphasis) 1.15 else 0.75)
+    segments(
+      xh, yi,
+      xi - ifelse(label_orders$side[i] == "right", 0.05, -0.05), yi,
+      col = line_col,
+      lwd = if (consistency_emphasis) 1.15 else 0.75
+    )
+    text(
+      xt, yt,
+      labels = label_orders$order[i],
+      cex = label_orders$text_cex[i],
+      adj = c(adj_lr, 0.5),
+      col = text_col,
+      font = if (consistency_emphasis) 2 else 1
+    )
 
     icon_path <- label_orders$icon_path[i]
     if (!is.na(icon_path) && icon_path %in% names(icon_rasters) && !is.null(icon_rasters[[icon_path]])) {
@@ -1140,7 +1165,18 @@ save_gg_bundle(qa_figure, "fig_s1_phylogeny_matching_diagnostics", width = 12.8,
 # Step 9. Export the main circular phylogeny figure
 # 第 9 步：导出主系统发育图
 # -------------------------------
-save_base_bundle(draw_phylo_composite, figure_stub, width = 15.2, height = 11.0)
+save_base_bundle(
+  function() draw_phylo_composite(consistency_emphasis = FALSE),
+  figure_stub,
+  width = 15.2,
+  height = 11.0
+)
+save_base_bundle(
+  function() draw_phylo_composite(consistency_emphasis = TRUE),
+  figure_stub_consistency,
+  width = 15.2,
+  height = 11.0
+)
 
 # -------------------------------
 # Step 10. Export data products and narrative outputs
