@@ -832,6 +832,60 @@ compute_theta_interval <- function(theta_values) {
   c(start = min(th), end = max(th))
 }
 
+relax_bubble_positions <- function(df, max_r, iterations = 260, padding = 0.015) {
+  if (nrow(df) <= 1) {
+    df$x <- df$bubble_radius * cos(df$bubble_theta)
+    df$y <- df$bubble_radius * sin(df$bubble_theta)
+    return(df)
+  }
+
+  x <- df$bubble_radius * cos(df$bubble_theta)
+  y <- df$bubble_radius * sin(df$bubble_theta)
+  r <- df$bubble_size + padding
+
+  for (iter in seq_len(iterations)) {
+    moved <- FALSE
+    for (i in seq_len(nrow(df) - 1)) {
+      for (j in (i + 1):nrow(df)) {
+        dx <- x[j] - x[i]
+        dy <- y[j] - y[i]
+        dist <- sqrt(dx * dx + dy * dy) + 1e-9
+        min_dist <- r[i] + r[j]
+        if (dist < min_dist) {
+          overlap <- (min_dist - dist) / 2
+          ux <- dx / dist
+          uy <- dy / dist
+          x[i] <- x[i] - ux * overlap
+          y[i] <- y[i] - uy * overlap
+          x[j] <- x[j] + ux * overlap
+          y[j] <- y[j] + uy * overlap
+          moved <- TRUE
+        }
+      }
+    }
+    rad <- sqrt(x * x + y * y)
+    min_allowed <- max_r * 0.18
+    max_allowed <- max_r * 0.64
+    too_small <- rad < min_allowed
+    too_large <- rad > max_allowed
+    if (any(too_small)) {
+      scale_up <- min_allowed / pmax(rad[too_small], 1e-9)
+      x[too_small] <- x[too_small] * scale_up
+      y[too_small] <- y[too_small] * scale_up
+    }
+    if (any(too_large)) {
+      scale_down <- max_allowed / rad[too_large]
+      x[too_large] <- x[too_large] * scale_down
+      y[too_large] <- y[too_large] * scale_down
+    }
+    if (!moved) break
+  }
+
+  df$x <- x
+  df$y <- y
+  df
+}
+
 select_spaced_orders <- function(df, max_n = 7, min_sep = 0.42) {
   picked <- integer()
   for (i in seq_len(nrow(df))) {
@@ -1059,12 +1113,12 @@ draw_phylo_composite <- function(consistency_emphasis = FALSE, strict_correspond
         prop_pct >= 20 ~ 0.48,
         TRUE ~ 0.43
       )
-    )
+    ) %>%
+    relax_bubble_positions(max_r = max_r)
 
   for (i in seq_len(nrow(bubble_orders))) {
-    ang <- bubble_orders$bubble_theta[i]
-    xb <- bubble_orders$bubble_radius[i] * cos(ang)
-    yb <- bubble_orders$bubble_radius[i] * sin(ang)
+    xb <- bubble_orders$x[i]
+    yb <- bubble_orders$y[i]
     symbols(
       xb, yb,
       circles = bubble_orders$bubble_size[i],
@@ -1098,9 +1152,9 @@ draw_phylo_composite <- function(consistency_emphasis = FALSE, strict_correspond
     arrange(desc(sin(theta_mid))) %>%
     mutate(
       y_label = seq(max_r * 0.96, -max_r * 0.96, length.out = n()),
-      x_anchor = max_r + 0.40,
-      x_icon = max_r + 0.54,
-      x_text = max_r + 0.72
+      x_anchor = max_r + 0.38,
+      x_icon = max_r + 0.49,
+      x_text = max_r + 0.56
     )
 
   label_left <- label_orders %>%
@@ -1108,9 +1162,9 @@ draw_phylo_composite <- function(consistency_emphasis = FALSE, strict_correspond
     arrange(desc(sin(theta_mid))) %>%
     mutate(
       y_label = seq(max_r * 0.96, -max_r * 0.96, length.out = n()),
-      x_anchor = -(max_r + 0.40),
-      x_icon = -(max_r + 0.54),
-      x_text = -(max_r + 0.72)
+      x_anchor = -(max_r + 0.38),
+      x_icon = -(max_r + 0.68),
+      x_text = -(max_r + 0.58)
     )
 
   label_orders <- bind_rows(label_right, label_left) %>%
@@ -1143,7 +1197,7 @@ draw_phylo_composite <- function(consistency_emphasis = FALSE, strict_correspond
     yi <- label_orders$y_label[i]
     xt <- label_orders$x_text[i]
     yt <- label_orders$y_label[i]
-    adj_lr <- ifelse(label_orders$side[i] == "right", 0, 1)
+    adj_lr <- 0
     xh <- label_orders$x_anchor[i]
 
     line_col <- "#111111"
@@ -1151,7 +1205,7 @@ draw_phylo_composite <- function(consistency_emphasis = FALSE, strict_correspond
     segments(x0, y0, xh, yi, col = line_col, lwd = if (consistency_emphasis) 1.15 else 0.75)
     segments(
       xh, yi,
-      xi - ifelse(label_orders$side[i] == "right", 0.05, -0.05), yi,
+      xi - ifelse(label_orders$side[i] == "right", 0.04, -0.04), yi,
       col = line_col,
       lwd = if (consistency_emphasis) 1.15 else 0.75
     )
