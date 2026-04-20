@@ -839,50 +839,55 @@ relax_bubble_positions <- function(df, max_r, iterations = 260, padding = 0.015)
     return(df)
   }
 
-  x <- df$bubble_radius * cos(df$bubble_theta)
-  y <- df$bubble_radius * sin(df$bubble_theta)
+  theta0 <- df$bubble_theta
+  theta <- theta0
+  rad <- df$bubble_radius
   r <- df$bubble_size + padding
 
   for (iter in seq_len(iterations)) {
     moved <- FALSE
     for (i in seq_len(nrow(df) - 1)) {
       for (j in (i + 1):nrow(df)) {
+        x <- rad * cos(theta)
+        y <- rad * sin(theta)
         dx <- x[j] - x[i]
         dy <- y[j] - y[i]
         dist <- sqrt(dx * dx + dy * dy) + 1e-9
         min_dist <- r[i] + r[j]
         if (dist < min_dist) {
-          overlap <- (min_dist - dist) / 2
-          ux <- dx / dist
-          uy <- dy / dist
-          x[i] <- x[i] - ux * overlap
-          y[i] <- y[i] - uy * overlap
-          x[j] <- x[j] + ux * overlap
-          y[j] <- y[j] + uy * overlap
+          overlap <- min_dist - dist
+          rad_step <- overlap * 0.55
+          angle_step <- pmin(0.016 + overlap * 0.02, 0.045)
+          # Prefer radial separation so bubbles stay aligned with the intended
+          # order sector. Use only small angular adjustments as a secondary
+          # mechanism when bubbles remain crowded.
+          # 优先沿半径方向分离，使比例球尽量贴近对应目扇区；角度只做小幅修正。
+          if (rad[i] <= rad[j]) {
+            rad[i] <- rad[i] - rad_step
+            rad[j] <- rad[j] + rad_step
+            theta[i] <- theta[i] - angle_step / 2
+            theta[j] <- theta[j] + angle_step / 2
+          } else {
+            rad[i] <- rad[i] + rad_step
+            rad[j] <- rad[j] - rad_step
+            theta[i] <- theta[i] + angle_step / 2
+            theta[j] <- theta[j] - angle_step / 2
+          }
           moved <- TRUE
         }
       }
     }
-    rad <- sqrt(x * x + y * y)
     min_allowed <- max_r * 0.18
     max_allowed <- max_r * 0.64
-    too_small <- rad < min_allowed
-    too_large <- rad > max_allowed
-    if (any(too_small)) {
-      scale_up <- min_allowed / pmax(rad[too_small], 1e-9)
-      x[too_small] <- x[too_small] * scale_up
-      y[too_small] <- y[too_small] * scale_up
-    }
-    if (any(too_large)) {
-      scale_down <- max_allowed / rad[too_large]
-      x[too_large] <- x[too_large] * scale_down
-      y[too_large] <- y[too_large] * scale_down
-    }
+    rad <- pmax(pmin(rad, max_allowed), min_allowed)
+    theta <- pmax(pmin(theta, theta0 + 0.08), theta0 - 0.08)
     if (!moved) break
   }
 
-  df$x <- x
-  df$y <- y
+  df$bubble_theta <- theta
+  df$bubble_radius <- rad
+  df$x <- rad * cos(theta)
+  df$y <- rad * sin(theta)
   df
 }
 
@@ -1153,8 +1158,8 @@ draw_phylo_composite <- function(consistency_emphasis = FALSE, strict_correspond
     mutate(
       y_label = seq(max_r * 0.96, -max_r * 0.96, length.out = n()),
       x_anchor = max_r + 0.38,
-      x_icon = max_r + 0.49,
-      x_text = max_r + 0.56
+      x_icon = max_r + 0.53,
+      x_text = max_r + 0.64
     )
 
   label_left <- label_orders %>%
@@ -1163,8 +1168,8 @@ draw_phylo_composite <- function(consistency_emphasis = FALSE, strict_correspond
     mutate(
       y_label = seq(max_r * 0.96, -max_r * 0.96, length.out = n()),
       x_anchor = -(max_r + 0.38),
-      x_icon = -(max_r + 0.68),
-      x_text = -(max_r + 0.58)
+      x_icon = -(max_r + 0.62),
+      x_text = x_icon - 0.48
     )
 
   label_orders <- bind_rows(label_right, label_left) %>%
