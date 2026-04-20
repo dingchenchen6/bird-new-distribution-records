@@ -1143,7 +1143,10 @@ draw_phylo_composite <- function(consistency_emphasis = FALSE, strict_correspond
     arrange(theta_mid) %>%
     left_join(icon_manifest, by = "order") %>%
     mutate(
-      side = ifelse(cos(theta_mid) >= 0, "right", "left"),
+      side = dplyr::case_when(
+        order == "Passeriformes" ~ "left",
+        TRUE ~ ifelse(cos(theta_mid) >= 0, "right", "left")
+      ),
       guide_radius = max_r + 0.076,
       text_cex = dplyr::case_when(
         nchar(order) >= 18 ~ 0.96,
