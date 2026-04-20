@@ -525,6 +525,42 @@ read_icon_as_raster <- function(path) {
   as.raster(img)
 }
 
+tint_icon_path_to_colour <- function(path, colour_hex) {
+  if (is.null(path) || !file.exists(path)) return(NULL)
+  img <- png::readPNG(path)
+  target_rgb <- grDevices::col2rgb(colour_hex)[, 1] / 255
+
+  if (is.matrix(img)) {
+    alpha_mat <- ifelse(img < 0.999, 1, 0)
+    out <- array(0, dim = c(nrow(img), ncol(img), 4))
+    out[, , 1] <- target_rgb[1]
+    out[, , 2] <- target_rgb[2]
+    out[, , 3] <- target_rgb[3]
+    out[, , 4] <- alpha_mat
+    return(as.raster(out))
+  }
+
+  if (length(dim(img)) == 3) {
+    ch <- dim(img)[3]
+    alpha_mat <- switch(
+      as.character(ch),
+      "4" = img[, , 4],
+      "2" = img[, , 2],
+      "3" = ifelse(rowMeans(img[, , 1:3, drop = FALSE]) < 0.999, 1, 0),
+      "1" = ifelse(img[, , 1] < 0.999, 1, 0),
+      matrix(1, nrow = dim(img)[1], ncol = dim(img)[2])
+    )
+    out <- array(0, dim = c(dim(img)[1], dim(img)[2], 4))
+    out[, , 1] <- target_rgb[1]
+    out[, , 2] <- target_rgb[2]
+    out[, , 3] <- target_rgb[3]
+    out[, , 4] <- alpha_mat
+    return(as.raster(out))
+  }
+
+  NULL
+}
+
 normalize_api_href <- function(href) {
   if (is.null(href) || length(href) == 0 || is.na(href) || href == "") return(NA_character_)
   if (grepl("^https?://", href)) return(href)
@@ -1127,17 +1163,18 @@ draw_phylo_composite <- function(consistency_emphasis = FALSE, strict_correspond
       col = text_col,
       font = 1
     )
-    if (strict_correspondence) {
-      badge_x <- if (label_orders$side[i] == "right") xt - 0.08 else xt + 0.08
-      points(badge_x, yt, pch = 15, cex = 1.05, col = order_palette[label_orders$order[i]])
-    }
 
     icon_path <- label_orders$icon_path[i]
     if (!is.na(icon_path) && icon_path %in% names(icon_rasters) && !is.null(icon_rasters[[icon_path]])) {
       half_w <- 0.080
       half_h <- 0.054
+      icon_img <- if (strict_correspondence || consistency_emphasis) {
+        tint_icon_path_to_colour(icon_path, order_palette[label_orders$order[i]])
+      } else {
+        icon_rasters[[icon_path]]
+      }
       rasterImage(
-        icon_rasters[[icon_path]],
+        icon_img,
         xleft = xi - half_w,
         ybottom = yi - half_h,
         xright = xi + half_w,
@@ -1268,6 +1305,14 @@ caption_en <- paste(
   "Species identities follow the corrected canonical dataset that already accounts for synonymy and removes later duplicate species-province publications."
 )
 
+caption_en_strict <- paste(
+  "Figure. Strict correspondence version of the circular phylogeny of China's bird species pool showing newly recorded species on the McTavish et al. complete and dynamic bird tree.",
+  "Grey branches represent the background Chinese bird species pool, whereas coloured branches indicate the lineage paths of corrected newly recorded species.",
+  "The coloured sector ring is drawn by contiguous order-specific segments, so each coloured arc corresponds only to the matching order rather than spanning intervening tips from other orders.",
+  "The widened outer ring marks newly recorded species by order, percentage bubbles report the proportion of newly recorded species within each order's Chinese species pool, and coloured silhouettes match the corresponding order colours.",
+  "Label text and guide lines are kept black to preserve structural readability."
+)
+
 caption_zh <- paste(
   "图. 基于 McTavish 等构建的 complete and dynamic bird tree 绘制的中国鸟类物种库环形系统发育图，突出显示校正后的新纪录物种。",
   "灰色背景树表示从《中国生物物种名录（2025）》中筛选得到的中国鸟类种级物种库，并已去除亚种及其他种下单元。",
@@ -1275,6 +1320,14 @@ caption_zh <- paste(
   "靠近根部的比例气泡对每个含新纪录物种的目进行标注，并显示该目新纪录物种数占中国该目物种总数的比例。",
   "圆外侧的目标签与代表性剪影按照参考图的标识方式排布。",
   "物种身份采用已经过同物异名归并与重复发表剔除的校正底表。"
+)
+
+caption_zh_strict <- paste(
+  "图. 中国鸟类新纪录环形系统发育树的严格对应版本。",
+  "灰色分支表示中国鸟类背景物种库，彩色分支表示校正后新纪录物种对应的系统发育路径。",
+  "按目着色的粗圆环不再使用整目最小角度到最大角度的整段包络，而是按圆周上的连续片段逐段绘制，因此每一段色环只对应同一目的真实连续区段，不会错误覆盖夹在中间的其他目。",
+  "加宽的外环表示不同目的新纪录物种，比例圆球表示该目新纪录物种占中国该目物种总数的比例，彩色剪影与对应目颜色保持一致。",
+  "为保证结构清晰，目标签文字与引导线统一保留为黑色。"
 )
 
 summary_lines_en <- c(
@@ -1295,7 +1348,28 @@ summary_lines_zh <- c(
   "所有未解决名称均保留在审计表中供人工复核，而不是被静默删除或不透明地强制匹配。"
 )
 
-writeLines(c("# Figure caption (English)", "", caption_en, "", "# 图题（中文）", "", caption_zh), file.path(results_dir, "figure_caption_bilingual.md"))
+writeLines(
+  c(
+    "# Figure Captions",
+    "",
+    "## Main Version (English)",
+    "",
+    caption_en,
+    "",
+    "## Main Version (中文)",
+    "",
+    caption_zh,
+    "",
+    "## Strict Correspondence Version (English)",
+    "",
+    caption_en_strict,
+    "",
+    "## Strict Correspondence Version (中文)",
+    "",
+    caption_zh_strict
+  ),
+  file.path(results_dir, "figure_caption_bilingual.md")
+)
 writeLines(
   c(
     "# Task Summary / 结果摘要",
