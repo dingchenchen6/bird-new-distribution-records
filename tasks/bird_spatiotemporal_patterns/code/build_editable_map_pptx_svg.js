@@ -76,6 +76,45 @@ async function buildOne(mainSvg, insetSvg, outPptx) {
   fs.copyFileSync(outPptx, path.join(mirrorFiguresDir, path.basename(outPptx)));
 }
 
+async function buildCombined(jobs, outPptx) {
+  const pptx = new PptxGenJS();
+  pptx.layout = 'LAYOUT_WIDE';
+  pptx.author = 'Codex';
+  pptx.company = 'OpenAI';
+  pptx.subject = 'Bird new-record editable map export';
+  pptx.title = path.basename(outPptx, '.pptx');
+  pptx.lang = 'en-US';
+  pptx.theme = {
+    headFontFace: 'Arial',
+    bodyFontFace: 'Arial',
+    lang: 'en-US'
+  };
+
+  for (const job of jobs) {
+    assertExists(job.mainSvg);
+    assertExists(job.insetSvg);
+    const slide = pptx.addSlide();
+    slide.background = { color: 'FFFFFF' };
+    slide.addImage({
+      path: job.mainSvg,
+      x: 0,
+      y: 0,
+      w: slideW,
+      h: slideH
+    });
+    slide.addImage({
+      path: job.insetSvg,
+      x: slideW * insetLeft,
+      y: slideH * (1 - insetTop),
+      w: slideW * (insetRight - insetLeft),
+      h: slideH * (insetTop - insetBottom)
+    });
+  }
+
+  await pptx.writeFile({ fileName: outPptx });
+  fs.copyFileSync(outPptx, path.join(mirrorFiguresDir, path.basename(outPptx)));
+}
+
 (async () => {
   const jobs = [
     {
@@ -94,4 +133,8 @@ async function buildOne(mainSvg, insetSvg, outPptx) {
     await buildOne(job.mainSvg, job.insetSvg, job.outPptx);
     console.log(`Built ${job.outPptx}`);
   }
+
+  const combinedPptx = path.join(figuresDir, 'fig_sp01_sp03_editable_v4_2slides.pptx');
+  await buildCombined(jobs, combinedPptx);
+  console.log(`Built ${combinedPptx}`);
 })();

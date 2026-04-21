@@ -13,3 +13,13 @@ To keep the export reproducible and more editable than raster-based PowerPoint f
 
 ## Practical interpretation
 These new PPTX files are SVG-backed vector slides. In modern PowerPoint, SVG objects usually preserve vector quality and can often be converted to shapes or ungrouped for further editing, making them substantially more editable than the previous image-like exports.
+
+## Two-slide deck
+A combined deck was also assembled:
+
+- `fig_sp01_sp03_editable_v4_2slides.pptx`
+
+Slide 1 contains the province-level new-record count map, and Slide 2 contains the record-point distribution map.
+
+## Server note
+A server rerun was requested, but no active remote execution bridge or server helper script was available in this session for this specific map-export task. The current deliverable is therefore a fully reproducible local workflow with mirrored outputs and GitHub synchronization.
