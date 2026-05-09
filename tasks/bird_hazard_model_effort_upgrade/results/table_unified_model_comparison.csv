@@ -1,0 +1,241 @@
+scale_id,climate_id,climate_label,climate_var,effort_id,effort_label,effort_var,model,status,aic,convergence,pdHess,marginal_r2,conditional_r2,delta_aic
+province,temp_grad,Temperature gradient,temp_grad_z,record,Record-based (legacy),log_effort_record_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,16.0213858450106
+province,temp_grad,Temperature gradient,temp_grad_z,record,Record-based (legacy),log_effort_record_z,M1,ok,4224.33054830305,0,FALSE,0.00264334667692613,,16.5162639337486
+province,temp_grad,Temperature gradient,temp_grad_z,record,Record-based (legacy),log_effort_record_z,M2,ok,4224.36946965606,0,FALSE,0.00347850002282306,,16.5551852867538
+province,temp_grad,Temperature gradient,temp_grad_z,record,Record-based (legacy),log_effort_record_z,M3,ok,4224.62750930258,0,FALSE,0.00613150372710356,,16.8132249332766
+province,temp_grad,Temperature gradient,temp_grad_z,record,Record-based (legacy),log_effort_record_z,M4,ok,4207.8142843693,0,FALSE,0.0319661584923251,,0
+province,temp_grad,Temperature gradient,temp_grad_z,visits,Observer visits,log_effort_visits_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,30.0028612950782
+province,temp_grad,Temperature gradient,temp_grad_z,visits,Observer visits,log_effort_visits_z,M1,ok,4224.33054830305,0,FALSE,0.00264334667692613,,30.4977393838162
+province,temp_grad,Temperature gradient,temp_grad_z,visits,Observer visits,log_effort_visits_z,M2,ok,4222.89902645142,0,FALSE,0.00778001924313982,,29.0662175321795
+province,temp_grad,Temperature gradient,temp_grad_z,visits,Observer visits,log_effort_visits_z,M3,ok,4223.4992608513,0,FALSE,0.00980368077287682,,29.6664519320639
+province,temp_grad,Temperature gradient,temp_grad_z,visits,Observer visits,log_effort_visits_z,M4,ok,4193.83280891924,0,FALSE,0.0499937470375951,,0
+province,temp_grad,Temperature gradient,temp_grad_z,pc1,PCA composite (PC1),effort_pc1_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,15.995866819504
+province,temp_grad,Temperature gradient,temp_grad_z,pc1,PCA composite (PC1),effort_pc1_z,M1,ok,4224.33054830305,0,FALSE,0.00264334667692613,,16.4907449082421
+province,temp_grad,Temperature gradient,temp_grad_z,pc1,PCA composite (PC1),effort_pc1_z,M2,ok,4223.48043787928,0,FALSE,0.0041841048656596,,15.6406344844736
+province,temp_grad,Temperature gradient,temp_grad_z,pc1,PCA composite (PC1),effort_pc1_z,M3,ok,4224.11704739707,0,FALSE,0.00619068239488479,,16.2772440022627
+province,temp_grad,Temperature gradient,temp_grad_z,pc1,PCA composite (PC1),effort_pc1_z,M4,ok,4207.83980339481,0,FALSE,0.0301914933412007,,0
+province,temp_grad,Temperature gradient,temp_grad_z,days,Birding days,log_effort_days_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,27.384592880323
+province,temp_grad,Temperature gradient,temp_grad_z,days,Birding days,log_effort_days_z,M1,ok,4224.33054830305,0,FALSE,0.00264334667692613,,27.879470969061
+province,temp_grad,Temperature gradient,temp_grad_z,days,Birding days,log_effort_days_z,M2,ok,4223.96593136789,0,FALSE,0.00501629451316272,,27.5148540339033
+province,temp_grad,Temperature gradient,temp_grad_z,days,Birding days,log_effort_days_z,M3,ok,4224.42010041415,0,FALSE,0.00738296499556085,,27.9690230801534
+province,temp_grad,Temperature gradient,temp_grad_z,days,Birding days,log_effort_days_z,M4,ok,4196.45107733399,0,FALSE,0.0462109909399409,,0
+province,clim_velocity,Climate velocity,climate_velocity_z,record,Record-based (legacy),log_effort_record_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,0
+province,clim_velocity,Climate velocity,climate_velocity_z,record,Record-based (legacy),log_effort_record_z,M1,ok,4224.93616302783,0,FALSE,0.00678547253924191,,1.10049281351621
+province,clim_velocity,Climate velocity,climate_velocity_z,record,Record-based (legacy),log_effort_record_z,M2,ok,4224.36946965606,0,FALSE,0.00347850002282306,,0.533799441743213
+province,clim_velocity,Climate velocity,climate_velocity_z,record,Record-based (legacy),log_effort_record_z,M3,ok,4225.28028680025,0,FALSE,0.010184990200143,,1.44461658593627
+province,clim_velocity,Climate velocity,climate_velocity_z,record,Record-based (legacy),log_effort_record_z,M4,ok,4227.11866201128,0,FALSE,0.0106601293293352,,3.28299179696387
+province,clim_velocity,Climate velocity,climate_velocity_z,visits,Observer visits,log_effort_visits_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,0.936643762898711
+province,clim_velocity,Climate velocity,climate_velocity_z,visits,Observer visits,log_effort_visits_z,M1,ok,4224.93616302783,0,FALSE,0.00678547253924191,,2.03713657641492
+province,clim_velocity,Climate velocity,climate_velocity_z,visits,Observer visits,log_effort_visits_z,M2,ok,4222.89902645142,0,FALSE,0.00778001924313982,,0
+province,clim_velocity,Climate velocity,climate_velocity_z,visits,Observer visits,log_effort_visits_z,M3,ok,4224.21454430726,0,FALSE,0.0130358422824825,,1.31551785584543
+province,clim_velocity,Climate velocity,climate_velocity_z,visits,Observer visits,log_effort_visits_z,M4,ok,4224.71797390006,0,FALSE,0.0152650867551578,,1.81894744864167
+province,clim_velocity,Climate velocity,climate_velocity_z,pc1,PCA composite (PC1),effort_pc1_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,1.559106405085
+province,clim_velocity,Climate velocity,climate_velocity_z,pc1,PCA composite (PC1),effort_pc1_z,M1,ok,4224.93616302783,0,FALSE,0.00678547253924191,,2.65959921860122
+province,clim_velocity,Climate velocity,climate_velocity_z,pc1,PCA composite (PC1),effort_pc1_z,M2,ok,4223.48043787928,0,FALSE,0.0041841048656596,,1.20387407005455
+province,clim_velocity,Climate velocity,climate_velocity_z,pc1,PCA composite (PC1),effort_pc1_z,M3,ok,4224.69692083372,0,FALSE,0.0101835244057494,,2.42035702449175
+province,clim_velocity,Climate velocity,climate_velocity_z,pc1,PCA composite (PC1),effort_pc1_z,M4,ok,4222.27656380923,0,FALSE,0.0165825832225912,,0
+province,clim_velocity,Climate velocity,climate_velocity_z,days,Birding days,log_effort_days_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,0
+province,clim_velocity,Climate velocity,climate_velocity_z,days,Birding days,log_effort_days_z,M1,ok,4224.93616302783,0,FALSE,0.00678547253924191,,1.10049281351621
+province,clim_velocity,Climate velocity,climate_velocity_z,days,Birding days,log_effort_days_z,M2,ok,4223.96593136789,0,FALSE,0.00501629451316272,,0.13026115358025
+province,clim_velocity,Climate velocity,climate_velocity_z,days,Birding days,log_effort_days_z,M3,ok,4225.19391157106,0,FALSE,0.0105541956612773,,1.35824135674829
+province,clim_velocity,Climate velocity,climate_velocity_z,days,Birding days,log_effort_days_z,M4,ok,4225.93186940617,0,FALSE,0.012919303296504,,2.09619919185661
+province,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,record,Record-based (legacy),log_effort_record_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,3.60013197792159
+province,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,record,Record-based (legacy),log_effort_record_z,M1,ok,4225.28509295487,0,FALSE,0.00180431146278937,,5.04955471848098
+province,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,record,Record-based (legacy),log_effort_record_z,M2,ok,4224.36946965606,0,FALSE,0.00347850002282306,,4.1339314196648
+province,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,record,Record-based (legacy),log_effort_record_z,M3,ok,4225.37893747369,0,FALSE,0.00647276279563462,,5.14339923729403
+province,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,record,Record-based (legacy),log_effort_record_z,M4,ok,4220.23553823639,0,FALSE,0.0144429292288507,,0
+province,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,visits,Observer visits,log_effort_visits_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,2.14093998240696
+province,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,visits,Observer visits,log_effort_visits_z,M1,ok,4225.28509295487,0,FALSE,0.00180431146278937,,3.59036272296635
+province,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,visits,Observer visits,log_effort_visits_z,M2,ok,4222.89902645142,0,FALSE,0.00778001924313982,,1.20429621950825
+province,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,visits,Observer visits,log_effort_visits_z,M3,ok,4224.7418844877,0,FALSE,0.00765315993595581,,3.04715425578797
+province,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,visits,Observer visits,log_effort_visits_z,M4,ok,4221.69473023191,0,FALSE,0.0126510226572905,,0
+province,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,pc1,PCA composite (PC1),effort_pc1_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,5.8904076769586
+province,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,pc1,PCA composite (PC1),effort_pc1_z,M1,ok,4225.28509295487,0,FALSE,0.00180431146278937,,7.33983041751799
+province,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,pc1,PCA composite (PC1),effort_pc1_z,M2,ok,4223.48043787928,0,FALSE,0.0041841048656596,,5.53517534192815
+province,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,pc1,PCA composite (PC1),effort_pc1_z,M3,ok,4225.32494407029,0,FALSE,0.00439331476519017,,7.37968153293605
+province,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,pc1,PCA composite (PC1),effort_pc1_z,M4,ok,4217.94526253736,0,FALSE,0.0139694151594796,,0
+province,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,days,Birding days,log_effort_days_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,1.60531521665689
+province,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,days,Birding days,log_effort_days_z,M1,ok,4225.28509295487,0,FALSE,0.00180431146278937,,3.05473795721628
+province,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,days,Birding days,log_effort_days_z,M2,ok,4223.96593136789,0,FALSE,0.00501629451316272,,1.73557637023714
+province,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,days,Birding days,log_effort_days_z,M3,ok,4225.50705284344,0,FALSE,0.00582258883938353,,3.27669784577756
+province,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,days,Birding days,log_effort_days_z,M4,ok,4222.23035499766,0,FALSE,0.0132378249584647,,0
+province,exposure,Climate exposure,climate_exposure_z,record,Record-based (legacy),log_effort_record_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,2.17216574560098
+province,exposure,Climate exposure,climate_exposure_z,record,Record-based (legacy),log_effort_record_z,M1,ok,4221.66350446871,0,FALSE,0.0300477286542201,,0
+province,exposure,Climate exposure,climate_exposure_z,record,Record-based (legacy),log_effort_record_z,M2,ok,4224.36946965606,0,FALSE,0.00347850002282306,,2.70596518734419
+province,exposure,Climate exposure,climate_exposure_z,record,Record-based (legacy),log_effort_record_z,M3,ok,4222.72624047936,0,FALSE,0.031872978872138,,1.06273601064822
+province,exposure,Climate exposure,climate_exposure_z,record,Record-based (legacy),log_effort_record_z,M4,ok,4224.71686476904,0,FALSE,0.0317990872247442,,3.05336030033141
+province,exposure,Climate exposure,climate_exposure_z,visits,Observer visits,log_effort_visits_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,3.72655333403054
+province,exposure,Climate exposure,climate_exposure_z,visits,Observer visits,log_effort_visits_z,M1,ok,4221.66350446871,0,FALSE,0.0300477286542201,,1.55438758842956
+province,exposure,Climate exposure,climate_exposure_z,visits,Observer visits,log_effort_visits_z,M2,ok,4222.89902645142,0,FALSE,0.00778001924313982,,2.78990957113183
+province,exposure,Climate exposure,climate_exposure_z,visits,Observer visits,log_effort_visits_z,M3,ok,4220.10911688028,0,FALSE,0.0391183360114683,,0
+province,exposure,Climate exposure,climate_exposure_z,visits,Observer visits,log_effort_visits_z,M4,ok,4222.02876630607,0,FALSE,0.0389825378277798,,1.91964942578579
+province,exposure,Climate exposure,climate_exposure_z,pc1,PCA composite (PC1),effort_pc1_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,2.9094980793825
+province,exposure,Climate exposure,climate_exposure_z,pc1,PCA composite (PC1),effort_pc1_z,M1,ok,4221.66350446871,0,FALSE,0.0300477286542201,,0.737332333781524
+province,exposure,Climate exposure,climate_exposure_z,pc1,PCA composite (PC1),effort_pc1_z,M2,ok,4223.48043787928,0,FALSE,0.0041841048656596,,2.55426574435205
+province,exposure,Climate exposure,climate_exposure_z,pc1,PCA composite (PC1),effort_pc1_z,M3,ok,4220.92617213493,0,FALSE,0.0345593541939017,,0
+province,exposure,Climate exposure,climate_exposure_z,pc1,PCA composite (PC1),effort_pc1_z,M4,ok,4222.85658039891,0,FALSE,0.0346137948379264,,1.93040826397555
+province,exposure,Climate exposure,climate_exposure_z,days,Birding days,log_effort_days_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,2.61495467692566
+province,exposure,Climate exposure,climate_exposure_z,days,Birding days,log_effort_days_z,M1,ok,4221.66350446871,0,FALSE,0.0300477286542201,,0.442788931324685
+province,exposure,Climate exposure,climate_exposure_z,days,Birding days,log_effort_days_z,M2,ok,4223.96593136789,0,FALSE,0.00501629451316272,,2.74521583050591
+province,exposure,Climate exposure,climate_exposure_z,days,Birding days,log_effort_days_z,M3,ok,4221.22071553739,0,FALSE,0.036163064168683,,0
+province,exposure,Climate exposure,climate_exposure_z,days,Birding days,log_effort_days_z,M4,ok,4222.2028976587,0,FALSE,0.0370321408790191,,0.98218212131178
+province,warming,Warming rate,warming_rate_z,record,Record-based (legacy),log_effort_record_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,3.66450861466092
+province,warming,Warming rate,warming_rate_z,record,Record-based (legacy),log_effort_record_z,M1,ok,4220.17116159965,0,FALSE,0.0391811309593197,,0
+province,warming,Warming rate,warming_rate_z,record,Record-based (legacy),log_effort_record_z,M2,ok,4224.36946965606,0,FALSE,0.00347850002282306,,4.19830805640413
+province,warming,Warming rate,warming_rate_z,record,Record-based (legacy),log_effort_record_z,M3,ok,4221.18038032382,0,FALSE,0.0409285160999866,,1.00921872416438
+province,warming,Warming rate,warming_rate_z,record,Record-based (legacy),log_effort_record_z,M4,ok,4223.1726477075,0,FALSE,0.0408477878857777,,3.00148610785072
+province,warming,Warming rate,warming_rate_z,visits,Observer visits,log_effort_visits_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,4.87886933466962
+province,warming,Warming rate,warming_rate_z,visits,Observer visits,log_effort_visits_z,M1,ok,4220.17116159965,0,FALSE,0.0391811309593197,,1.2143607200087
+province,warming,Warming rate,warming_rate_z,visits,Observer visits,log_effort_visits_z,M2,ok,4222.89902645142,0,FALSE,0.00778001924313982,,3.94222557177091
+province,warming,Warming rate,warming_rate_z,visits,Observer visits,log_effort_visits_z,M3,ok,4218.95680087965,0,FALSE,0.0475203072621255,,0
+province,warming,Warming rate,warming_rate_z,visits,Observer visits,log_effort_visits_z,M4,ok,4219.91702013815,0,FALSE,0.0479537469359704,,0.960219258505276
+province,warming,Warming rate,warming_rate_z,pc1,PCA composite (PC1),effort_pc1_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,4.26917696150758
+province,warming,Warming rate,warming_rate_z,pc1,PCA composite (PC1),effort_pc1_z,M1,ok,4220.17116159965,0,FALSE,0.0391811309593197,,0.604668346846665
+province,warming,Warming rate,warming_rate_z,pc1,PCA composite (PC1),effort_pc1_z,M2,ok,4223.48043787928,0,FALSE,0.0041841048656596,,3.91394462647713
+province,warming,Warming rate,warming_rate_z,pc1,PCA composite (PC1),effort_pc1_z,M3,ok,4219.56649325281,0,FALSE,0.0436366606457457,,0
+province,warming,Warming rate,warming_rate_z,pc1,PCA composite (PC1),effort_pc1_z,M4,ok,4220.12536669304,0,FALSE,0.0449396113764754,,0.558873440234493
+province,warming,Warming rate,warming_rate_z,days,Birding days,log_effort_days_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,4.28208322633418
+province,warming,Warming rate,warming_rate_z,days,Birding days,log_effort_days_z,M1,ok,4220.17116159965,0,FALSE,0.0391811309593197,,0.617574611673263
+province,warming,Warming rate,warming_rate_z,days,Birding days,log_effort_days_z,M2,ok,4223.96593136789,0,FALSE,0.00501629451316272,,4.41234437991443
+province,warming,Warming rate,warming_rate_z,days,Birding days,log_effort_days_z,M3,ok,4219.97040287468,0,FALSE,0.044686433811143,,0.416815886695986
+province,warming,Warming rate,warming_rate_z,days,Birding days,log_effort_days_z,M4,ok,4219.55358698798,0,FALSE,0.047185322555747,,0
+province,prec_velocity,Precipitation velocity,precip_velocity_z,record,Record-based (legacy),log_effort_record_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,2.52986803784461
+province,prec_velocity,Precipitation velocity,precip_velocity_z,record,Record-based (legacy),log_effort_record_z,M1,ok,4223.96462883746,0,FALSE,0.014604273062956,,2.65882666098696
+province,prec_velocity,Precipitation velocity,precip_velocity_z,record,Record-based (legacy),log_effort_record_z,M2,ok,4224.36946965606,0,FALSE,0.00347850002282306,,3.06366747958782
+province,prec_velocity,Precipitation velocity,precip_velocity_z,record,Record-based (legacy),log_effort_record_z,M3,ok,4224.61858867546,0,FALSE,0.0174008658933034,,3.31278649899286
+province,prec_velocity,Precipitation velocity,precip_velocity_z,record,Record-based (legacy),log_effort_record_z,M4,ok,4221.30580217647,0,FALSE,0.0217629281695413,,0
+province,prec_velocity,Precipitation velocity,precip_velocity_z,visits,Observer visits,log_effort_visits_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,5.47445570042055
+province,prec_velocity,Precipitation velocity,precip_velocity_z,visits,Observer visits,log_effort_visits_z,M1,ok,4223.96462883746,0,FALSE,0.014604273062956,,5.6034143235629
+province,prec_velocity,Precipitation velocity,precip_velocity_z,visits,Observer visits,log_effort_visits_z,M2,ok,4222.89902645142,0,FALSE,0.00778001924313982,,4.53781193752184
+province,prec_velocity,Precipitation velocity,precip_velocity_z,visits,Observer visits,log_effort_visits_z,M3,ok,4223.09416203281,0,FALSE,0.0208879093342598,,4.73294751891717
+province,prec_velocity,Precipitation velocity,precip_velocity_z,visits,Observer visits,log_effort_visits_z,M4,ok,4218.36121451389,0,FALSE,0.0307297973097316,,0
+province,prec_velocity,Precipitation velocity,precip_velocity_z,pc1,PCA composite (PC1),effort_pc1_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,5.55901209106833
+province,prec_velocity,Precipitation velocity,precip_velocity_z,pc1,PCA composite (PC1),effort_pc1_z,M1,ok,4223.96462883746,0,FALSE,0.014604273062956,,5.68797071421068
+province,prec_velocity,Precipitation velocity,precip_velocity_z,pc1,PCA composite (PC1),effort_pc1_z,M2,ok,4223.48043787928,0,FALSE,0.0041841048656596,,5.20377975603788
+province,prec_velocity,Precipitation velocity,precip_velocity_z,pc1,PCA composite (PC1),effort_pc1_z,M3,ok,4223.38403214619,0,FALSE,0.0185056722755139,,5.10737402294035
+province,prec_velocity,Precipitation velocity,precip_velocity_z,pc1,PCA composite (PC1),effort_pc1_z,M4,ok,4218.27665812325,0,FALSE,0.0259010251988848,,0
+province,prec_velocity,Precipitation velocity,precip_velocity_z,days,Birding days,log_effort_days_z,M0,ok,4223.83567021431,0,FALSE,0.000486835114521117,,1.19405827076571
+province,prec_velocity,Precipitation velocity,precip_velocity_z,days,Birding days,log_effort_days_z,M1,ok,4223.96462883746,0,FALSE,0.014604273062956,,1.32301689390806
+province,prec_velocity,Precipitation velocity,precip_velocity_z,days,Birding days,log_effort_days_z,M2,ok,4223.96593136789,0,FALSE,0.00501629451316272,,1.32431942434596
+province,prec_velocity,Precipitation velocity,precip_velocity_z,days,Birding days,log_effort_days_z,M3,ok,4224.22818825187,0,FALSE,0.0183318223502819,,1.58657630832568
+province,prec_velocity,Precipitation velocity,precip_velocity_z,days,Birding days,log_effort_days_z,M4,ok,4222.64161194355,0,FALSE,0.0245084459462993,,0
+grid100,temp_grad,Temperature gradient,temp_grad_z,record,Record-based (legacy),log_effort_record_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,temp_grad,Temperature gradient,temp_grad_z,record,Record-based (legacy),log_effort_record_z,M1,ok,13.0615650590589,0,FALSE,0.000464944447497477,,1.99989703231813
+grid100,temp_grad,Temperature gradient,temp_grad_z,record,Record-based (legacy),log_effort_record_z,M2,ok,13.0616404158891,1,FALSE,0.00032015329671381,,1.9999723891483
+grid100,temp_grad,Temperature gradient,temp_grad_z,record,Record-based (legacy),log_effort_record_z,M3,ok,15.0615382100823,0,FALSE,0.00050540644807192,,3.9998701833415
+grid100,temp_grad,Temperature gradient,temp_grad_z,record,Record-based (legacy),log_effort_record_z,M4,ok,17.061527838232,0,FALSE,0.000471249637297869,,5.99985981149121
+grid100,temp_grad,Temperature gradient,temp_grad_z,visits,Observer visits,log_effort_visits_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,temp_grad,Temperature gradient,temp_grad_z,visits,Observer visits,log_effort_visits_z,M1,ok,13.0615650590589,0,FALSE,0.000464944447497477,,1.99989703231813
+grid100,temp_grad,Temperature gradient,temp_grad_z,visits,Observer visits,log_effort_visits_z,M2,ok,13.0616553405166,0,FALSE,6.22954658402141e-08,0.999781045250497,1.99998731377582
+grid100,temp_grad,Temperature gradient,temp_grad_z,visits,Observer visits,log_effort_visits_z,M3,ok,15.0615521543605,0,FALSE,0.00047371172028385,,3.99988412761968
+grid100,temp_grad,Temperature gradient,temp_grad_z,visits,Observer visits,log_effort_visits_z,M4,ok,17.0615069311534,0,FALSE,0.000453374309969715,,5.99983890441263
+grid100,temp_grad,Temperature gradient,temp_grad_z,pc1,PCA composite (PC1),effort_pc1_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,temp_grad,Temperature gradient,temp_grad_z,pc1,PCA composite (PC1),effort_pc1_z,M1,ok,13.0615650590589,0,FALSE,0.000464944447497477,,1.99989703231813
+grid100,temp_grad,Temperature gradient,temp_grad_z,pc1,PCA composite (PC1),effort_pc1_z,M2,ok,13.0616532418553,0,FALSE,0.00028173324538654,,1.99998521511452
+grid100,temp_grad,Temperature gradient,temp_grad_z,pc1,PCA composite (PC1),effort_pc1_z,M3,ok,15.0615456938649,0,FALSE,0.000472412584881963,,3.99987766712411
+grid100,temp_grad,Temperature gradient,temp_grad_z,pc1,PCA composite (PC1),effort_pc1_z,M4,ok,17.0615199143722,0,FALSE,0.000458756682540713,,5.99985188763139
+grid100,temp_grad,Temperature gradient,temp_grad_z,days,Birding days,log_effort_days_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,temp_grad,Temperature gradient,temp_grad_z,days,Birding days,log_effort_days_z,M1,ok,13.0615650590589,0,FALSE,0.000464944447497477,,1.99989703231813
+grid100,temp_grad,Temperature gradient,temp_grad_z,days,Birding days,log_effort_days_z,M2,ok,,0,FALSE,0.000287870070197545,,
+grid100,temp_grad,Temperature gradient,temp_grad_z,days,Birding days,log_effort_days_z,M3,ok,15.061551973874,0,FALSE,1.03944184400492e-07,0.999780940547805,3.99988394713319
+grid100,temp_grad,Temperature gradient,temp_grad_z,days,Birding days,log_effort_days_z,M4,ok,17.061505580079,0,FALSE,0.000451730368124721,,5.99983755333824
+grid100,clim_velocity,Climate velocity,climate_velocity_z,record,Record-based (legacy),log_effort_record_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,clim_velocity,Climate velocity,climate_velocity_z,record,Record-based (legacy),log_effort_record_z,M1,ok,,0,FALSE,0.00028205487779801,,
+grid100,clim_velocity,Climate velocity,climate_velocity_z,record,Record-based (legacy),log_effort_record_z,M2,ok,13.0616404158891,1,FALSE,0.00032015329671381,,1.9999723891483
+grid100,clim_velocity,Climate velocity,climate_velocity_z,record,Record-based (legacy),log_effort_record_z,M3,ok,15.0616404983284,0,FALSE,0.000320094327314909,,3.99997247158763
+grid100,clim_velocity,Climate velocity,climate_velocity_z,record,Record-based (legacy),log_effort_record_z,M4,ok,17.0616404984266,0,FALSE,0.000320079055145674,,5.99997247168585
+grid100,clim_velocity,Climate velocity,climate_velocity_z,visits,Observer visits,log_effort_visits_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,clim_velocity,Climate velocity,climate_velocity_z,visits,Observer visits,log_effort_visits_z,M1,ok,,0,FALSE,0.00028205487779801,,
+grid100,clim_velocity,Climate velocity,climate_velocity_z,visits,Observer visits,log_effort_visits_z,M2,ok,13.0616553405166,0,FALSE,6.22954658402141e-08,0.999781045250497,1.99998731377582
+grid100,clim_velocity,Climate velocity,climate_velocity_z,visits,Observer visits,log_effort_visits_z,M3,ok,15.0616548844919,0,FALSE,0.000284436085922071,,3.99998685775108
+grid100,clim_velocity,Climate velocity,climate_velocity_z,visits,Observer visits,log_effort_visits_z,M4,ok,17.0616548239359,0,FALSE,0.000284259448502526,,5.99998679719511
+grid100,clim_velocity,Climate velocity,climate_velocity_z,pc1,PCA composite (PC1),effort_pc1_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,clim_velocity,Climate velocity,climate_velocity_z,pc1,PCA composite (PC1),effort_pc1_z,M1,ok,,0,FALSE,0.00028205487779801,,
+grid100,clim_velocity,Climate velocity,climate_velocity_z,pc1,PCA composite (PC1),effort_pc1_z,M2,ok,13.0616532418553,0,FALSE,0.00028173324538654,,1.99998521511452
+grid100,clim_velocity,Climate velocity,climate_velocity_z,pc1,PCA composite (PC1),effort_pc1_z,M3,ok,15.0616530167445,0,FALSE,0.000281899507477376,,3.99998499000367
+grid100,clim_velocity,Climate velocity,climate_velocity_z,pc1,PCA composite (PC1),effort_pc1_z,M4,ok,17.0616521958382,0,FALSE,0.000283882029673226,,5.99998416909739
+grid100,clim_velocity,Climate velocity,climate_velocity_z,days,Birding days,log_effort_days_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,clim_velocity,Climate velocity,climate_velocity_z,days,Birding days,log_effort_days_z,M1,ok,,0,FALSE,0.00028205487779801,,
+grid100,clim_velocity,Climate velocity,climate_velocity_z,days,Birding days,log_effort_days_z,M2,ok,,0,FALSE,0.000287870070197545,,
+grid100,clim_velocity,Climate velocity,climate_velocity_z,days,Birding days,log_effort_days_z,M3,ok,15.0616509835272,0,FALSE,0.000287830792920349,,3.99998295678643
+grid100,clim_velocity,Climate velocity,climate_velocity_z,days,Birding days,log_effort_days_z,M4,ok,17.0616509535812,0,FALSE,0.000288147377536964,,5.9999829268404
+grid100,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,record,Record-based (legacy),log_effort_record_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,record,Record-based (legacy),log_effort_record_z,M1,ok,,0,FALSE,0.000277766216727172,,
+grid100,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,record,Record-based (legacy),log_effort_record_z,M2,ok,13.0616404158891,1,FALSE,0.00032015329671381,,1.9999723891483
+grid100,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,record,Record-based (legacy),log_effort_record_z,M3,ok,,0,FALSE,0.000317032051982024,,
+grid100,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,record,Record-based (legacy),log_effort_record_z,M4,ok,,0,FALSE,0.000317354802770148,,
+grid100,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,visits,Observer visits,log_effort_visits_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,visits,Observer visits,log_effort_visits_z,M1,ok,,0,FALSE,0.000277766216727172,,
+grid100,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,visits,Observer visits,log_effort_visits_z,M2,ok,13.0616553405166,0,FALSE,6.22954658402141e-08,0.999781045250497,1.99998731377582
+grid100,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,visits,Observer visits,log_effort_visits_z,M3,ok,,0,FALSE,0.000279903197355453,,
+grid100,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,visits,Observer visits,log_effort_visits_z,M4,ok,17.0616374529509,0,FALSE,0.000291708692306272,,5.9999694262101
+grid100,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,pc1,PCA composite (PC1),effort_pc1_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,pc1,PCA composite (PC1),effort_pc1_z,M1,ok,,0,FALSE,0.000277766216727172,,
+grid100,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,pc1,PCA composite (PC1),effort_pc1_z,M2,ok,13.0616532418553,0,FALSE,0.00028173324538654,,1.99998521511452
+grid100,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,pc1,PCA composite (PC1),effort_pc1_z,M3,ok,,0,FALSE,0.000278307704932262,,
+grid100,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,pc1,PCA composite (PC1),effort_pc1_z,M4,ok,,0,FALSE,0.000280142022365438,,
+grid100,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,days,Birding days,log_effort_days_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,days,Birding days,log_effort_days_z,M1,ok,,0,FALSE,0.000277766216727172,,
+grid100,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,days,Birding days,log_effort_days_z,M2,ok,,0,FALSE,0.000287870070197545,,
+grid100,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,days,Birding days,log_effort_days_z,M3,ok,15.0616483020985,0,FALSE,0.000282705537344474,,3.99998027535776
+grid100,mahalanobis,Mahalanobis distance,mahalanobis_dist_z,days,Birding days,log_effort_days_z,M4,ok,,0,FALSE,0.000294544752829362,,
+grid100,exposure,Climate exposure,climate_exposure_z,record,Record-based (legacy),log_effort_record_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,exposure,Climate exposure,climate_exposure_z,record,Record-based (legacy),log_effort_record_z,M1,ok,13.0613206913222,0,FALSE,0.000567758905067723,,1.99965266458139
+grid100,exposure,Climate exposure,climate_exposure_z,record,Record-based (legacy),log_effort_record_z,M2,ok,13.0616404158891,1,FALSE,0.00032015329671381,,1.9999723891483
+grid100,exposure,Climate exposure,climate_exposure_z,record,Record-based (legacy),log_effort_record_z,M3,ok,15.0613141750473,0,FALSE,0.000576395844889033,,3.99964614830651
+grid100,exposure,Climate exposure,climate_exposure_z,record,Record-based (legacy),log_effort_record_z,M4,ok,17.0613008701857,0,FALSE,0.000604087384032576,,5.99963284344494
+grid100,exposure,Climate exposure,climate_exposure_z,visits,Observer visits,log_effort_visits_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,exposure,Climate exposure,climate_exposure_z,visits,Observer visits,log_effort_visits_z,M1,ok,13.0613206913222,0,FALSE,0.000567758905067723,,1.99965266458139
+grid100,exposure,Climate exposure,climate_exposure_z,visits,Observer visits,log_effort_visits_z,M2,ok,13.0616553405166,0,FALSE,6.22954658402141e-08,0.999781045250497,1.99998731377582
+grid100,exposure,Climate exposure,climate_exposure_z,visits,Observer visits,log_effort_visits_z,M3,ok,15.0613082223535,0,FALSE,0.000601185260968437,,3.99964019561276
+grid100,exposure,Climate exposure,climate_exposure_z,visits,Observer visits,log_effort_visits_z,M4,ok,17.0612940807368,0,FALSE,0.00062885401653401,,5.99962605399605
+grid100,exposure,Climate exposure,climate_exposure_z,pc1,PCA composite (PC1),effort_pc1_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,exposure,Climate exposure,climate_exposure_z,pc1,PCA composite (PC1),effort_pc1_z,M1,ok,13.0613206913222,0,FALSE,0.000567758905067723,,1.99965266458139
+grid100,exposure,Climate exposure,climate_exposure_z,pc1,PCA composite (PC1),effort_pc1_z,M2,ok,13.0616532418553,0,FALSE,0.00028173324538654,,1.99998521511452
+grid100,exposure,Climate exposure,climate_exposure_z,pc1,PCA composite (PC1),effort_pc1_z,M3,ok,15.0613184992126,1,FALSE,0.000575809005811663,,3.99965047247179
+grid100,exposure,Climate exposure,climate_exposure_z,pc1,PCA composite (PC1),effort_pc1_z,M4,ok,17.0613102798743,0,FALSE,0.000597650060095237,,5.99964225313352
+grid100,exposure,Climate exposure,climate_exposure_z,days,Birding days,log_effort_days_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,exposure,Climate exposure,climate_exposure_z,days,Birding days,log_effort_days_z,M1,ok,13.0613206913222,0,FALSE,0.000567758905067723,,1.99965266458139
+grid100,exposure,Climate exposure,climate_exposure_z,days,Birding days,log_effort_days_z,M2,ok,,0,FALSE,0.000287870070197545,,
+grid100,exposure,Climate exposure,climate_exposure_z,days,Birding days,log_effort_days_z,M3,ok,15.06131097866,0,FALSE,0.000595331886775807,,3.99964295191921
+grid100,exposure,Climate exposure,climate_exposure_z,days,Birding days,log_effort_days_z,M4,ok,,1,FALSE,0.000628314340567712,,
+grid100,warming,Warming rate,warming_rate_z,record,Record-based (legacy),log_effort_record_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,warming,Warming rate,warming_rate_z,record,Record-based (legacy),log_effort_record_z,M1,ok,13.061382403228,0,FALSE,0.000584678129331195,,1.99971437648719
+grid100,warming,Warming rate,warming_rate_z,record,Record-based (legacy),log_effort_record_z,M2,ok,13.0616404158891,1,FALSE,0.00032015329671381,,1.9999723891483
+grid100,warming,Warming rate,warming_rate_z,record,Record-based (legacy),log_effort_record_z,M3,ok,15.061380447537,1,FALSE,0.000589342143809604,,3.99971242079619
+grid100,warming,Warming rate,warming_rate_z,record,Record-based (legacy),log_effort_record_z,M4,ok,17.0613779446303,0,FALSE,0.000589142830691831,,5.9997099178895
+grid100,warming,Warming rate,warming_rate_z,visits,Observer visits,log_effort_visits_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,warming,Warming rate,warming_rate_z,visits,Observer visits,log_effort_visits_z,M1,ok,13.061382403228,0,FALSE,0.000584678129331195,,1.99971437648719
+grid100,warming,Warming rate,warming_rate_z,visits,Observer visits,log_effort_visits_z,M2,ok,13.0616553405166,0,FALSE,6.22954658402141e-08,0.999781045250497,1.99998731377582
+grid100,warming,Warming rate,warming_rate_z,visits,Observer visits,log_effort_visits_z,M3,ok,,0,FALSE,0.000594152725862617,,
+grid100,warming,Warming rate,warming_rate_z,visits,Observer visits,log_effort_visits_z,M4,ok,17.0613808395083,0,FALSE,0.000593672689314366,,5.99971281276748
+grid100,warming,Warming rate,warming_rate_z,pc1,PCA composite (PC1),effort_pc1_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,warming,Warming rate,warming_rate_z,pc1,PCA composite (PC1),effort_pc1_z,M1,ok,13.061382403228,0,FALSE,0.000584678129331195,,1.99971437648719
+grid100,warming,Warming rate,warming_rate_z,pc1,PCA composite (PC1),effort_pc1_z,M2,ok,13.0616532418553,0,FALSE,0.00028173324538654,,1.99998521511452
+grid100,warming,Warming rate,warming_rate_z,pc1,PCA composite (PC1),effort_pc1_z,M3,ok,15.0613821529496,0,FALSE,0.000588193150376229,,3.9997141262088
+grid100,warming,Warming rate,warming_rate_z,pc1,PCA composite (PC1),effort_pc1_z,M4,ok,,1,FALSE,0.000588141874490629,,
+grid100,warming,Warming rate,warming_rate_z,days,Birding days,log_effort_days_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,warming,Warming rate,warming_rate_z,days,Birding days,log_effort_days_z,M1,ok,13.061382403228,0,FALSE,0.000584678129331195,,1.99971437648719
+grid100,warming,Warming rate,warming_rate_z,days,Birding days,log_effort_days_z,M2,ok,,0,FALSE,0.000287870070197545,,
+grid100,warming,Warming rate,warming_rate_z,days,Birding days,log_effort_days_z,M3,ok,15.0613822597534,0,FALSE,0.000586835113188509,,3.99971423301258
+grid100,warming,Warming rate,warming_rate_z,days,Birding days,log_effort_days_z,M4,ok,17.0613822213491,0,FALSE,0.000586300602042539,,5.99971419460826
+grid100,prec_velocity,Precipitation velocity,precip_velocity_z,record,Record-based (legacy),log_effort_record_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,prec_velocity,Precipitation velocity,precip_velocity_z,record,Record-based (legacy),log_effort_record_z,M1,ok,13.0616336547027,0,FALSE,0.00028278318454259,,1.99996562796196
+grid100,prec_velocity,Precipitation velocity,precip_velocity_z,record,Record-based (legacy),log_effort_record_z,M2,ok,13.0616404158891,1,FALSE,0.00032015329671381,,1.9999723891483
+grid100,prec_velocity,Precipitation velocity,precip_velocity_z,record,Record-based (legacy),log_effort_record_z,M3,ok,15.0616174017982,0,FALSE,7.09097734479108e-08,0.999781045460435,3.99994937505744
+grid100,prec_velocity,Precipitation velocity,precip_velocity_z,record,Record-based (legacy),log_effort_record_z,M4,ok,,1,FALSE,0.000323964444369196,,
+grid100,prec_velocity,Precipitation velocity,precip_velocity_z,visits,Observer visits,log_effort_visits_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,prec_velocity,Precipitation velocity,precip_velocity_z,visits,Observer visits,log_effort_visits_z,M1,ok,13.0616336547027,0,FALSE,0.00028278318454259,,1.99996562796196
+grid100,prec_velocity,Precipitation velocity,precip_velocity_z,visits,Observer visits,log_effort_visits_z,M2,ok,13.0616553405166,0,FALSE,6.22954658402141e-08,0.999781045250497,1.99998731377582
+grid100,prec_velocity,Precipitation velocity,precip_velocity_z,visits,Observer visits,log_effort_visits_z,M3,ok,15.0616206681334,0,FALSE,0.000293763804639003,,3.99995264139261
+grid100,prec_velocity,Precipitation velocity,precip_velocity_z,visits,Observer visits,log_effort_visits_z,M4,ok,17.0616202580241,0,FALSE,0.000295183809794162,,5.99995223128326
+grid100,prec_velocity,Precipitation velocity,precip_velocity_z,pc1,PCA composite (PC1),effort_pc1_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,prec_velocity,Precipitation velocity,precip_velocity_z,pc1,PCA composite (PC1),effort_pc1_z,M1,ok,13.0616336547027,0,FALSE,0.00028278318454259,,1.99996562796196
+grid100,prec_velocity,Precipitation velocity,precip_velocity_z,pc1,PCA composite (PC1),effort_pc1_z,M2,ok,13.0616532418553,0,FALSE,0.00028173324538654,,1.99998521511452
+grid100,prec_velocity,Precipitation velocity,precip_velocity_z,pc1,PCA composite (PC1),effort_pc1_z,M3,ok,15.0616231980202,0,FALSE,0.000290031151565246,,3.99995517127945
+grid100,prec_velocity,Precipitation velocity,precip_velocity_z,pc1,PCA composite (PC1),effort_pc1_z,M4,ok,,0,FALSE,0.000293918147125033,,
+grid100,prec_velocity,Precipitation velocity,precip_velocity_z,days,Birding days,log_effort_days_z,M0,ok,11.0616680267408,1,FALSE,6.17562667876825e-08,0.999781020990601,0
+grid100,prec_velocity,Precipitation velocity,precip_velocity_z,days,Birding days,log_effort_days_z,M1,ok,13.0616336547027,0,FALSE,0.00028278318454259,,1.99996562796196
+grid100,prec_velocity,Precipitation velocity,precip_velocity_z,days,Birding days,log_effort_days_z,M2,ok,,0,FALSE,0.000287870070197545,,
+grid100,prec_velocity,Precipitation velocity,precip_velocity_z,days,Birding days,log_effort_days_z,M3,ok,15.0616128510028,0,FALSE,0.000299619059210273,,3.999944824262
+grid100,prec_velocity,Precipitation velocity,precip_velocity_z,days,Birding days,log_effort_days_z,M4,ok,,0,FALSE,0.000301930834941372,,

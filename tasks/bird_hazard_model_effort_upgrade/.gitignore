@@ -15,5 +15,9 @@ results/xgboost_model.model
 # County-level future predictions (very large, >10 MB)
 results/table_multi_scale_county_future.csv
 
+# Shapefile copies (tracked in parent tasks/ directory)
+2019中国地图-审图号GS(2019)1822号/
+中国shp/
+
 # macOS
 .DS_Store
