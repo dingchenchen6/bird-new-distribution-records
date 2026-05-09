@@ -1,0 +1,6 @@
+model,label,aic,pdHess,temp_grad_hr,temp_grad_p,interact_hr,interact_p
+M_interact,Interaction model,4193.83280891924,TRUE,0.869946700348362,0.00490628268966881,1.29169520151261,1.53029987790919e-08
+M_offset,Effort as offset,4280.31583294057,TRUE,0.953423864278065,0.330018088545929,,
+M_offset_interact,Effort offset + climate interaction,4493.10917075065,TRUE,0.968684473859251,0.522350711936791,,
+M_no_effort,No effort (climate only),4224.33054830305,TRUE,0.941898692423296,0.217875030386754,,
+M_effort_only,Effort only (no climate),4222.89902645142,TRUE,,,,

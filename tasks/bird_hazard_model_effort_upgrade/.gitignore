@@ -1,0 +1,19 @@
+# Large grid risk sets (>100 MB, not suitable for git)
+data/grid_50km_risk_set.csv
+data/grid_100km_risk_set.csv
+
+# Large effort files
+data/grid_50km_effort.csv
+data/grid_50km_sdm_sample.csv
+
+# XGBoost binary model (regenerable)
+results/xgboost_model.model
+
+# Source master spreadsheet (14 MB, tracked in parent)
+鸟类新纪录20260509.xlsx
+
+# County-level future predictions (very large, >10 MB)
+results/table_multi_scale_county_future.csv
+
+# macOS
+.DS_Store

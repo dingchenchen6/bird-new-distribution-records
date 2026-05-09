@@ -1,0 +1,4 @@
+model,type,handles_random_effects,captures_interaction,interpretability,key_strength
+"glmmTMB (M4, Spec B)",Statistical,Yes,Explicit,High (coefficients),"Inference, causal interpretation"
+Random Forest,ML,No,Implicit,Medium (PDP/VI),"Non-linear patterns, robustness"
+XGBoost,ML,No,Implicit,High (SHAP),"Prediction accuracy, SHAP explanation"

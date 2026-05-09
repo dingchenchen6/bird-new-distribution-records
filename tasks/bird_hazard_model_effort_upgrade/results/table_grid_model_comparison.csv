@@ -1,0 +1,8 @@
+model,formula,resolution,status,nobs,aic,n_events,convergence,pdHess
+grid_M1,event ~ year_c + temp_grad_prov_z * log_effort_visits_z + (1 | species) + (1 | province),100km,ok,400899,16982.9136539795,1594,0,TRUE
+grid_M2,event ~ year_c + climate_velocity_z * log_effort_visits_z + (1 | species) + (1 | province),100km,ok,400899,17053.0530376139,1594,0,TRUE
+grid_M3,event ~ year_c + bio1_z * log_effort_visits_z + (1 | species) + (1 | province),100km,ok,400899,17096.6318761373,1594,0,TRUE
+grid_M4,event ~ year_c + bio1_z + climate_velocity_z * log_effort_visits_z + (1 | species) + (1 | province),100km,ok,400899,17055.0444090582,1594,0,TRUE
+grid_M5,event ~ year_c + mahalanobis_dist_z * log_effort_visits_z + (1 | species) + (1 | province),100km,ok,400899,17084.0554414418,1594,0,TRUE
+prov_prov_M1,event ~ year_c + temp_grad_z * log_effort_visits_z + (1 | species) + (1 | province),province,ok,1186,368.031668366842,41,0,TRUE
+prov_prov_M2,event ~ year_c + climate_velocity_z * log_effort_visits_z + (1 | species) + (1 | province),province,convergence_warning,1186,,41,0,FALSE

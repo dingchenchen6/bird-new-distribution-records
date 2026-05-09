@@ -1,0 +1,4 @@
+model,formula,status,nobs,aic,bic,logLik,convergence,pdHess
+M_multi_top2,event ~ year_c + climate_velocity_z * log_effort_visits_z + mahalanobis_dist_z + (1 | species) + (1 | province),ok,12813,4226.47905765841,4286.14478213448,-2105.2395288292,0,TRUE
+M_multi_top3,event ~ year_c + climate_velocity_z * log_effort_visits_z + mahalanobis_dist_z + climate_exposure_z + (1 | species) + (1 | province),ok,12813,4224.58770768821,4291.71164772379,-2103.2938538441,0,TRUE
+M_multi_full,event ~ year_c + temp_grad_z + climate_velocity_z + mahalanobis_dist_z + climate_exposure_z + warming_rate_z + log_effort_visits_z + climate_velocity_z:log_effort_visits_z + (1 | species) + (1 | province),ok,12813,4225.62608072319,4307.66645187779,-2101.81304036159,0,TRUE

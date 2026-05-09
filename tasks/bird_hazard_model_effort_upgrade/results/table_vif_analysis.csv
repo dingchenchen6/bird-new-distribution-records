@@ -1,0 +1,11 @@
+variable,vif,group
+prec_grad_z,1.03927232317767,Climate
+climate_velocity_z,1.57212982972727,Climate
+precip_velocity_z,1.18193862170924,Climate
+climate_exposure_z,5.52689232553933,Climate
+warming_rate_z,6.56955652459674,Climate
+mahalanobis_dist_z,1.07797317758971,Climate
+log_effort_record_z,2.97288570608244,Effort
+log_effort_observers_z,11.6782484093643,Effort
+log_effort_days_z,5.89293383121227,Effort
+effort_pc1_z,3.74397376458728,Effort

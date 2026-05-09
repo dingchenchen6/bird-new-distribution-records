@@ -1,0 +1,21 @@
+spec,spec_label,effort_var,model,formula,status,nobs,aic,bic,logLik,convergence,pdHess,delta_aic
+spec_A,Record-based (legacy),log_effort_record_z,M0,event ~ year_c + (1 | species) + (1 | province),ok,12813,4223.83567021435,4253.66853245239,-2107.91783510717,0,TRUE,16.0213858450461
+spec_A,Record-based (legacy),log_effort_record_z,M1,event ~ year_c + temp_grad_z + (1 | species) + (1 | province),ok,12813,4224.33054830301,4261.62162610055,-2107.1652741515,0,TRUE,16.516263933705
+spec_A,Record-based (legacy),log_effort_record_z,M2,event ~ year_c + log_effort_record_z + (1 | species) + (1 | province),ok,12813,4224.36946965604,4261.66054745358,-2107.18473482802,0,TRUE,16.5551852867347
+spec_A,Record-based (legacy),log_effort_record_z,M3,event ~ year_c + temp_grad_z + log_effort_record_z + (1 | species) + (1 | province),ok,12813,4224.62750930263,4269.37680265969,-2106.31375465132,0,TRUE,16.8132249333285
+spec_A,Record-based (legacy),log_effort_record_z,M4,event ~ year_c + temp_grad_z * log_effort_record_z + (1 | species) + (1 | province),ok,12813,4207.8142843693,4260.02179328587,-2096.90714218465,0,TRUE,0
+spec_B,Observer visits,log_effort_visits_z,M0,event ~ year_c + (1 | species) + (1 | province),ok,12813,4223.83567021435,4253.66853245239,-2107.91783510717,0,TRUE,30.0028612950773
+spec_B,Observer visits,log_effort_visits_z,M1,event ~ year_c + temp_grad_z + (1 | species) + (1 | province),ok,12813,4224.33054830301,4261.62162610055,-2107.1652741515,0,TRUE,30.4977393837362
+spec_B,Observer visits,log_effort_visits_z,M2,event ~ year_c + log_effort_visits_z + (1 | species) + (1 | province),ok,12813,4222.89902645142,4260.19010424897,-2106.44951322571,0,TRUE,29.0662175321468
+spec_B,Observer visits,log_effort_visits_z,M3,event ~ year_c + temp_grad_z + log_effort_visits_z + (1 | species) + (1 | province),ok,12813,4223.49926085126,4268.24855420832,-2105.74963042563,0,TRUE,29.666451931992
+spec_B,Observer visits,log_effort_visits_z,M4,event ~ year_c + temp_grad_z * log_effort_visits_z + (1 | species) + (1 | province),ok,12813,4193.83280891927,4246.04031783584,-2089.91640445964,0,TRUE,0
+spec_C,PCA composite (PC1),effort_pc1_z,M0,event ~ year_c + (1 | species) + (1 | province),ok,12813,4223.83567021435,4253.66853245239,-2107.91783510717,0,TRUE,15.995866819585
+spec_C,PCA composite (PC1),effort_pc1_z,M1,event ~ year_c + temp_grad_z + (1 | species) + (1 | province),ok,12813,4224.33054830301,4261.62162610055,-2107.1652741515,0,TRUE,16.4907449082439
+spec_C,PCA composite (PC1),effort_pc1_z,M2,event ~ year_c + effort_pc1_z + (1 | species) + (1 | province),ok,12813,4223.48043787927,4260.77151567681,-2106.74021893963,0,TRUE,15.6406344845036
+spec_C,PCA composite (PC1),effort_pc1_z,M3,event ~ year_c + temp_grad_z + effort_pc1_z + (1 | species) + (1 | province),ok,12813,4224.1170473971,4268.86634075415,-2106.05852369855,0,TRUE,16.2772440023318
+spec_C,PCA composite (PC1),effort_pc1_z,M4,event ~ year_c + temp_grad_z * effort_pc1_z + (1 | species) + (1 | province),ok,12813,4207.83980339476,4260.04731231133,-2096.91990169738,0,TRUE,0
+spec_D,Birding days,log_effort_days_z,M0,event ~ year_c + (1 | species) + (1 | province),ok,12813,4223.83567021435,4253.66853245239,-2107.91783510717,0,TRUE,27.3845928802966
+spec_D,Birding days,log_effort_days_z,M1,event ~ year_c + temp_grad_z + (1 | species) + (1 | province),ok,12813,4224.33054830301,4261.62162610055,-2107.1652741515,0,TRUE,27.8794709689555
+spec_D,Birding days,log_effort_days_z,M2,event ~ year_c + log_effort_days_z + (1 | species) + (1 | province),ok,12813,4223.96593136794,4261.25700916549,-2106.98296568397,0,TRUE,27.514854033886
+spec_D,Birding days,log_effort_days_z,M3,event ~ year_c + temp_grad_z + log_effort_days_z + (1 | species) + (1 | province),ok,12813,4224.42010041418,4269.16939377124,-2106.21005020709,0,TRUE,27.9690230801261
+spec_D,Birding days,log_effort_days_z,M4,event ~ year_c + temp_grad_z * log_effort_days_z + (1 | species) + (1 | province),ok,12813,4196.45107733405,4248.65858625062,-2091.22553866703,0,TRUE,0

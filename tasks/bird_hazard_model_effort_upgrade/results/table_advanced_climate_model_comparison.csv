@@ -1,0 +1,49 @@
+climate_spec,climate_label,climate_var,effort_spec,effort_label,effort_var,status,nobs,aic,bic,logLik,convergence,pdHess,formula,delta_aic_within_effort,delta_aic_global
+clim_orig,"Temp gradient
+(legacy)",temp_grad_z,spec_A,Record-based,log_effort_record_z,ok,12813,4207.8142843693,4260.02179328587,-2096.90714218465,0,TRUE,event ~ year_c + temp_grad_z * log_effort_record_z + (1|species) + (1|province),0,13.9814754500676
+clim_orig,"Temp gradient
+(legacy)",temp_grad_z,spec_B,Observer visits,log_effort_visits_z,ok,12813,4193.83280891924,4246.0403178358,-2089.91640445962,0,TRUE,event ~ year_c + temp_grad_z * log_effort_visits_z + (1|species) + (1|province),0,0
+clim_orig,"Temp gradient
+(legacy)",temp_grad_z,spec_C,PCA composite,effort_pc1_z,ok,12813,4207.83980339481,4260.04731231138,-2096.91990169741,0,TRUE,event ~ year_c + temp_grad_z * effort_pc1_z + (1|species) + (1|province),0,14.0069944755742
+clim_orig,"Temp gradient
+(legacy)",temp_grad_z,spec_D,Birding days,log_effort_days_z,ok,12813,4196.45107733399,4248.65858625056,-2091.225538667,0,TRUE,event ~ year_c + temp_grad_z * log_effort_days_z + (1|species) + (1|province),0,2.61826841475522
+clim_velocity,"Climate
+velocity",climate_velocity_z,spec_A,Record-based,log_effort_record_z,ok,12813,4227.11866201128,4279.32617092785,-2106.55933100564,0,TRUE,event ~ year_c + climate_velocity_z * log_effort_record_z + (1|species) + (1|province),19.3043776419745,33.2858530920421
+clim_velocity,"Climate
+velocity",climate_velocity_z,spec_B,Observer visits,log_effort_visits_z,ok,12813,4224.71797390006,4276.92548281663,-2105.35898695003,0,TRUE,event ~ year_c + climate_velocity_z * log_effort_visits_z + (1|species) + (1|province),30.8851649808212,30.8851649808212
+clim_velocity,"Climate
+velocity",climate_velocity_z,spec_C,PCA composite,effort_pc1_z,ok,12813,4222.27656380923,4274.4840727258,-2104.13828190462,0,TRUE,event ~ year_c + climate_velocity_z * effort_pc1_z + (1|species) + (1|province),14.436760414419,28.4437548899932
+clim_velocity,"Climate
+velocity",climate_velocity_z,spec_D,Birding days,log_effort_days_z,ok,12813,4225.93186940617,4278.13937832274,-2105.96593470309,0,TRUE,event ~ year_c + climate_velocity_z * log_effort_days_z + (1|species) + (1|province),29.4807920721796,32.0990604869348
+clim_mahal,"Mahalanobis
+distance",mahalanobis_dist_z,spec_A,Record-based,log_effort_record_z,ok,12813,4220.23553823639,4272.44304715296,-2103.1177691182,0,TRUE,event ~ year_c + mahalanobis_dist_z * log_effort_record_z + (1|species) + (1|province),12.421253867089,26.4027293171566
+clim_mahal,"Mahalanobis
+distance",mahalanobis_dist_z,spec_B,Observer visits,log_effort_visits_z,ok,12813,4221.69473023191,4273.90223914848,-2103.84736511595,0,TRUE,event ~ year_c + mahalanobis_dist_z * log_effort_visits_z + (1|species) + (1|province),27.8619213126713,27.8619213126713
+clim_mahal,"Mahalanobis
+distance",mahalanobis_dist_z,spec_C,PCA composite,effort_pc1_z,ok,12813,4217.94526253736,4270.15277145392,-2101.97263126868,0,TRUE,event ~ year_c + mahalanobis_dist_z * effort_pc1_z + (1|species) + (1|province),10.1054591425454,24.1124536181196
+clim_mahal,"Mahalanobis
+distance",mahalanobis_dist_z,spec_D,Birding days,log_effort_days_z,ok,12813,4222.23035499766,4274.43786391423,-2104.11517749883,0,TRUE,event ~ year_c + mahalanobis_dist_z * log_effort_days_z + (1|species) + (1|province),25.7792776636661,28.3975460784213
+clim_exposure,"Climate
+exposure",climate_exposure_z,spec_A,Record-based,log_effort_record_z,ok,12813,4224.71686476904,4276.92437368561,-2105.35843238452,0,TRUE,event ~ year_c + climate_exposure_z * log_effort_record_z + (1|species) + (1|province),16.9025803997411,30.8840558498087
+clim_exposure,"Climate
+exposure",climate_exposure_z,spec_B,Observer visits,log_effort_visits_z,ok,12813,4222.02876630607,4274.23627522264,-2104.01438315304,0,TRUE,event ~ year_c + climate_exposure_z * log_effort_visits_z + (1|species) + (1|province),28.1959573868335,28.1959573868335
+clim_exposure,"Climate
+exposure",climate_exposure_z,spec_C,PCA composite,effort_pc1_z,ok,12813,4222.85658039891,4275.06408931548,-2104.42829019945,0,TRUE,event ~ year_c + climate_exposure_z * effort_pc1_z + (1|species) + (1|province),15.0167770040971,29.0237714796713
+clim_exposure,"Climate
+exposure",climate_exposure_z,spec_D,Birding days,log_effort_days_z,ok,12813,4222.2028976587,4274.41040657527,-2104.10144882935,0,TRUE,event ~ year_c + climate_exposure_z * log_effort_days_z + (1|species) + (1|province),25.7518203247091,28.3700887394643
+clim_warming,"Warming
+rate",warming_rate_z,spec_A,Record-based,log_effort_record_z,ok,12813,4223.1726477075,4275.38015662407,-2104.58632385375,0,TRUE,event ~ year_c + warming_rate_z * log_effort_record_z + (1|species) + (1|province),15.3583633382004,29.339838788268
+clim_warming,"Warming
+rate",warming_rate_z,spec_B,Observer visits,log_effort_visits_z,ok,12813,4219.91702013815,4272.12452905472,-2102.95851006908,0,TRUE,event ~ year_c + warming_rate_z * log_effort_visits_z + (1|species) + (1|province),26.0842112189139,26.0842112189139
+clim_warming,"Warming
+rate",warming_rate_z,spec_C,PCA composite,effort_pc1_z,ok,12813,4220.12536669304,4272.33287560961,-2103.06268334652,0,TRUE,event ~ year_c + warming_rate_z * effort_pc1_z + (1|species) + (1|province),12.285563298231,26.2925577738051
+clim_warming,"Warming
+rate",warming_rate_z,spec_D,Birding days,log_effort_days_z,ok,12813,4219.55358698798,4271.76109590455,-2102.77679349399,0,TRUE,event ~ year_c + warming_rate_z * log_effort_days_z + (1|species) + (1|province),23.1025096539888,25.720778068744
+clim_precip_vel,"Precipitation
+velocity",precip_velocity_z,spec_A,Record-based,log_effort_record_z,ok,12813,4221.30580217647,4273.51331109304,-2103.65290108824,0,TRUE,event ~ year_c + precip_velocity_z * log_effort_record_z + (1|species) + (1|province),13.491517807166,27.4729932572336
+clim_precip_vel,"Precipitation
+velocity",precip_velocity_z,spec_B,Observer visits,log_effort_visits_z,ok,12813,4218.36121451389,4270.56872343046,-2102.18060725695,0,TRUE,event ~ year_c + precip_velocity_z * log_effort_visits_z + (1|species) + (1|province),24.5284055946577,24.5284055946577
+clim_precip_vel,"Precipitation
+velocity",precip_velocity_z,spec_C,PCA composite,effort_pc1_z,ok,12813,4218.27665812325,4270.48416703981,-2102.13832906162,0,TRUE,event ~ year_c + precip_velocity_z * effort_pc1_z + (1|species) + (1|province),10.4368547284357,24.4438492040099
+clim_precip_vel,"Precipitation
+velocity",precip_velocity_z,spec_D,Birding days,log_effort_days_z,ok,12813,4222.64161194355,4274.84912086012,-2104.32080597177,0,TRUE,event ~ year_c + precip_velocity_z * log_effort_days_z + (1|species) + (1|province),26.1905346095573,28.8088030243125

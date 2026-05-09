@@ -1,0 +1,11 @@
+variable,importance,category
+log_effort_visits_z,0.048942704619452,Effort
+log_effort_days_z,0.0461299477462198,Effort
+effort_pc1_z,0.0441463514634625,Effort
+mahalanobis_dist_z,0.0380632460451039,Climate
+climate_exposure_z,0.0298288916265311,Climate
+warming_rate_z,0.0282580436799248,Climate
+year_c,0.0205152002495859,Year
+climate_velocity_z,0.0178035950957291,Climate
+temp_grad_z,0.00983845080407438,Climate
+prec_grad_z,0.00765928574852985,Climate

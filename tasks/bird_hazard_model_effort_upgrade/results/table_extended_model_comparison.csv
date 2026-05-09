@@ -1,0 +1,4 @@
+spec,spec_label,effort_var,model,formula,status,nobs,aic,bic,logLik,convergence,pdHess
+spec_B_extended,Observer visits (extended),log_effort_visits_z,M5,event ~ year_c + temp_grad_z * log_effort_visits_z + prec_grad_z + (1 | species) + (1 | province),ok,12813,4194.23185017228,4253.89757464836,-2089.11592508614,0,TRUE
+spec_B_extended,Observer visits (extended),log_effort_visits_z,M6,event ~ year_c + temp_grad_z * log_effort_visits_z + mig + (1 | species) + (1 | province),ok,12813,4198.4544505549,4273.03660614999,-2089.22722527745,0,TRUE
+spec_B_extended,Observer visits (extended),log_effort_visits_z,M7,event ~ year_c + temp_grad_z * log_effort_visits_z + prec_grad_z + mig + (1 | species) + (1 | province),ok,12813,4198.71807673175,4280.75844788636,-2088.35903836588,0,TRUE

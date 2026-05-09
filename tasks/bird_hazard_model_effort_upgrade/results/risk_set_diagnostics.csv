@@ -1,0 +1,13 @@
+metric,value
+threshold,100
+year_range,2002-2024
+risk_rows_full,177724
+risk_rows_complete,12813
+events_complete,512
+species_complete,333
+provinces_complete,32
+effort_record_na,11929
+effort_visits_na,8019
+effort_pc1_na,8019
+effort_days_na,8019
+temp_grad_na,164528
